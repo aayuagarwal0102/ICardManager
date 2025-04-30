@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Schools</title>
+</head>
+<body>
+    <h1>Manage Schools</h1>
+    
+    <table border="1">
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Address</th>
+            <th>Contact Number</th>
+            <th>Actions</th>
+        </tr>
+        <% schools.forEach(school => { %>
+            <tr>
+                <td><%= school.name %></td>
+                <td><%= school.email %></td>
+                <td><%= school.address %></td>
+                <td><%= school.contactNumber %></td>
+                <td>
+                    <form action="/admin/manage-schools/delete/<%= school._id %>" method="POST">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        <% }); %>
+    </table>
+
+    <a href="/admin/dashboard">Back to Dashboard</a>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Details</title>
+</head>
+<body>
+    <h1><%= school.schoolName %> Details</h1>
+    <p>Email: <%= school.email %></p>
+    <p>Address: <%= school.address %></p>
+    <p>Contact: <%= school.contactNumber %></p>
+
+    <h2>Students & ID Card Requests</h2>
+    <table border="1">
+        <tr>
+            <th>Roll No.</th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+        <% students.forEach(student => { %>
+            <% if (student.schoolId.toString() === school._id.toString()) { %>  <!-- Filter Students -->
+                <tr>
+                    <td><%= student.rollNo %></td>
+                    <td><%= student.name %></td>
+                    <td>
+                        <% if (student.idCardStatus === "Pending") { %>
+                            <a href="/admin/print-id/<%= student._id %>">Print ID</a>
+                        <% } else { %>
+                            <a href="/admin/reprint-id/<%= student._id %>">Reprint ID Card</a>
+                        <% } %>
+                    </td>
+                    <td><%= student.idCardStatus %></td>
+                    
+                </tr>
+            <% } %>
+        <% }); %>
+    </table>
+
+    <a href="/admin">Back to Dashboard</a>
+</body>
+</html>

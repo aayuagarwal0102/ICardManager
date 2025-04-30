@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="/css/schooldashboard.css">
+  
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Anton&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+  </style>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+
+<body>
+ <!-- Flash Message Styles -->
+<style>
+  .flash-message {
+    padding: 12px 20px;
+    margin: 15px auto;
+    border-radius: 8px;
+    max-width: 600px;
+    font-size: 16px;
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  }
+
+  .flash-message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border-left: 6px solid #28a745;
+  }
+
+  .flash-message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-left: 6px solid #dc3545;
+  }
+
+  .flash-message .close-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: inherit;
+    margin-left: 15px;
+  }
+</style>
+
+<!-- Flash Message Display -->
+<% if (success_msg && success_msg.length) { %>
+  <div class="flash-message success">
+    <span><%= success_msg %></span>
+    <button class="close-btn" onclick="this.parentElement.style.display='none';">&times;</button>
+  </div>
+<% } %>
+
+<% if (error_msg && error_msg.length) { %>
+  <div class="flash-message error">
+    <span><%= error_msg %></span>
+    <button class="close-btn" onclick="this.parentElement.style.display='none';">&times;</button>
+  </div>
+<% } %>
+
+
+  <!-- <-------------------------       ---------------------------->
+  <!-- <-------------------------SIDE-BAR ---------------------------->
+  <!-- <-------------------------       ---------------------------->
+  <aside class="sidebar">
+    <h2>A T S</h2>
+
+    <ul class="list-items">
+
+
+      <li class="menu-item">
+        <div class="menu" onclick="toggleSubMenu('students-submenu', this)">
+          <a href="/schools/<%= school._id %>"> <i class="material-icons">dashboard</i>Dashboard</a>
+        </div>
+
+      </li>
+
+      <li class="menu-item">
+        <div class="menu" onclick="toggleSubMenu('students-submenu1', this)">
+          <a href="#students"> <i class="material-icons">groups</i>Students</a>
+          <i class="material-icons arrow">chevron_right</i>
+        </div>
+        <ul id="students-submenu1" class="submenu">
+          <li><a href="#" onclick="showStudents()">View all </a></li>
+
+        </ul>
+      </li>
+
+      <li class="menu-item">
+        <div class="menu" onclick="toggleSubMenu('students-submenu2', this)">
+          <a href="#teachers"> <i class="material-icons">group</i>Teachers</a>
+          <i class="material-icons arrow">chevron_right</i>
+        </div>
+        <ul id="students-submenu2" class="submenu">
+          <li><a href="#" onclick="showTeacherTable()">View all</a></li>
+          <li><a href="#" onclick="showAddTeacherForm()">New teacher</a></li>
+
+        </ul>
+      </li>
+
+      <li class="menu-item">
+        <div class="menu" onclick="toggleSubMenu('students-submenu3', this)">
+          <a href="#school"> <i class="material-icons">location_city</i>School Details</a>
+          <i class="material-icons arrow">chevron_right</i>
+        </div>
+
+      </li>
+
+      <li class="menu-item">
+        <div class="menu" onclick="toggleSubMenu('students-submenu4', this)">
+          <a href="#setting"> <i class="material-icons">settings</i>Settings</a>
+        </div>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- <-------------------------               ------------------ -->
+  <!-- <------------------------- TOP BAR               ------------------ -->
+  <!-- <-------------------------               ------------------ -->
+
+  <main class="main-content">
+    <header class="top-bar">
+      <i class="material-icons menu-toggle">menu</i>
+      <h2>Admin Dashboard</h2>
+      <div class="icons">
+        <div class="profile ">
+          <img src="<%= school.logo %>" alt="logo">
+          <div class="profile-info ">
+            <Span id="adminName " class="dropdown-btn" onclick="toggleDropdown()">
+              <%= school.schoolName %>
+                <div class="dropdown">▼
+                </div>
+            </Span>
+            <span class="admin">Admin</span>
+          </div>
+          <div id="dropdownMenu" class="dropdown-menu">
+            <a href="#" class="option" onclick="openProfilePopup()"><i class="material-icons">account_circle</i>My
+              Profile</a>
+            <a href="#" class="option"><i class="material-icons">task</i>Task</a>
+            <a href="#" class="option"><i class="material-icons">mail</i>Message</a>
+            <a href="#" class="option"><i class="material-icons">settings</i>Account Settings</a>
+            <form action="/schools/logout" method="post">
+              <button type="submit" class="option" id="logoutBtn"><i class="material-icons">logout</i>Log Out</button>
+              </form>
+          </div>
+        </div>
+
+        <div class="icon"><i class="material-icons">mail</i></div>
+        <div class="icon"><i class="material-icons">notifications</i></div>
+      </div>
+    </header>
+
+    <!-- <-----------------------------                       ----------------- -->
+    <!-- <----------------------------       DASHBOARD     ----------------- -->
+    <!-- <-----------------------------                       ----------------- -->
+    <section id="dashboard">
+      <div class="stats">
+        <div class="card" style="animation-delay: 0.1s;">
+          <div class="img"><img src="/images/graduated.png" alt="" c></div>
+          <div class="text">Students: <span id="total-students">
+              <%= totalStudents %>
+            </span></div>
+        </div>
+        <div class="card" style="animation-delay: 0.3s;">
+          <div class="img tea"><img src="/images/chalkboard-user.png" alt=""> </div>
+          <div class="text">Teachers: <span id="total-teachers">
+              <%= totalTeachers %>
+            </span></div>
+        </div>
+        <div class="card" style="animation-delay: 0.5s;">
+          <div class="img idcards"><img src="/images/identification.png" alt=""></div>
+          <div class="text">ID requests:<span id="total-idcards">
+              <%= pendingRequests %>
+            </span></div>
+        </div>
+      </div>
+
+
+      <!-- <---------------------------        ---------------------- -->
+      <!-- <--------------------------- CELENDAR---------------------- -->
+      <!-- <---------------------------        ---------------------- -->
+
+
+      <div class="calendar-container">
+        <div class="calendar-header">
+          <button id="prevMonth"><i class="material-icons">arrow_back_ios</i></button>
+          <span id="currentMonthYear">April 2025</span>
+          <button id="nextMonth"><i class="material-icons">arrow_forward_ios</i></button>
+        </div>
+
+        <div class="calendar-grid">
+          <div class="day-name">Su</div>
+          <div class="day-name">Mo</div>
+          <div class="day-name">Tu</div>
+          <div class="day-name">We</div>
+          <div class="day-name">Th</div>
+          <div class="day-name">Fr</div>
+          <div class="day-name">Sa</div>
+        </div>
+        <div class="calendar-grid" id="calendarDays"></div>
+      </div>
+
+
+
+    </section>
+
+    <!-- <---------------------             --------------- -->
+    <!-- <---------------------ADD-TEACHER FORM--------------- -->
+    <!-- <---------------------             --------------- -->
+
+    <section id="add-teacher-form" style="display: none; padding: 20px;">
+      <h2>Add New Teacher</h2>
+      <form class="teacher-form" action="/schools/<%= schoolId %>/add-class-teacher" method="POST">
+        <div class="form-grid">
+
+
+          <div class="form-group">
+            <label for="fullName">Full Name<span>*</span></label>
+            <input type="text" name="fullName" id="fullName" placeholder="Enter full name" required />
+          </div>
+
+
+          <div class="form-group">
+            <label for="class">Class assigned<span>*</span></label>
+            <select id="class" name="className" required >
+              <option value="">Select Class</option>
+              <option value="playgroup">Play group</option>
+              <option value="First">1st</option>
+              <option value="Second">2nd</option>
+              <option value="Third">3rd</option>
+              <option value="Fourth">4th</option>
+              <option value="Fifth">5th</option>
+              <option value="Sixth">6th</option>
+              <option value="Seventh">7th</option>
+              <option value="Eighth">8th</option>
+              <option value="Ninth">9th</option>
+              <option value="Tenth">10th</option>
+              <option value="Eleventh">11th</option>
+              <option value="Twelevth">12th</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="section">Section</label>
+            <select id="section" name= "section" required>
+              <option value="">Select section</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Create Password<span>*</span></label>
+            <input type="password" name="password" id="password" required />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Confirm Password<span>*</span></label>
+            <input type="password" id="password" name="confirmPassword" required />
+          </div>
+
+
+
+        </div>
+
+
+        <button class="submit-btn" type="submit">Save</button>
+
+      </form>
+    </section>
+
+
+    <!-- <----------------------                   ---------------- -->
+    <!-- <---------------------- TEACHER TABLE---------------- -->
+    <!-- <----------------------                   ---------------- -->
+
+    <section id="teacher-table" style="display: none;">
+      <div class="teacher-table-container">
+
+        <!-- 🔍 Search and 🔽 Section Filter -->
+        <div class="filter-bar">
+          <div class="searchbar">
+            <input type="text" id="searchInput" placeholder="Search by name or class...">
+
+            <i class="material-icons arrow">search</i>
+
+          </div>
+          <select id="sectionFilter">
+            <option value="">All Sections</option>
+            <option value="A">Section A</option>
+            <option value="B">Section B</option>
+            <option value="C">Section C</option>
+          </select>
+        </div>
+
+        <!-- 📊 Table -->
+        <div style="overflow-x: auto;">
+          <% if (teachers && teachers.length> 0) { %>
+            <table class="teacher-table">
+              <thead>
+                <tr>
+                  <th>Sr. No.</th>
+                  <th>Full Name</th>
+                  <th>Username</th>
+                  <th>Class Assigned</th>
+                  <th>Section</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="teacherTableBody">
+                <% let serial = 1; %>
+                <% teachers.forEach(teacher=> { %>
+                  <tr>
+                    <td> <%= serial++ %> </td>
+                    <td>
+                      <%= teacher.fullName %>
+                    </td>
+
+                    <td>
+                      <%= teacher.username %>
+                    </td>
+                    <td>
+                      <%= teacher.class %>
+                    </td>
+                    <td><%= teacher.section %></td>
+                    <td>
+
+                      <form action="/schools/delete-class-teacher/<%= teacher._id %>?schoolId=<%= schoolId %>"
+                        method="POST">
+                        <button type="submit">Remove</button>
+                      </form>
+
+
+                      <button 
+                        onclick="openEditForm('<%= teacher._id %>', '<%= teacher.fullName %>', '<%= teacher.class %>', '<%= schoolId %>','<%= teacher.username %>', '<%= teacher.section %>' )"
+                        type="submit">Update </button>
+
+
+                    </td>
+
+                  </tr>
+                  <% }) %>
+
+              </tbody>
+              <% } else { %>
+                <p class="no-student-found">No teacher found :(</p>
+                <% } %>
+            </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- <-----------------------                 ---------------------- -->
+    <!-- <-----------------------  UPDATE TEACHER DETAILS ---------------------- -->
+    <!-- <-----------------------                 ---------------------- -->
+
+    <section id="update-teacher-details" style="display: none; padding: 20px;">
+      <h2 style=>Update Details</h2>
+      <form class="teacher-form" id="editTeacherForm" method="POST" >
+        <div class="form-grid">
+
+
+          <div class="form-group">
+            <label for="fullName">Full Name</label>
+            <input type="text" id="editFullName"  name="fullName"
+        />
+          </div>
+
+
+
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="username" id="username" name="username" />
+          </div>
+
+          <div class="form-group">
+            <label for="class">Class assigned</label>
+            <select id="class" name="class">
+              <option idvalue="">
+               
+              </option>
+              <option value="playgroup">Play group</option>
+              <option value="First">1st</option>
+              <option value="Second">2nd</option>
+              <option value="Third">3rd</option>
+              <option value="Fourth">4th</option>
+              <option value="Fifth">5th</option>
+              <option value="Sixth">6th</option>
+              <option value="Seventh">7th</option>
+              <option value="Eighth">8th</option>
+              <option value="Ninth">9th</option>
+              <option value="Tenth">10th</option>
+              <option value="Eleventh">11th</option>
+              <option value="Twelevth">12th</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="section">Section</label>
+            <select id="section" name="section">
+              <option value="">Select section</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
+            </select>
+          </div>
+
+
+          <div class="form-group">
+            <label for="password">Change Password</label>
+            <input type="password" id="password" name="password" placeholder="Leave blank to keep old" />
+          </div>
+
+
+
+        </div>
+
+
+        <button class="submit-btn" type="submit">Save</button>
+
+      </form>
+    </section>
+
+
+
+    <!-- <-----------------------------                  ------------------ -->
+    <!-- <----------------------------- STUDENT TABLE------------------ -->
+    <!-- <-----------------------------                  ------------------ -->
+
+    <section id="student-table" style="display: none;">
+      <div class="teacher-table-container">
+
+        <!-- 🔍 Search and 🔽 Section Filter -->
+        <div class="filter-bar">
+          <div class="searchbar">
+            <input type="text" id="searchInput" placeholder="Search by name or roll no...">
+
+            <i class="material-icons arrow">search</i>
+
+          </div>
+          <select id="sectionFilter">
+            <option value="">All Sections</option>
+            <option value="A">Section A</option>
+            <option value="B">Section B</option>
+            <option value="C">Section C</option>
+            <option value="D">Section D</option>
+          </select>
+        </div>
+
+        <!-- 📊 Table -->
+
+        <% let serial = 1; %>
+        <div style="overflow-x: auto;">
+          <% if (students && students.length> 0) { %>
+            <table class="teacher-table" id="stu-table">
+              <thead>
+                
+                <tr>
+                  <th>Sr. No.</th>
+                  <th>Full Name</th>
+                  <th>Image</th>
+                  <th>Roll no</th>
+                  <th>Class</th>
+                  <th>Section</th>
+                  <th>Father's Name</th>
+                  <th>Mobile No.</th>
+                  <th>Address</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              
+               
+                <tbody id="teacherTableBody">
+                <% students.forEach(student=> { %>
+                 
+                  <tr>
+                    <td> <%= serial++ %> </td>
+                    <td>
+                      <%= student.name %>
+                    </td>
+                    <td>
+                      <% if(student.photo) { %>
+                          <button class="view-image-btn" data-img="<%= student.photo %>">View</button>
+                          <% } else { %>
+                              <em>No Image</em>
+                              <% } %>
+                    
+                  </td>
+
+                    <td><%= student.rollNo %></td>
+                    <td>
+                      <%= student.class %>
+                    </td>
+                    <td>
+                      <%=student.section %>
+                    </td>
+                    <td><%=student.fathername %></td>
+                    <td><%=student.contact%></td>
+                    <td><%=student.address %></td>
+                    <td>
+                      <%=student.idCardStatus %>
+                    </td>
+
+                  </tr>
+                 
+                  <% }) %>
+                </tbody>
+            
+              <% } else { %>
+                <p class="no-student-found">No student found :(</p>
+                <% } %>
+            </table>
+        </div>
+
+        <!-- PAGINATION -->
+
+        <div class="pagination">
+          <button id="prevBtn">Previous</button>
+          <button id="nextBtn">Next</button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- <-------------------------------           --------------------- -->
+    <!-- <------------------------------- MY PROFILE SECTION--------------------- -->
+    <!-- <-------------------------------           --------------------- -->
+    <div class="overlay hidden" id="profilePopup">
+      <div class="profile-card">
+        <button class="close-btn" onclick="closeProfilePopup()">&times;</button>
+
+        <div class="profile-header">
+          <div class="image-container">
+            
+            <label for="profileImageInput">
+              <img id="profileImage" src="<%= school.logo %>" alt="logo" class="avatar" />
+              <i class="material-icons edit-icon">edit</i>
+
+          </label>
+          </div>
+          <div>
+            <h2>
+              <%= school.schoolName %>
+            </h2>
+            <p>
+              <%= school.email %>
+            </p>
+          </div>
+        </div>
+
+        <form action="/schools/<%= schoolId %>/update-profile" method="POST" enctype="multipart/form-data"
+          class="profile-form">
+          <input type="file" name="logo" id="profileImageInput" accept="image/*" style="display: none" />
+
+          <label>School Name</label>
+
+          
+          <input type="text" name="schoolName" value="<%= school.schoolName %>" required />
+
+          <label>Email ID</label>
+          <input type="email" name="email" value="<%= school.email %>" required />
+
+          <label>Phone Number</label>
+          <input type="tel" name="contactNumber" value="<%= school.contactNumber %>" required />
+
+          <label>Address</label>
+          <input type="text" name="address" value="<%= school.address %>" required />
+
+          <label for="city">City</label>
+          <input type="text" name="city" placeholder="city" value="<%= school.city %>" required>
+
+          <label for="">Affiliation Number</label>
+          <input type="text" name="affnumber" placeholder="affnumber" value="<%= school.affnumber %>" required>
+
+          <label class="signature">Principal's Signature <span id="signature-requirements">*Image must be in PNG format
+              with transparent background only.(Max: 200 KB)</span></label>
+          <input type="file" name="signature" accept=".png" onchange="validateSignature(this)" />
+
+          <button type="submit">Save Changes</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Cropper Modal HTML (Same for Photo or Signature) -->
+<div id="cropperModal" class="cropper-modal" style="display: none;">
+  <div class="cropper-modal-content">
+    <img id="cropperImage" style="max-width: 100%;" />
+    <div style="margin-top: 10px;">
+      <button id="cropButton">Crop & Save</button>
+      <button id="cancelCrop">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+
+    <!-- student image popup -->
+    <div class="popup-overlay" id="imagePopup" style="display: none;">
+      <div class="popup-form" style="max-width: 400px;">
+        <span class="close-btn" onclick="closeImagePopup()">×</span>
+        <h2>Student Image</h2>
+        <img id="popupStudentImage" src="" alt="Student Photo" style="width: 100%; border-radius: 8px; margin-top: 15px;" />
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/schooldashboard.js"></script>
+</body>
+
+</html>

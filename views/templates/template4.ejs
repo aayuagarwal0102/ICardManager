@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ID Card Template 2</title>
+  <style>
+    body { font-family: 'Poppins', sans-serif; background: #f0f2f5; }
+    .id-card {
+      width: 240px;
+      height: 340px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      margin: 15px;
+      padding: 15px;
+      display: inline-block;
+      text-align: center;
+    }
+    .id-card img {
+      width: 70px;
+      height: 70px;
+      border-radius: 10px;
+      margin-top: 5px;
+    }
+    .school-logo {
+      width: 50px;
+      height: 50px;
+    }
+    .school-name {
+      font-weight: 600;
+      font-size: 18px;
+      color: #2c3e50;
+      margin-top: 5px;
+    }
+    .student-info {
+      margin-top: 8px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+
+  <div class="id-card">
+    <img class="school-logo" src="<%= school.logo %>" alt="School Logo">
+    <div class="school-name"><%= school.schoolName %></div>
+    <img src="<%= student.photo %>" alt="Student Photo">
+    <div class="student-info">
+      <p><strong>Name:</strong> <%= student.name %></p>
+      <p><strong>Class:</strong> <%= student.class %> - <%= student.section %></p>
+      <p><strong>Roll No:</strong> <%= student.rollNo %></p>
+    </div>
+  </div>
+
+
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Verify OTP</title>
+  <!-- <script defer src="/script.js"></script> -->
+</head>
+<body>
+  <h2>OTP sent to <%= email %></h2>
+
+  <form action="/verify-otp" method="POST" id="otpForm">
+    <div>
+      
+        <input type="text" name="otp[]" maxlength="1" class="otp-input" oninput="handleOtpInput(this, 0)" />
+        <input type="text" name="otp[]" maxlength="1" class="otp-input" oninput="handleOtpInput(this,1)" />
+        <input type="text" name="otp[]" maxlength="1" class="otp-input" oninput="handleOtpInput(this, 2)" />
+        <input type="text" name="otp[]" maxlength="1" class="otp-input" oninput="handleOtpInput(this, 3)" />
+        <input type="text" name="otp[]" maxlength="1" class="otp-input" oninput="handleOtpInput(this,4)" />
+        <input type="text" name="otp[]" maxlength="1" class="otp-input" oninput="handleOtpInput(this, 5)" />
+     
+    </div>
+    <p id="timer">Time remaining: 01:00</p>
+    <button type="submit">Verify OTP</button>
+  </form>
+
+  
+  <script>
+    function handleOtpInput(input, index) {
+  if (input.value.length === 1) {
+    const nextInput = input.nextElementSibling;
+    if (nextInput) nextInput.focus();
+  }
+}
+
+// Timer countdown
+let countdown = 60;
+const timer = document.getElementById("timer");
+const interval = setInterval(() => {
+  countdown--;
+  timer.textContent = `Time remaining: 00:${countdown < 10 ? "0" : ""}${countdown}`;
+  if (countdown <= 0) {
+    clearInterval(interval);
+    timer.textContent = "OTP expired!";
+  }
+}, 1000);
+
+  </script>
+</body>
+</html>

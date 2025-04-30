@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Students</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+
+    /* image popup */
+
+  .popup-overlay {
+    display: none; /* Initially hidden */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6); /* semi-transparent dark background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+  }
+
+  .popup-form {
+    background-color: #fff;
+    padding: 20px 25px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    position: relative;
+  }
+
+  .popup-form h2 {
+    margin-bottom: 15px;
+    font-size: 22px;
+    color: #333;
+  }
+
+  .popup-form img {
+
+    height: 50%;
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 10px;
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    font-size: 22px;
+    font-weight: bold;
+    color: #444;
+    cursor: pointer;
+  }
+
+  .close-btn:hover {
+    color: #000;
+  }
+
+    
+
+    .disabled { pointer-events: none; opacity: 0.6; } 
+  </style>
+</head>
+<body>
+
+  <h1>Students List</h1>
+
+  <form id="print-form" method="POST" action="/admin/print-id" target="_blank">
+    <% if (students.length > 0) { %>
+      <table>
+        <thead>
+          <tr>
+            <th>select</th>
+            <th>view image</th>
+            <th>Roll No</th>
+            <th>Name</th>
+            <th>Class</th>
+            <th>Section</th>
+            <th>Father Name</th>
+            <th>Contact</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% students.forEach(student => { %>
+            <tr>
+              <td><input type="checkbox" name="selectedStudents" class="student-checkbox" value="<%= student._id %>"></td>
+              <td>
+                <% if(student.photo) { %>
+                    <div class="view-image-btn" data-img="<%= student.photo %>"> View </div>
+                    <% } else { %>
+                        <em>No Image</em>
+                        <% } %>
+              
+            </td>
+              <td><%= student.rollNo %></td>
+              <td><%= student.name %></td>
+              <td><%= student.class %></td>
+              <td><%= student.section %></td>
+              <td><%= student.fathername %></td>
+              <td><%= student.contact %></td>
+              <td><%= student.idCardStatus %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+  
+      <!-- Print button -->
+      <button type="submit" id="printButton" class="disabled" disabled>Print ID Cards</button>
+    <% } else { %>
+      <p>No students found to print.</p>
+    <% } %>
+  </form>
+
+  <div class="popup-overlay" id="imagePopup" style="display: none;">
+    <div class="popup-form" style="max-width: 400px;">
+      <span class="close-btn" onclick="closeImagePopup()">×</span>
+      <h2>Student Image</h2>
+      <img id="popupStudentImage" src="" alt="Student Photo" style="width: 100%; border-radius: 8px; margin-top: 15px;" />
+    </div>
+  </div>
+
+  <br>
+
+
+  <a href="/admin/schools/<%= schoolId %>/classes">Back to Classes</a>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+const checkboxes = document.querySelectorAll('.student-checkbox');
+const printButton = document.getElementById('printButton');
+const maxSelection = 50;
+
+checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', () => {
+        const selected = document.querySelectorAll('.student-checkbox:checked').length;
+
+        if (selected > 0 && selected <= maxSelection) {
+            printButton.disabled = false;
+            printButton.classList.remove('disabled');
+        } else {
+            printButton.disabled = true;
+            printButton.classList.add('disabled');
+        }
+
+        if (selected >= maxSelection) {
+            checkboxes.forEach(box => {
+                if (!box.checked) box.disabled = true;
+            });
+        } else {
+            checkboxes.forEach(box => box.disabled = false);
+        }
+    });
+});
+});
+
+
+function closeImagePopup() {
+document.getElementById('imagePopup').style.display = 'none';
+document.getElementById('popupStudentImage').src = ''; // Clear image on close
+}
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+const imageBtns = document.querySelectorAll(".view-image-btn");
+const imagePopup = document.getElementById("imagePopup");
+const imageElement = document.getElementById("popupStudentImage");
+
+imageBtns.forEach((btn) => {
+btn.addEventListener("click", function () {
+  const imgPath = btn.getAttribute("data-img");
+  imageElement.src = imgPath.startsWith("http") ? imgPath : `/${imgPath}`;
+  imagePopup.style.display = "flex";
+});
+});
+});
+</script>
+
+</body>
+</html>

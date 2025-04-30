@@ -1,0 +1,1200 @@
+.student-card {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  font-size: 16px;
+}
+
+.logo-img {
+  width: 80px;         /* Size छोटा रखने के लिए */
+  height: 80px;
+  border-radius: 50%;  /* इसे गोल बनाने के लिए */
+  object-fit: cover;   /* Image को circle के अंदर सही से fit करने के लिए */
+  border: 2px solid #ccc; /* Optional border */
+}
+
+.logo-img:hover {
+  transform: scale(1.05);
+  transition: 0.3s ease;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+}
+
+body {
+  display: flex;
+  font-family: poppins;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #f4f4f4;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+
+
+}
+
+#dashboard{
+  margin-left: 40px ;
+  margin-right: 40px;
+  margin-bottom: 20px;
+}
+
+/* <----------------                   --------------------> */
+/* <---------------- SIDE BAR DESIGN   --------------------> */
+/* <----------------                   --------------------> */
+.sidebar {
+  width: 200px;
+  background: #55297f;
+  color: white;
+  padding: 20px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  transition: left 0.3s ease;
+  z-index: 999;
+  transition: transform 0.3s ease-in-out;
+
+}
+
+
+.sidebar h2 {
+  text-align: center;
+  font-weight: 400;
+  font-size: 18px;
+  background-color: white;
+  color: #55297f;
+
+
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar ul li a {
+  color: white;
+  text-decoration: none;
+}
+
+
+
+.menu-item .menu {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  padding-right: 10px;
+  width: 100%;
+  border-bottom: 1px solid #401f5f;
+  padding: 20px 10px;
+}
+
+
+.menu-item .menu a {
+  flex-grow: 1;
+  padding-left: 5px;
+  text-decoration: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.menu-item .menu .arrow {
+  position: absolute;
+  right: 10px;
+}
+
+/* Submenu */
+.submenu {
+  list-style: none;
+  padding-left: 30px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.submenu.show {
+  max-height: 300px;
+}
+
+/* Submenu items full width */
+
+.submenu li a {
+  display: flex;
+  width: 100%;
+  padding: 10px;
+  text-decoration: none;
+  color: white;
+  justify-content: center;
+  border-bottom: 1px solid #401f5f;
+  font-size: 14px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.submenu li a:hover {
+  transform: translateX(6px);
+}
+
+/* Arrow rotation */
+.arrow {
+  transition: transform 0.3s ease;
+}
+
+.arrow.rotate {
+  transform: rotate(90deg);
+}
+
+
+.menu-toggle {
+  display: none;
+  font-size: 24px;
+  background: none;
+  border: none;
+  color: #55297f;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  left: 30px;
+}
+
+/* <-------------------------                          ----------------------------------> */
+/* <--------------------- MAIN CONTENT IN DASHBOARD & TOP BAR  ----------------------------------> */
+/* <-------------------------                          ----------------------------------> */
+
+.main-content {
+  margin-left: 240px;
+  width: 100%;
+  transition: margin-left 0.3s ease-in-out;
+}
+.top-bar {
+  background: white;
+  color: #55297f;
+  padding: 10px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.top-bar h2 {
+  font-size: 18px;
+  font-weight: 400;
+  margin: 0;
+  flex: 1;
+}
+
+.icons {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 📱 Responsive Top Bar */
+@media (max-width: 600px) {
+  .top-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .top-bar h2{
+    margin: auto;
+  }
+
+  .icons {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .profile-info {
+    align-items: flex-start;
+  }
+}
+
+
+.top-bar .icons .icon i {
+  color: #55297f;
+  padding: 5px;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 20px;
+  padding:50px 0 50px 0;
+}
+
+.card {
+  background: white;
+  padding: 30px 20px;
+  font-weight: 300;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  text-align: center;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeUp 0.6s ease forwards;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Entry animation */
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.card span {
+  font-weight: 500;
+}
+
+.card .img img {
+  width: 30px;
+}
+
+.card .img {
+  height: 30px;
+  width: 30px;
+  background-color: #55297f;
+  padding: 10px;
+  border-radius: 50%;
+
+}
+
+.card .tea {
+  background-color: #F4A261;
+}
+
+.card .idcards {
+  background-color: #FF5733;
+}
+
+.card .text {
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
+}
+
+
+.icons {
+  display: flex;
+  gap: 15px;
+  margin-right: 5%;
+}
+
+
+.profile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.profile img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+  border: 2px solid #55297f;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-info .admin {
+  font-size: 12px;
+  color: #666;
+}
+
+.profile-info #adminName {
+  font-weight: 500;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+}
+
+/* <---------------------------            ----------------------------> */
+/* <------------------------ DROPDOWN IN TOPBAR ----------------------------> */
+/* <---------------------------            ----------------------------> */
+
+.dropdown {
+  margin-left: auto;
+  cursor: pointer;
+  font-size: 10px;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-btn {
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  background-color: white;
+  min-width: 160px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  top: 75px;
+  z-index: 1000;
+}
+
+.dropdown-menu a {
+  color: #666;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  font-size: 14px;
+}
+
+.dropdown-menu #logoutBtn{
+  background-color: white;
+  border: none;
+  color: #666;
+  padding:12px 16px ;
+  width: 100%;
+  font-size: 14px;
+  display: flex;
+  font-family: poppins;
+  cursor: pointer;
+}
+
+.dropdown-menu a:hover , #logoutBtn:hover{
+  background-color: #f1f1f1;
+}
+
+.show {
+  display: block;
+}
+
+.dropdown-menu .option {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+
+
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    position: absolute;
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+
+  .menu-toggle {
+    display: block;
+  }
+
+  .sidebar.show {
+    transform: translateX(0);
+  }
+}
+
+
+
+/*<-----------------               ------------------------> */
+ /*------------------ FOR CELENDAR -------------------------> */
+/*<-----------------               ------------------------> */
+
+
+.calendar-container {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 400px;
+  /* margin: auto; */
+  text-align: center;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  color: #55297f;
+  margin-bottom: 10px;
+}
+
+.calendar-header button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #55297f;
+  cursor: pointer;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  text-align: center;
+}
+
+.day-name, .day {
+  font-size: 14px;
+  padding: 8px;
+}
+
+.day {
+  border-radius: 50%;
+  cursor: pointer;
+  color: black;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.day.today {
+  background-color: #FF5733;
+  color: white;
+}
+
+.day:hover {
+  background-color: #eee;
+  transform: scale(1.05);
+}
+
+
+@media (max-width: 500px) {
+  .calendar-grid {
+    gap: 5px;
+  }
+
+  .calendar-container {
+    padding: 15px;
+  }
+
+  .day-name, .day {
+    font-size: 11px;
+    padding: 6px;
+  }
+}
+
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #55297f;
+  margin-bottom: 10px;
+}
+
+.calendar-header button {
+  background: none;
+  border: none;
+  font-size: 12px;
+  color: #55297f;
+  cursor: pointer;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  text-align: center;
+}
+
+.day-name {
+  font-size: 12px;
+  margin-bottom: 10px;
+  color: #aaa;
+}
+
+.day {
+  font-size: 14px;
+  padding: 8px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.3s;
+  color: black;
+}
+
+.day:hover {
+  background-color: #eee;
+}
+
+.day.inactive {
+  color: #ccc;
+}
+
+.day.today {
+  background-color: #FF5733;
+  color: white;
+}
+
+/* <------------------------------           -----------------------> */
+/* <-------------------------- TEACHER ADD FORM -----------------------> */
+/* <------------------------------           --------------------------> */
+.teacher-form {
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #555;
+}
+
+.form-group span {
+  color: red;
+  margin-left: 4px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  font-family: poppins;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #7b2cbf;
+  box-shadow: 0 0 5px #c8a2ff;
+}
+
+.form-group select option {
+  font-family: poppins;
+}
+
+.form-group input::placeholder {
+  font-family: poppins;
+}
+
+select option:hover {
+  background-color: #7b2cbf;
+}
+
+
+.full-width {
+  grid-column: 1 / -1;
+
+}
+
+.submit-btn {
+  background-color: #55297f;
+  border: none;
+  padding: 10px 20px;
+  color: white;
+  font-family: "Poppins", sans-serif;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease-in-out;
+  margin-top: 30px;
+}
+
+.submit-btn:hover {
+  cursor: pointer;
+  background-color: #5c1f7d;
+  transform: scale(1.05);
+}
+
+#add-teacher-form h2,
+#update-teacher-details h2 {
+  font-weight: 400;
+  color: #55297f;
+  padding: 10px;
+}
+
+/*<---------------------                   ---------------------------------> */
+/*<---------------------   TEACHER TABLE   ---------------------------------> */
+/*<---------------------                   ---------------------------------> */
+
+.no-student-found{
+  color: red;
+}
+
+.teacher-table-container {
+  max-width: 1000px;
+  margin: auto;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 30px;
+  margin: 50px 20px 20px 20px;
+  
+}
+
+.teacher-table-container h2 {
+  color: #6a1b9a;
+  margin-bottom: 20px;
+  font-size: 26px;
+  font-weight: 600;
+}
+
+.filter-bar {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+#teacherTableBody button{
+  background-color: transparent;
+  font-family: poppins;
+  text-decoration: underline;
+}
+
+.filter-bar input,
+.filter-bar select {
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  transition: border-color 0.3s ease;
+  outline: none;
+  font-family: poppins;
+}
+
+.filter-bar input:focus,
+.filter-bar select:focus {
+  border-color: #6a1b9a;
+}
+
+.filter-bar input {
+  flex: 1;
+  min-width: 200px;
+}
+
+.filter-bar select {
+  width: 160px;
+}
+
+.teacher-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.teacher-table thead {
+  background-color: #55297f;
+  color: white;
+}
+
+
+.teacher-table th {
+  font-weight: 400;
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 14px;
+}
+
+
+
+.teacher-table td {
+  font-size: 14px;
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.teacher-table tbody tr {
+  transition: background-color 0.3s ease;
+}
+
+.teacher-table tbody tr:hover {
+  background-color: #f3e5f5;
+}
+
+
+.teacher-table button {
+  background-color: none;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  color: #55297f;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+
+@media (max-width: 600px) {
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.searchbar #searchInput {
+  border: none;
+  outline: none;
+}
+
+.searchbar {
+  border: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 6px;
+  border-radius: 6px;
+}
+
+.searchbar i {
+  color: #ccc;
+}
+
+.searchbar input::placeholder {
+  font-family: poppins;
+}
+
+/* <-----------------------                       -------------------------> */
+/* <-----------------------STUDENT IMAGE POP-UP-------------------------> */
+/* <-----------------------                       -------------------------> */
+
+#openBtn:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+#openBtn {
+  color: #55297f;
+}
+
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+
+.modal-container {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 6px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  max-width: 90%;
+  max-height: 90%;
+  overflow: hidden;
+  text-align: center;
+
+}
+
+.modal-content {
+  max-width: 100%;
+  height: auto;
+}
+
+
+.close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 30px;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+}
+
+
+/* <----------------------------                     ------------------------------> */
+/* <----------------------------     PAGINATION      ------------------------------> */
+/* <----------------------------                     ------------------------------> */
+.pagination {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.pagination button {
+  padding: 8px 14px;
+  margin: 0 5px;
+  border: none;
+  background: #55297f;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: poppins;
+}
+
+.pagination button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+a {
+  color: #007bff;
+  cursor: pointer;
+}
+
+/*<--------------------------                ------------------------>  */
+/*<--------------------------MY PROFILE ON TOP-BAR------------------------>  */
+/*<--------------------------                ------------------------>  */
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1200;
+  overflow-y: auto;
+  
+}
+
+
+
+.close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #333;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.profile-header .avatar {
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  margin-right: 15px;
+}
+
+.profile-header h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.profile-header p {
+  margin: 2px 0 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.profile-form label {
+  display: block;
+  margin-top: 15px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.profile-form .signature{
+  display: flex;
+  flex-direction: column;
+}
+
+.signature #signature-requirements{
+  font-weight: 400;
+  font-size: 12px;
+} 
+
+.avatar {
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  margin-right: 15px;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+
+.profile-card {
+  background: #fff;
+  border-radius: 6px;
+  padding: 25px 50px;
+  max-width: 600px;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin: 100px 20px 0 20px;
+
+}
+
+.close-btn {
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.profile-header div h2{
+  font-weight: 400;
+}
+
+.profile-form label {
+  display: block;
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.profile-form input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-top: 5px;
+  font-size: 14px;
+  outline: none;
+  font-family: poppins;
+}
+
+.profile-form button {
+  margin-top: 20px;
+  padding: 10px 15px;
+  background-color: #55297f;
+  font-family: poppins;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.3s;
+}
+
+.profile-form button:hover {
+  background-color: #401f5f ;
+}
+
+.image-container {
+  position: relative;
+  display: inline-block;
+  margin-right: 15px;
+}
+
+.avatar {
+  border-radius: 50%;
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  cursor: pointer;
+  border: 2px solid #e5e7eb;
+}
+
+.edit-icon {
+  position: absolute;
+  bottom: 5px;
+  right: 20px;
+  background: white;
+  border-radius: 50%;
+  padding: 4px;
+  font-size: 15px !important;
+  color: #55297f;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  transform: translate(25%, 25%);
+}
+
+.hidden {
+  display: none;
+}
+
+
+
+/* image popup */
+
+.popup-overlay {
+  display: none; /* Initially hidden */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6); /* semi-transparent dark background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.popup-form {
+  background-color: #fff;
+  padding: 20px 25px;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  position: relative;
+}
+
+.popup-form h2 {
+  margin-bottom: 15px;
+  font-size: 22px;
+  color: #333;
+}
+
+.popup-form img {
+
+  height: 50%;
+  width: 100%;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+.close-btn {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #444;
+  cursor: pointer;
+}
+
+.close-btn:hover {
+  color: #000;
+}
+
+
+
+
+/* Modal Styles */
+.modal {
+  display: none; 
+  position: fixed; 
+  z-index: 9999; 
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%; 
+  overflow: auto; 
+  background-color: rgba(0,0,0,0.6); /* dark background */
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: 5% auto;
+  padding: 20px 30px;
+  border-radius: 8px;
+  width: 50%;
+  max-width: 600px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+.image-container {
+  max-height: 400px;
+  overflow: hidden;
+  margin: 15px 0;
+}
+
+#imageToCrop {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+
+/* Buttons */
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.btn-primary, .btn-secondary {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.btn-primary {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.btn-secondary {
+  background-color: #f44336;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #45a049;
+}
+
+.btn-secondary:hover {
+  background-color: #e53935;
+}
+

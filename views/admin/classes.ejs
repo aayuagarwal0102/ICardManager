@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Classes</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Classes List</h1>
+
+  <% if (classes.length > 0) { %>
+    <table>
+      <thead>
+        <tr>
+          <th>Class</th>
+          <th>Section</th>
+          <th>Full Name</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% classes.forEach(classItem => { %>
+          <tr>
+            <td><%= classItem.class %></td>
+            <td><%= classItem.section %></td>
+            <td><%= classItem.fullName %></td>
+            <td>
+              <a href="/admin/schools/<%= schoolId %>/classes/<%= classItem._id %>/students">View Students</a>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } else { %>
+    <p>No classes available for this school.</p>
+  <% } %>
+
+  <br>
+  <a href="/admin/dashboard">Back to Dashboard</a>
+
+</body>
+</html>

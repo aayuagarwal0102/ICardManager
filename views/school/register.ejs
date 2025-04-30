@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Registration</title>
+    <link rel="stylesheet" href="/css/stylesignup.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Anton&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+    </style>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Anton&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+    </style>
+
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=arrow_forward" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=arrow_back" />
+
+
+</head>
+
+<body>
+
+   \
+
+
+    <div id="errorMessage" class="hide">
+        <i class="material-icons" id="material-icons">error</i>
+        <span class="msg" id="errorTxt">error</span>
+        <i class="material-icons" id="close">close</i>
+    </div>
+
+
+    <div class="images">
+        <img src="images/signup svg.svg" alt="">
+    </div>
+
+
+
+    <div class="halfright">
+
+        <% if (!showOtpStep && !showFinalStep) { %>
+            
+            <form action="/send-otp" method="POST" class="login-container"  >
+       
+
+            <div class="welcome">
+                <h1>Welcome!</h1>
+                <p>Fill up the following details to register your School or organization.</p>
+            </div>
+
+            <div class="input-field">
+                <input type="text" placeholder=" " name="schoolName" id="Schoolname" required>
+                <label for="Schoolname"> School Name</label>
+            </div>
+
+            <div class="input-field">
+                <input type="text" placeholder=" " name="contactNumber" id="number" required pattern="\d{10}"
+                    maxlength="10">
+                <label for="number"> Mobile Number</label>
+            </div>
+
+            <div class="input-field">
+                <div class="input-field">
+                    <input type="email" placeholder=" " name="email" id="email" required>
+                    <label for="Schoolname"> Email address</label>
+                </div>
+            </div>
+
+
+
+            <button type="submit" class="btn-login" id="nextBtn">Next </button>
+
+            <div class="already">Already registered?<a href="/loginS">Sign in</a></div>
+        </form>
+        <% } %>
+        
+       
+
+        <% if (showOtpStep) { %>
+
+            <div class="login-container " >
+                <p>"We have sent a 6-digit OTP to your registered email. Please enter it below to verify your email and
+                    continue."</p>
+                <p>Enter the OTP sent to your Email address</p>
+
+                <form action="/verify-otp" method="POST" class="login-container">
+
+                <div class="otp-input">
+                    <input type="text" name="otp[]" maxlength="1" oninput="validateInput(this, 0)">
+                    <input type="text" name="otp[]" maxlength="1" oninput="validateInput(this, 1)">
+                    <input type="text" name="otp[]" maxlength="1" oninput="validateInput(this, 2)">
+                    <input type="text" name="otp[]" maxlength="1" oninput="validateInput(this, 3)">
+                    <input type="text" name="otp[]" maxlength="1" oninput="validateInput(this, 4)">
+                    <input type="text" name="otp[]" maxlength="1" oninput="validateInput(this, 5)">
+                </div>
+
+                <div class="time">
+                    <p  id="timer">Time remaining: 01:00</p>
+                    <p class="nootp">
+                        Didn't get the code?
+                        <a href="/resend-otp" class="resend-link">Resend</a>
+                      </p>
+                      
+                </div>
+
+                <button class="btn" type="submit" id="verifybtn">Verify OTP</button>
+            </form>
+            </div>
+            <% } %>
+
+            <% if (showFinalStep) { %>
+                    <div class="login-container" >
+                        <h1>Fil out more details!</h1>
+
+                        <form action="/schools/register" method="POST" enctype="multipart/form-data" class="login-container">
+
+                        <div class="input-field">
+                            <input type="text" placeholder=" " name="address" id="address" required>
+
+                            <label for="address"> Address of School</label>
+
+                        </div>
+                        <div class="input-field">
+                            <input type="text" placeholder=" " name="city" id="city" required>
+                            <label for="city"> City & State</label>
+
+                        </div>
+                        <div class="input-field">
+                            <input type="text" placeholder=" " name="affnumber" id="affnumber" required>
+                            <label for="affnumber"> Affiliation Number</label>
+
+                        </div>
+
+                        <div class="input-field">
+                            <input type="file" name="logo" accept="image/*">
+                            <label for="logo"> Upload School logo</label>
+
+                        </div>
+
+                        <div class="input-field">
+                            <input type="file" name="signature" accept="image/*">
+                            <label for="signature"> Upload signature</label>
+
+                        </div>
+
+
+                        <div class="input-field">
+                            <input type="password" placeholder=" " name="password" id="password" required>
+
+
+                            <label for="password"> Create Password</label>
+
+                        </div>
+                        <div class="input-field">
+                            <input type="password" placeholder=" " name="confirmPassword" id="confirmPassword" required>
+                            <label for="password"> Confirm Password</label>
+                        </div>
+
+                        <button type="submit" id="submit" formaction="/schools/register">Submit</button>
+                    </form>
+                    </div>
+                    <% } %>
+                        </form>
+    </div>
+
+
+
+
+    <script src="/js/signup.js"></script>
+</body>
+
+</html>

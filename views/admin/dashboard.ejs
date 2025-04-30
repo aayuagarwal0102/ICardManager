@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/css/admin-dashboard.css">
+</head>
+<body>
+
+      <!-- Flash Message Styles -->
+<style>
+    .flash-message {
+      padding: 12px 20px;
+      margin: 15px auto;
+      border-radius: 8px;
+      max-width: 600px;
+      font-size: 16px;
+      font-weight: 500;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+  
+    .flash-message.success {
+      background-color: #d4edda;
+      color: #155724;
+      border-left: 6px solid #28a745;
+    }
+  
+    .flash-message.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border-left: 6px solid #dc3545;
+    }
+  
+    .flash-message .close-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: inherit;
+      margin-left: 15px;
+    }
+  </style>
+  
+  <!-- Flash Message Display -->
+  <% if (success_msg && success_msg.length) { %>
+    <div class="flash-message success">
+      <span><%= success_msg %></span>
+      <button class="close-btn" onclick="this.parentElement.style.display='none';">&times;</button>
+    </div>
+  <% } %>
+  
+  <% if (error_msg && error_msg.length) { %>
+    <div class="flash-message error">
+      <span><%= error_msg %></span>
+      <button class="close-btn" onclick="this.parentElement.style.display='none';">&times;</button>
+    </div>
+  <% } %>
+    <h1>Admin Dashboard</h1>
+
+
+    <form action="/admin/select-template" method="POST">
+        <select name="selectedTemplate" required>
+          <% templates.forEach(t => { %>
+            <option value="<%= t.value %>"><%= t.name %></option>
+          <% }) %>
+        </select>
+        <button type="submit">Save Template</button>
+      </form>
+      
+    
+    <a href="/admin/logout">Logout</a>
+
+    <div class="stats">
+        <div class="card">
+            <h3>Total Schools</h3>
+            <p><%= totalSchools %></p>
+        </div>
+        <div class="card">
+            <h3>Total Students</h3>
+            <p><%= totalStudents %></p>
+        </div>
+        <div class="card">
+            <h3>Pending ID Card Requests</h3>
+            <p><%= pendingRequests %></p>
+        </div>
+    </div>
+
+    <!-- <input type="text" id="searchRollNo" placeholder="Search by Roll No">
+
+<table border="1">
+    <tr>
+        <th>Roll No</th>
+        <th>Student Name</th>
+        <th>School Name</th>
+        <th>ID Card Status</th>
+        <th>Action</th>
+    </tr>
+    <% pendingStudents.forEach(student => { %>
+        <tr class="student-row">
+            <td><%= student.rollNo %></td>
+            <td><%= student.name %></td>
+            <td><%= student.schoolId.schoolName %></td>
+            <td><%= student.idCardStatus %></td>
+            <td>
+                <% if (student.idCardStatus === "Pending") { %>
+                    <a href="/admin/print-id/<%= student._id %>">Print ID</a>
+                <% } else { %>
+                    Generated
+                <% } %>
+            </td>
+        </tr>
+    <% }); %>
+</table> -->
+
+<!-- <script>
+    document.getElementById('searchRollNo').addEventListener('input', function() {
+        let searchValue = this.value.toLowerCase();
+        let rows = document.querySelectorAll('.student-row');
+
+        rows.forEach(row => {
+            let rollNo = row.cells[0].innerText.toLowerCase();
+            if (rollNo.includes(searchValue)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+</script> -->
+<!-- 
+    <h3>Pending ID Card Requests</h3>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Roll No</th>
+            <th>Student Name</th>
+            <th>School Name</th>
+            <th>ID Card Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% if (pendingStudents.length === 0) { %>
+            <tr><td colspan="5">No Pending Requests</td></tr>
+        <% } else { %>
+            <% pendingStudents.forEach(student => { %>
+                <tr>
+                    <td><%= student.rollNo %></td>
+                    <td><%= student.name %></td>
+                    <td><%= student.schoolId.schoolName %></td>
+                    <td><%= student.idCardStatus %></td>
+                    <td>
+                        <a href="/admin/print-id/<%= student._id %>">Print ID</a>
+                    </td>
+                </tr>
+            <% }); %>
+        <% } %>
+    </tbody>
+</table> -->
+
+    <h2>Registered Schools</h2>
+    <input type="text" id="searchSchool" placeholder="Search School">
+    
+    <table border="1">
+        <tr>
+            <th>School Name</th>
+            <th>Email</th>
+            <th>Address</th>
+            <th>Contact</th>
+            <th>Action</th>
+        </tr>
+        <% schools.forEach(school => { %>
+            <tr class="school-row">
+                <td><%= school.schoolName %></td>
+                <td><%= school.email %></td>
+                <td><%= school.address %></td>
+                <td><%= school.contactNumber %></td>
+                <td><a href="/admin/schools/<%= school._id %>/classes">Show More</a></td>
+                <td ><button class="view-image-btn" data-img="<%= school.logo %>">View</button></td>
+            </tr>
+        <% }); %>
+    </table>
+
+    <div class="popup-overlay" id="imagePopup" style="display: none;">
+        <div class="popup-form" style="max-width: 400px;">
+          <span class="close-btn" onclick="closeImagePopup()">×</span>
+          <img id="popupStudentImage" src="" alt="Student Photo" style="width: 100%; border-radius: 8px; margin-top: 15px;" />
+        </div>
+      </div>
+
+      <!-- classes div dynamic showing -->
+      <div id="classes-container"></div>
+
+    <script>
+        document.getElementById('searchSchool').addEventListener('input', function() {
+            let searchValue = this.value.toLowerCase();
+            let rows = document.querySelectorAll('.school-row');
+
+            rows.forEach(row => {
+                let schoolName = row.cells[0].innerText.toLowerCase();
+                if (schoolName.includes(searchValue)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        function closeImagePopup() {
+    document.getElementById('imagePopup').style.display = 'none';
+    document.getElementById('popupStudentImage').src = ''; // Clear image on close
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+  const imageBtns = document.querySelectorAll(".view-image-btn");
+  const imagePopup = document.getElementById("imagePopup");
+  const imageElement = document.getElementById("popupStudentImage");
+
+  imageBtns.forEach((btn) => {
+    btn.addEventListener("click", function () {
+      const imgPath = btn.getAttribute("data-img");
+      imageElement.src = imgPath.startsWith("http") ? imgPath : `/${imgPath}`;
+      imagePopup.style.display = "flex";
+    });
+  });
+});
+
+
+ 
+    </script>
+</body>
+</html>

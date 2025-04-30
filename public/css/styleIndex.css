@@ -1,0 +1,500 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: poppins;
+    overflow-x: hidden;
+    font-family: poppins;
+    /* background-color: #FCFCFC; */
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+    background-color: white;
+    padding: 10px 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    z-index: 1000;
+    position: sticky;
+    top: 0;
+}
+
+.logo {
+    font-size: 20px;
+    /* font-weight: bold; */
+    font-family: poppins;
+    color: #73299a;
+
+}
+
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    position: relative;
+    right: 300px;
+    gap: 40px;
+    font-family: poppins;
+    font-size: 16px;
+    transition: color 0.3s ease;
+    z-index: 300;
+
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: black;
+
+    position: relative;
+    text-decoration: none;
+    color: #333;
+    padding: 5px 0;
+    transition: color 0.3s ease;
+}
+
+.nav-links a::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -2px;
+    width: 0;
+    height: 2px;
+    background-color: #73299a;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.nav-links a:hover {
+    cursor: pointer;
+    color: #73299a;
+}
+
+.nav-links a:hover::after {
+    width: 100%;
+}
+
+.auth-buttons .signup {
+    background-color: #73299a;
+    border: none;
+    padding: 8px 18px;
+    color: white;
+    font-family: poppins;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 500;
+
+}
+
+.auth-buttons .signup:hover {
+    cursor: pointer;
+}
+
+.section-container img {
+    width: 350px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    /* Ensures there's no space on top */
+}
+
+
+
+.section-container {
+    position: relative;
+    background-color: #55297f;
+    min-height: 100vh;
+    /* Ensures it covers the screen height */
+}
+
+.navbar.scrolled a {
+    color: white;
+    /* Change to any color you want */
+}
+
+.text {
+    position: relative;
+    top: 50px;
+    left: 70px;
+}
+
+.text h1 {
+    color: white;
+    font-size: 42px;
+    font-weight: 400;
+    font-family: 'poppins';
+    display: inline;
+}
+
+.text p {
+    font-size: 16px;
+    font-family: poppins;
+    color: white;
+    width: 710px;
+
+}
+
+
+.designs .triangle-up2 {
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 40px solid #cccccb; /* Triangle color */
+    position: relative;
+    top: 200px;
+    left: 880px;
+    opacity: 10%;
+}
+
+
+
+.designs .circle2{
+    width: 30px;
+    height: 30px;
+    position: relative;
+    top: 10px;
+    left: 900px;
+    border-radius: 50%;
+    background-color:#cccccb ;
+    opacity: 10%;
+}
+.blob img{
+    z-index: 1000;
+    opacity: 20%    ;
+    width: 1000px;
+    position: absolute;
+    left: 0;
+ top: 200px;
+ 
+}
+
+/* animation foe triangle and circle */
+@keyframes floatUpDown {
+    0% { transform: translateY(0); opacity: 0.8; }
+    50% { transform: translateY(-20px); opacity: 1; }
+    100% { transform: translateY(0); opacity: 0.8; }
+}
+
+@keyframes floatLeftRight {
+    0% { transform: translateX(0); opacity: 0.8; }
+    50% { transform: translateX(20px); opacity: 1; }
+    100% { transform: translateX(0); opacity: 0.8; }
+}
+
+.triangle-up2 {
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 40px solid #fff; /* Adjust color */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    animation: floatUpDown 3s infinite ease-in-out;
+}
+
+.circle2 {
+    width: 30px;
+    height: 30px;
+    background-color: #fff; /* Adjust color */
+    border-radius: 50%;
+    position: absolute;
+    top: 60%;
+    left: 30%;
+    animation: floatLeftRight 4s infinite ease-in-out;
+}
+
+.text button{
+    margin-top: 50px;
+    background-color: #55297f;
+    color: white;
+    border: 1px solid white;
+    padding: 10px 10px;
+    font-family: poppins;
+    border-radius: 5px;
+    margin-right: 40px;
+}
+
+.text button:hover{
+    cursor: pointer;
+}
+
+/* css for section2 */
+.section2, .section3,.section4{
+    text-align: center;
+    height: 90vh;
+}
+
+.text-container{
+    position: relative;
+    font-size: 24px;
+    border-bottom: 2px solid #55297f;
+    line-height: 15px;
+    display: inline-block;
+    text-align: center;
+    max-width: 300px; /* Adjust as per your design */
+    margin: 40px auto; 
+    padding: 10px 20px;
+    opacity: 0; /* Initially hidden */
+    transform: translateY(20px); /* Start below */
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.text-container2{
+    position: relative;
+    font-size: 24px;
+    border-bottom: 2px solid #55297f;
+    line-height: 15px;
+    display: inline-block;
+    text-align: center;
+    max-width: 300px; /* Adjust as per your design */
+    margin: 40px auto; 
+    padding: 10px 20px;
+    opacity: 0; /* Initially hidden */
+    transform: translateY(20px); /* Start below */
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.text-container3{
+    position: relative;
+    font-size: 24px;
+    border-bottom: 2px solid #55297f;
+    line-height: 15px;
+    display: inline-block;
+    text-align: center;
+    max-width: 300px; /* Adjust as per your design */
+    margin: 40px auto; 
+    padding: 10px 20px;
+    opacity: 0; /* Initially hidden */
+    transform: translateY(20px); /* Start below */
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+
+.text-container.active {
+    animation: fadeInUp 0.8s ease-in-out forwards;
+}
+
+.text-container2.active {
+    animation: fadeInUp 0.8s ease-in-out forwards;
+}
+
+.text-container3.active {
+    animation: fadeInUp 0.8s ease-in-out forwards;
+}
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.products{
+    margin-top: 50px;
+    display: flex;
+    gap: 70px;
+    justify-content: center;
+}
+
+.service{
+    position: relative;
+    width: 300px; /* Adjust as needed */
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out;
+    padding: 0;
+    margin: 0;
+    opacity: 0;
+    transform: translateY(50px); /* Move card down initially */
+    transition: opacity 0.6s ease-out , transform 0.s ease-out;
+
+}
+
+.service.show {
+    opacity: 1;
+    transform: translateY(0); /* Move card to original position */
+}
+.service:hover {
+    transform: translateY(-5px);
+}
+
+.service img{
+    width: 100%;
+    height: auto;
+    display: block
+    
+}
+
+.service .content{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 50px; /* Initially small */
+    background-color: rgba(0, 0, 0, 0.8); /* Dark transparent */
+    color: white;
+    text-align: center;
+    padding: 0;
+    font-size: 14px;
+    transition: height 0.5s ease-in-out, opacity 0.3s ease-in-out;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+   
+}
+
+.content button{
+    opacity: 0;
+    background-color: white;
+    color: black;
+    border: none;
+    padding: 8px 15px;
+    font-size: 14px;
+   font-weight: 00;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    transform: translateY(10px);}
+
+
+.card-text button:hover {
+    background-color: #ddd;
+}
+
+.service:hover .content {
+    height: 120px; /* Expand section */
+    /* font-size: 0; */
+}
+
+.service:hover .content button {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.section3,.section4{
+    /* text-align: center; */
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  
+}
+.section3 .textcontent{
+    width: 80vw;
+    text-align: center;
+    margin: 20px auto ;
+    background-color: #55297f;
+    color: white;
+    padding: 40px 40px;
+   border-radius: 5px;
+   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.185);
+}
+.details{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 40px;
+    gap: 10px;
+
+}
+.details .material-icons{
+    border: 2px solid black;
+    border-radius: 50%;
+    padding: 10px 10px;
+    font-size: 30px;
+}
+
+.description{
+    display: flex;
+    flex-direction: column;
+    margin-right: 40px;
+}
+
+.description .value{
+    font-size: 15px;
+    color: rgba(0, 0, 0, 0.705);
+}
+
+.add p{
+    /* width: 600px; */
+    margin: auto;
+}
+
+.add h3{
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.contact div{
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    /* justify-content: center; */
+    gap: 10px   ;
+}
+
+.contact div i{
+    border: 1px solid white;
+    border-radius: 50%;
+    padding: 3px;
+}
+
+.contact div span:hover{
+    cursor: pointer;
+}
+
+.sec4content{
+    width: 80vw;
+    text-align: center;
+    margin: 20px auto ;
+    background-color: #55297f;
+    color: white;
+    padding: 40px 40px;
+   border-radius: 5px;
+   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.185);
+}
+
+/* CSS for footer */
+footer {
+    background-color: #222;
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+}
+.footer-container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    padding: 20px;
+}
+.footer-section {
+    max-width: 300px;
+}
+.footer-section h3 {
+    margin-bottom: 10px;
+}
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+}
+.footer-section ul li {
+    margin: 5px 0;
+}
+.footer-section ul li a {
+    color: #bbb;
+    text-decoration: none;
+}
+.footer-section ul li a:hover {
+    color: #fff;
+}
+.footer-bottom {
+    background-color: #111;
+    padding: 10px;
+    font-size: 14px;
+}

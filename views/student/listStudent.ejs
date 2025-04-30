@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Student List</title>
+</head>
+<body>
+    <h1>Student List</h1>
+    <a href="/student/add">Add New Student</a>
+    <table border="1">
+        <tr>
+            <th>Name</th>
+            <th>Roll Number</th>
+            <th>Class</th>
+            <th>Actions</th>
+        </tr>
+        <% students.forEach(student => { %>
+        <tr>
+            <td><%= student.studentName %></td>
+            <td><%= student.rollNumber %></td>
+            <td><%= student.className %></td>
+            <td>
+                <a href="/student/edit/<%= student._id %>">Edit</a>
+                <a href="/student/delete/<%= student._id %>" onclick="return confirm('Are you sure?')">Delete</a>
+            </td>
+        </tr>
+        <% }); %>
+    </table>
+    <a href="/school/dashboard">Back to Dashboard</a>
+</body>
+</html>

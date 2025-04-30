@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+  </style>
+
+  <style>
+    body {
+      font-family: 'open sans';
+      display: flex;
+      gap: 50px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .rectangle {
+      width: 210px;
+      height: 336px;
+      background: white;
+      border: 1px solid #1c52bf;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      /* box-shadow: 0 0 10px rgba(0,0,0,0.2) */
+    }
+
+    .back{
+      background-color: #1c52bf;
+    }
+    .head {
+      background-color: #1c52bf;
+      height: 30%;
+      padding: 6px;
+      color: white;
+      margin-bottom: 70px;
+    }
+
+    .logo-name {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      flex-direction: column;
+    }
+
+    .school-address {
+      display: flex;
+      flex-direction: column;
+      text-align: center;
+
+    }
+
+    .img {
+      display: flex;
+      gap: 5px;
+    }
+
+    .img h2 {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 0px;
+    }
+
+    .img .logo {
+      padding: 2px;
+      height: 40px;
+      width: 40px;
+      border-radius: 50%;
+      background-color: white;
+
+    }
+
+
+
+    .school-address {
+      font-size: 9px;
+      /* width: 70%; */
+      margin-top: 0;
+    }
+
+    .student-photo {
+      position: absolute;
+      top: 95px;
+      /* Move up to overlap */
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 80px;
+      background: white;
+      border: 2px solid #1c52bf;
+      /* border-radius: 10px; */
+      overflow: hidden;
+      z-index: 5;
+    }
+
+    .student-photo img {
+      width: 60px;
+    }
+
+    .student-name {
+      text-align: center;
+      color: #1c52bf;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+
+    .set .key {
+      width: 90px;
+      font-weight: bold;
+      text-align: left;
+
+    }
+
+    .colon {
+      width: 10px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+
+    .set .val {
+
+      flex: 1;
+      text-align: left;
+    }
+
+    .set {
+      font-size: 10px;
+      display: flex;
+      margin-bottom: 4px;
+      gap: 2px;
+    }
+
+    .student-details {
+      padding: 10px;
+      align-content: cente;
+    }
+
+    .principal-signature img {
+      width: 40px;
+    }
+
+    .principal-signature span {
+      font-size: 9px;
+      font-weight: 600;
+      color: #1c52bf;
+    }
+
+    .principal-signature {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .student-details-back{
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 100%;
+      padding: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  
+  <div class="rectangle">
+    <div class="head">
+
+      <div class="logo-name">
+        <div class="img">
+          <img src="school-logo-1.jpg" alt="" class="logo">
+          <h2>Srinath Public School</h2>
+        </div>
+
+        <span class="school-address">
+          <span class="address">22-Govind vihar Nagar,Near HDFC Bank</span>
+          <span class="city">Jaipur-303021</span>
+          <span class="school-phone-number">Phone Number-6367507039</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="student-photo">
+      <img src="IMG-20240306-WA0006.jpg" alt="">
+    </div>
+
+    <div class="student-name">ANKIT KUMAWAT</div>
+
+    <div class="student-details">
+      <div class="set">
+        <span class="key">Class</span>
+        <span class="colon">:</span>
+        <span class="val">X</span>
+      </div>
+
+      <div class="set">
+        <span class="key">Section</span>
+        <span class="colon">:</span>
+        <span class="val">A</span>
+      </div>
+
+      <div class="set">
+        <span class="key">Roll no.</span>
+        <span class="colon">:</span>
+        <span class="val">805</span>
+      </div>
+
+      <div class="set">
+        <span class="key">Father's Name</span>
+        <span class="colon">:</span>
+        <span class="val">Mr. Hanuman Sahay Kumawat</span>
+      </div>
+
+      <div class="principal-signature">
+        <img src="Pi7_Tool_WhatsApp Image 2024-02-27 at 13.21.51.jpg" alt="">
+        <span>PRINCIPAL</span>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="rectangle back">
+<div class="student-details-back">
+    <div class="set">
+      <span class="key">DOB</span>
+      <span class="colon">:</span>
+      <span class="val">17 MAY 2002</span>
+    </div>
+
+    <div class="set">
+      <span class="key">SR No</span>
+      <span class="colon">:</span>
+      <span class="val">216545</span>
+    </div>
+
+         <div class="set">
+      <span class="key">Mobile no.</span>
+      <span class="colon">:</span>
+      <span class="val">6367507039</span>
+    </div>
+
+    <div class="set">
+      <span class="key">Address</span>
+      <span class="colon">:</span>
+      <span class="val">Chhitroli, Bagru,Jaipur-303007</span>
+    </div>
+  </div>
+  </div>
+
+</body>
+
+</html>

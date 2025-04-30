@@ -1,0 +1,19 @@
+
+<h2>Student ID Card</h2>
+
+<div>
+<% studentsWithQr.forEach(({ student, qrCode }) => { %>
+<div style="border: 2px solid black; padding: 20px; width: 300px; text-align: center;">
+    <h3><%= student.name %></h3>
+    <p><strong>Roll No:</strong> <%= student.rollNo %></p>
+    <p><strong>Class:</strong> <%= student.class %></p>
+    <p><strong>School:</strong> <%= student.schoolName %></p>
+    <p><strong>Status:</strong> <%= student.idCardStatus %></p>
+    
+    <h4>Scan QR Code</h4>
+    <img src="<%= qrCode %>" alt="QR Code">
+</div> 
+    <% }); %>
+    <br><br>
+    <!-- <button onclick="window.print()">Print ID Card</button> -->
+</div> 
