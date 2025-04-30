@@ -98,6 +98,7 @@ const transporter = nodemailer.createTransport({
 
       
       app.get('/resend-otp', async (req, res) => {
+        const { schoolName, contactNumber, email } = req.body;
     
         if (!email || !contactNumber || !schoolName) {
             return res.redirect('/registerS'); // if session expired
