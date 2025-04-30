@@ -70,12 +70,14 @@ const transporter = nodemailer.createTransport({
 
 
     app.post("/send-otp", async (req, res) => {
-        const { email , contactNumber, schoolName} = req.body;
+       
         const otp = generateOtp();
         req.session.otp = otp;
-        req.session.school_email= email;
-        req.session.school_contact=contactNumber;
-        req.session.school_name= schoolName;
+
+        const { schoolName, contactNumber, email } = req.body;
+
+  // Store in session
+  req.session.tempSchoolData = { schoolName, contactNumber, email };
 
         
       
@@ -91,12 +93,11 @@ const transporter = nodemailer.createTransport({
           console.log(error);
           res.send("Failed to send OTP.");
         }
+
       });
 
+      
       app.get('/resend-otp', async (req, res) => {
-        const email = req.session.school_email;
-        const contactNumber = req.session.school_contact;
-        const schoolName = req.session.school_name;
     
         if (!email || !contactNumber || !schoolName) {
             return res.redirect('/registerS'); // if session expired
@@ -128,6 +129,8 @@ const transporter = nodemailer.createTransport({
   app.post("/verify-otp", (req, res) => {
     const userOtp = req.body.otp.join("");
     if (userOtp === req.session.otp) {
+      const schoolData = req.session.tempSchoolData;
+      console.log(schoolData);
       req.session.otp = null;
      return res.render('school/register.ejs',  { showOtpStep: false, showFinalStep: true });
     } else {

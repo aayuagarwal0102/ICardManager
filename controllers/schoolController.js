@@ -17,14 +17,9 @@ const SECRET_KEY = "aayu";
 
 exports.registerSchool = async (req, res) => {
     try {
-        const {password, confirmPassword, address, contactNumber, city, affnumber } = req.body;
+        const {password, confirmPassword, address, city, affnumber } = req.body;
 
-        email= req.session.school_email;
-        contactNumber=req.session.school_contact;
-        schoolName= req.session.school_name;
-
-        console.log(email);
-        console.log(schoolName);
+        const { schoolName, contactNumber, email } = req.session.tempSchoolData;
 
 
 
@@ -65,6 +60,9 @@ exports.registerSchool = async (req, res) => {
             city,
             affnumber
         });
+
+        delete req.session.tempSchoolData;
+
 
         await newSchool.save();
         req.flash("success_msg", "registered successfully! please login");
