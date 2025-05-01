@@ -2,56 +2,199 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>ID Card Template 2</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
   <style>
-    body { font-family: 'Poppins', sans-serif; background: #f0f2f5; }
-    .id-card {
-      width: 240px;
-      height: 340px;
-      background: white;
-      border-radius: 15px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-      margin: 15px;
-      padding: 15px;
-      display: inline-block;
-      text-align: center;
-    }
-    .id-card img {
-      width: 70px;
-      height: 70px;
-      border-radius: 10px;
-      margin-top: 5px;
-    }
-    .school-logo {
-      width: 50px;
-      height: 50px;
-    }
-    .school-name {
-      font-weight: 600;
-      font-size: 18px;
-      color: #2c3e50;
-      margin-top: 5px;
-    }
-    .student-info {
-      margin-top: 8px;
-      font-size: 14px;
-    }
+    .card-designs{
+  padding: 50px;
+}
+
+.id-card {
+  width: 8.56cm;
+  height: 5.4cm;
+  padding: 0.3cm;
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.id-header {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.logo {
+  width: 1.3cm;
+  height: 1.3cm;
+  object-fit: contain;
+}
+
+.school-name {
+  font-size: 10pt;
+  font-weight: 600;
+  color: #2a4d60;
+  line-height: 1.1;
+}
+
+.address {
+  font-size: 7pt;
+  color: #555;
+}
+
+.heading {
+  background-color: #2a4d60 !important;
+  color: white;
+  font-size: 8pt;
+  padding: 2px 4px;
+  margin: 4px 0;
+  text-align: center;
+  font-weight: bold;
+}
+
+.id-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.details {
+  font-size: 7pt;
+  line-height: 1.7;
+  flex: 1;
+}
+
+.detail-row {
+  display: flex;
+}
+
+.detail-label {
+  width: 1.9cm;
+  font-weight: 600;
+}
+
+.colon {
+  width: 0.2cm;
+}
+
+.detail-value {
+  flex: 1;
+}
+
+.photo-signature {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.student-photo {
+  width: 1.5cm;
+  height: 2.0cm;
+  border: 1px solid #2a4d60;
+  object-fit: cover;
+}
+
+.signature {
+  width: 1.6cm;
+  height: auto;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+.principal-label {
+  font-size: 7pt;
+  font-weight: 600;
+}
+
+.print-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #2a4d60;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+@media print {
+body * {
+visibility: hidden;
+}
+
+.id-card, .id-card * {
+visibility: visible;
+}
+
+.id-card {
+position: absolute;
+left: 0;
+top: 0;
+margin: 0;
+box-shadow: none;
+border: 1px solid #2a4d60;
+border-radius: none;
+}
+
+.print-btn {
+display: none;
+}
+}
+
   </style>
 </head>
-<body>
+<body onload="window.print()">
 
-
+  <% studentsWithQr.forEach(({ student, qrCode }) => { %>
   <div class="id-card">
-    <img class="school-logo" src="<%= school.logo %>" alt="School Logo">
-    <div class="school-name"><%= school.schoolName %></div>
-    <img src="<%= student.photo %>" alt="Student Photo">
-    <div class="student-info">
-      <p><strong>Name:</strong> <%= student.name %></p>
-      <p><strong>Class:</strong> <%= student.class %> - <%= student.section %></p>
-      <p><strong>Roll No:</strong> <%= student.rollNo %></p>
+    <div class="id-header">
+        <img src="<%= school.logo %>" alt="Logo" class="logo" />
+        <div>
+            <div class="school-name"><%= school.schoolName %></div>
+            <div class="address"><%= school.address %></div>
+        </div>
     </div>
+  
+    <div class="heading">IDENTITY CARD - SESSION 2025-2026</div>
+  
+    <div class="id-body">
+        <div class="details">
+            <div class="detail-row"><span class="detail-label">Name</span><span
+                    class="colon">:</span><span class="detail-value"><%= student.name %></span></div>
+            <div class="detail-row"><span class="detail-label">Class</span><span
+                    class="colon">:</span><span class="detail-value"><%= student.class %></span></div>
+            <div class="detail-row"><span class="detail-label">Section</span><span
+                    class="colon">:</span><span class="detail-value"><%= student.section %></span></div>
+            <div class="detail-row"><span class="detail-label">Roll No.</span><span
+                    class="colon">:</span><span class="detail-value"><%= student.rollNo %></span></div>
+            <div class="detail-row"><span class="detail-label">Father's Name</span><span
+                    class="colon">:</span><span class="detail-value"><%= student.fathername %></span></div>
+            <div class="detail-row"><span class="detail-label">Mobile</span><span
+                    class="colon">:</span><span class="detail-value"><%= student.contact %></span></div>
+            <div class="detail-row"><span class="detail-label">Address</span><span
+                    class="colon">:</span><span class="detail-value"><%= student.address %></span></div>
+        </div>
+  
+        <div class="photo-signature">
+            <img src="<%= student.photo %>" alt="Student" class="student-photo" />
+            <img src="<%= school.signature %>" alt="Principal Signature"
+                class="signature" />
+            <div class="principal-label">PRINCIPAL</div>
+        </div>
+    </div>
+   
   </div>
+  <% }); %>
 
-
+  <div class="print-button-container">
+    <button class="print-button" onclick="window.print()">Print</button>
+  </div>
 </body>
 </html>
