@@ -1,57 +1,164 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Classes</title>
-  <style>
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    th, td {
-      padding: 10px;
-      border: 1px solid #ccc;
-      text-align: left;
-    }
-    th {
-      background-color: #f2f2f2;
-    }
-  </style>
-</head>
-<body>
 
-  <h1>Classes List</h1>
 
-  <% if (classes.length > 0) { %>
-    <table>
-      <thead>
-        <tr>
-          <th>Class</th>
-          <th>Section</th>
-          <th>Full Name</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% classes.forEach(classItem => { %>
-          <tr>
-            <td><%= classItem.class %></td>
-            <td><%= classItem.section %></td>
-            <td><%= classItem.fullName %></td>
-            <td>
-              <a href="/admin/schools/<%= schoolId %>/classes/<%= classItem._id %>/students">View Students</a>
-            </td>
-          </tr>
-        <% }) %>
-      </tbody>
-    </table>
-  <% } else { %>
-    <p>No classes available for this school.</p>
-  <% } %>
 
-  <br>
-  <a href="/admin/dashboard">Back to Dashboard</a>
+  <!DOCTYPE html>
+  <html lang="en">
+  
+  <head>
+    <meta charset="UTF-8">
+    <title>Classes</title>
+    
+    <link rel="stylesheet" href="/css/admin-classes.css">
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Anton&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+    </style>
+  
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  </head>
+  
+  <body>
+  
+    <!-- <-------------------------       ---------------------------->
+    <!-- <-------------------------SIDE-BAR ---------------------------->
+    <!-- <-------------------------       ---------------------------->
+    <aside class="sidebar">
+      <h2>A T S</h2>
 
-</body>
-</html>
+      <ul class="list-items">
+
+
+          <li class="menu-item">
+              <div class="menu">
+                  <a href="/admin/dashboard" style="text-decoration: none; color: inherit;">
+                      <i class="material-icons">dashboard</i>Dashboard
+                    </a>
+              </div>
+
+          </li>
+
+          <li class="menu-item">
+              <div class="menu">
+                  <a href="#school"> <i class="material-icons">location_city</i><span>All Schools</span></a>
+
+              </div>
+
+          </li>
+
+          <li class="menu-item">
+              <div class="menu">
+                  <a href="#students"> <i class="material-icons">add</i> <span>Add School</span></a>
+              </div>
+
+          </li>
+
+          <li class="menu-item">
+              <div class="menu">
+                  <a href="#card-designs"> <i class="material-icons">badge</i><span>Card Designs</span></a>
+
+              </div>
+
+          </li>
+
+
+
+          <li class="menu-item">
+              <div class="menu">
+                  <a href="#setting"> <i class="material-icons">settings</i><span>Settings</span></a>
+              </div>
+          </li>
+
+          <li class="menu-item">
+              <div class="menu">
+                  <a href="/admin/logout"> <i class="material-icons">logout</i><span>Log out</span></a>
+              </div>
+          </li>
+      </ul>
+      <div class="expnd"><i class="material-icons toggle-arrow">keyboard_double_arrow_left</i><span>Collapse</span>
+      </div>
+  </aside>
+    <!-- <-------------------------               ------------------ -->
+    <!-- <------------------------- TOP BAR               ------------------ -->
+    <!-- <-------------------------               ------------------ -->
+  
+    <main class="main-content">
+      <header class="top-bar">
+
+          <h2>Admin Dashboard</h2>
+          <div class="icons">
+              <div class="profile ">
+                  <img src="" alt="img">
+                  <div class="profile-info ">
+                      <Span id="adminName " class="dropdown-btn" onclick="toggleDropdown()">
+                          Mr. Pokhar Mal Kumawat
+
+                      </Span>
+                      <span class="admin">Super Admin</span>
+                  </div>
+
+              </div>
+
+              <div class="icon"><i class="material-icons">mail</i></div>
+              <div class="icon">
+                  <i class="material-icons">notifications</i>
+              </div>
+
+              <!-- Dark Mode Toggle with Label -->
+              <div class="icon dark-mode-container">
+                  <span class="toggle-label">Dark Mode</span>
+                  <label class="dark-mode-toggle">
+                      <input type="checkbox" id="darkModeSwitch" />
+                      <span class="slider"></span>
+                  </label>
+              </div>
+
+          </div>
+      </header>
+
+  
+      <section class="classes">
+        <div class="classes-table-container">
+          <h3>List of all classes</h3>
+  
+          <% if (classes.length> 0) { %>
+            <table class="classes-table" >
+              <thead>
+                <tr>
+                  <th>Class</th>
+                  <th>Section</th>
+                  <th>Class Teacher Name</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+  
+              <tbody id="classes-table-body">
+                <% classes.forEach(classItem=> { %>
+                  <tr>
+                    <td>
+                      <%= classItem.class %>
+                    </td>
+                    <td>
+                      <%= classItem.section %>
+                    </td>
+                    <td>
+                      <%= classItem.fullName %>
+                    </td>
+                    <td class="action">
+                      <a href="/admin/schools/<%= schoolId %>/classes/<%= classItem._id %>/students">View Students</a>
+                    </td>
+                  </tr>
+                  <% }) %>
+              </tbody>
+            </table>
+            <% } else { %>
+              <p class="noClassError">No classes available for this school :(</p>
+              <% } %>
+  
+        </div>
+      </section>
+    </main>
+
+  
+  
+  </body>
+  
+  </html>

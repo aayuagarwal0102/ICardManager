@@ -1,0 +1,339 @@
+body {
+    display: flex;
+    font-family: poppins;
+    margin: 0;
+    padding: 0;
+    /* overflow: hidden; */
+    background-color: #f4f4f4;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+  
+  
+  }
+  
+  #dashboard{
+    margin-left: 40px ;
+    margin-right: 40px;
+    margin-bottom: 20px;
+  }
+  
+  /* <----------------                   --------------------> */
+  /* <---------------- SIDE BAR DESIGN   --------------------> */
+  /* <----------------                   --------------------> */
+  .sidebar {
+    width: 200px;
+    background: #55297f;
+    color: white;
+    padding: 20px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    z-index: 999;
+    transition: width 0.3s ease-in-out, transform 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(0);
+   
+
+  }
+
+  .sidebar .expnd{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+gap: 8px;
+  margin-top: 80px;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor:pointer
+  }
+  
+  
+  .sidebar h2 {
+    text-align: center;
+    font-weight: 400;
+    font-size: 18px;
+    background-color: white;
+    color: #55297f;
+  
+  
+  }
+  
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .sidebar ul li a {
+    color: white;
+    text-decoration: none;
+  }
+  
+  
+  
+  .menu-item .menu {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    padding-right: 10px;
+    width: 100%;
+    border-bottom: 1px solid #401f5f;
+    padding: 20px 10px;
+  }
+  
+  
+  .menu-item .menu a {
+    flex-grow: 1;
+    padding-left: 5px;
+    text-decoration: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .menu-item .menu .arrow {
+    position: absolute;
+    right: 10px;
+  }
+  
+  /* Submenu */
+  .submenu {
+    list-style: none;
+    padding-left: 30px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  
+  .submenu.show {
+    max-height: 300px;
+  }
+  
+  /* Submenu items full width */
+  
+  .submenu li a {
+    display: flex;
+    width: 100%;
+    padding: 10px;
+    text-decoration: none;
+    color: white;
+    justify-content: center;
+    border-bottom: 1px solid #401f5f;
+    font-size: 14px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .submenu li a:hover {
+    transform: translateX(6px);
+  }
+  
+  /* Arrow rotation */
+  .arrow {
+    transition: transform 0.3s ease;
+  }
+  
+  .arrow.rotate {
+    transform: rotate(90deg);
+  }
+  
+
+  
+  /* When sidebar is collapsed */
+  .sidebar.collapsed ~ .main-content .menu-toggle {
+    left: 1000px;
+  }
+  
+  /* Responsive view (mobile) */
+  @media (max-width: 768px) {
+    .menu-toggle {
+      left: 20px;
+    }
+  }
+  
+  
+  /* <-------------------------                          ----------------------------------> */
+  /* <--------------------- MAIN CONTENT IN DASHBOARD & TOP BAR  ----------------------------------> */
+  /* <-------------------------                          ----------------------------------> */
+  
+  .main-content {
+    margin-left: clamp(60px, 20vw, 240px);
+    width: 100%;
+    transition: margin-left 0.3s ease-in-out;
+  }
+  .top-bar {
+    background: white;
+    color: #55297f;
+    padding: clamp(8px, 2vw, 20px);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
+  }
+  
+  .top-bar h2 {
+    font-size: 18px;
+    font-weight: 400;
+    margin: 0;
+    flex: 1;
+  }
+  
+  .icons {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .profile {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* 📱 Responsive Top Bar */
+  @media (max-width: 600px) {
+    .top-bar {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .top-bar h2{
+      margin: auto;
+    }
+  
+    .icons {
+      width: 100%;
+      justify-content: space-between;
+    }
+  
+    .profile-info {
+      align-items: flex-start;
+    }
+  }
+  
+  
+  .top-bar .icons .icon i {
+    color: #55297f;
+    padding: 5px;
+    font-size: 25px;
+    cursor: pointer;
+  }
+  
+  
+  .icons {
+    display: flex;
+    gap: 15px;
+    margin-right: 5%;
+  }
+  
+  
+  .profile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+  }
+  
+  .profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+    border: 2px solid #55297f;
+  }
+  
+  .profile-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .profile-info .admin {
+    font-size: 12px;
+    color: #666;
+  }
+  
+  .profile-info #adminName {
+    font-weight: 500;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  
+  }
+
+  /* <-------------------              ----------------------> */
+  /* <------------------- Classes-table-----------------------> */
+  /* <-------------------              ----------------------> */
+
+  
+.classes-table-container {
+    max-width: 100%;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 30px;
+    margin: clamp(20px, 5vw, 50px) clamp(10px, 3vw, 20px) 20px clamp(10px, 3vw, 20px);
+    
+  }
+
+.classes-table{
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 12px;
+    border-spacing: 0;
+    overflow: hidden;
+    border: none;
+}
+
+.classes-table thead {
+    background-color: #55297f;
+    color: white;
+  }
+
+  .classes-table th {
+    font-weight: 400;
+    padding: 8px 14px;
+    text-align: left;
+    font-size: 14px;
+  }
+
+  .classes-table td {
+    font-size: 14px;
+    text-align: left;
+    padding: 10px;
+    border-bottom: 1px solid #e6e6e6;
+  }
+
+  .classes-table tbody tr {
+    transition: background-color 0.3s ease;
+  }
+  
+  .classes-table tbody tr:hover {
+    background-color: #f3e5f5;
+  }
+
+  .noClassError{
+    color: red;
+  }
+
+  .action a{
+    color: #55297f;
+    text-decoration: none;
+  }
+
+  .action a:hover{
+    text-decoration: underline;
+  }
+
+  .classes-table-container h3{
+    font-weight: 400;
+    color: #55297f;
+  }
+  
