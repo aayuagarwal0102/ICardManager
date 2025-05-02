@@ -1,6 +1,7 @@
 const express = require('express');
 const connectDB = require('./config/db');
 const cors = require('cors');
+const ejsMate= require("ejs-mate");
 const flash = require("connect-flash");
 require('dotenv').config();
 const nodemailer= require("nodemailer");
@@ -12,6 +13,7 @@ const path = require("path");
 const session= require("express-session");
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+app.engine("ejs",ejsMate);
 app.use(express.static(path.join(__dirname, 'public')));
 
 const schoolRouter= require("./routes/schoolRoutes.js");

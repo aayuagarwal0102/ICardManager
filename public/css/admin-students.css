@@ -1,0 +1,183 @@
+body{
+    font-family: poppins;
+  }
+  .student-table-container {
+      max-width: 100%;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      padding: 30px;
+      margin: clamp(20px, 5vw, 50px) clamp(10px, 3vw, 20px) 20px clamp(10px, 3vw, 20px);
+      
+    }
+  
+    .student-table{
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 12px;
+      border-spacing: 0;
+      overflow: hidden;
+      border: none;
+    }
+  
+    .student-table thead {
+      background-color: #55297f;
+      color: white;
+    }
+  
+    .student-table th {
+      font-weight: 400;
+      padding: 2px 14px;
+      text-align: left;
+      font-size: 14px;
+    }
+  
+    .student-table td {
+      font-size: 14px;
+      text-align: left;
+      padding: 10px;
+      border-bottom: 1px solid #e6e6e6;
+    }
+  
+    .student-table tbody tr {
+      transition: background-color 0.3s ease;
+    }
+  
+  
+    
+    .student-table th, 
+  .student-table td {
+    border: none;
+    padding: clamp(6px, 2vw, 10px);
+    font-size: 14px;
+    text-align: left;
+  }
+  
+  .student-table tbody tr:nth-child(odd) {
+    background-color: #f3e5f5;  /* light purple */
+  }
+  
+  .student-table tbody tr:nth-child(even) {
+    background-color:  #e1bee7;  /* light purple */
+  }
+  
+  /* for check box */
+  .custom-checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    user-select: none;
+    gap: 5px;
+  }
+  
+  .custom-checkbox input {
+    display: none;
+  }
+  
+  /* Custom checkbox style */
+  .custom-checkbox .checkmark {
+    height: 15px;
+    width: 15px;
+    background-color: #eee;
+    border: 2px solid #ccc;
+    position: relative;
+    transition: all 0.2s ease;
+  }
+  
+  .custom-checkbox input:checked + .checkmark {
+    background-color:#55297f;
+    border-color: #55297f;
+  }
+  
+  /* Tick mark */
+  .custom-checkbox .checkmark::after {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 4px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  
+  .custom-checkbox input:checked + .checkmark::after {
+    display: block;
+  }
+  
+  /* view image */
+  .view-image-btn{
+    color: #55297f;
+  }
+  
+  .view-image-btn:hover{
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  
+  .listInfo{
+    display: flex;
+    justify-content: space-between;
+  }
+  /* print button */
+  #printButton{
+    background-color: #55297f;
+    padding: 10px 15px;
+    color: white;
+    font-family: poppins;
+    border-radius: 6px;
+    margin-top: 30px;
+    cursor: pointer;
+    transition: all .3s ease-in-out;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+  }
+  
+  #back{
+  display: inline;
+  background-color: #55297f;
+  padding: 10px 15px;
+  color: white;
+  font-family: poppins;
+  border-radius: 6px;
+  margin-top: 30px;
+  cursor: pointer;
+  transition: all .3s ease-in-out;
+  border: none;
+  font-size: 14px;
+  text-decoration: none;
+  }
+  #printButton i{
+    font-size: 18px;
+  }
+  
+  .button{
+    display: flex;
+    gap: 20px;
+  }
+  #printButton:hover{
+    background:#61348b;
+  
+  }
+  
+  .noStudentFound{
+    color: red;
+  }
+  
+  #print-form h3{
+    font-weight: 400;
+    color: #55297f;
+  }
+    
+  #printButton:disabled {
+    background-color: #b39ddb;  
+    color: #55297f;            
+    cursor: not-allowed;
+    /* opacity: 1;                  */
+  }
+    

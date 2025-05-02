@@ -4,7 +4,7 @@ const School = require('../models/School'); // Import School Model
 const Student = require('../models/Student');
 const ClassTeacher= require("../models/ClassTeacher");
 const adminController = require('../controllers/adminController');
-const { getSchoolDetails } = require('../controllers/adminController');
+const { getSchoolDetails, getSchools } = require('../controllers/adminController');
 
 const { printStudentId } = require('../controllers/adminController');
 const { isAdminLoggedIn } = require('../middleware'); // Import middleware
@@ -51,8 +51,11 @@ router.get('/schools/:id/classes', async (req, res) => {
   // Yahan database se classes fetch kar lo
   const classes = await ClassTeacher.find({ schoolId });
 
-  res.render('admin/classes', { classes, schoolId });
+  res.render('admin/classes', { layout: "layouts/boilerplate", classes, schoolId });
   });
+
+  
+  router.get('/schools' ,isAdminLoggedIn, getSchools);
   
 
 //  Individual School Page Route

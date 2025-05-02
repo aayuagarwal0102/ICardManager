@@ -52,9 +52,20 @@ exports.dashboard = async (req, res) => {
             { name: "Template 6", value: "template6" }
           ];
 
-        res.render("admin/dashboard", { schools, totalSchools, totalStudents, pendingRequests ,pendingStudents,templates });
+        res.render("admin/dashboard", { layout: "layouts/boilerplate", totalSchools, totalStudents, pendingRequests ,pendingStudents,templates });
     } catch (error) {
         res.status(500).send("Error loading dashboard");
+    }
+};
+
+exports.getSchools = async (req, res) => {
+    const schools = await School.find(); // all students
+
+    try {
+    res.render("admin/schools", { layout: "layouts/boilerplate", schools});
+    }
+    catch(err){
+        res.status(500).send("Error fetching schools");
     }
 };
 

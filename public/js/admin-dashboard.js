@@ -125,3 +125,35 @@ function closeImagePopup() {
     });
     });
     });
+
+    // for print button in student.ejs 
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const checkboxes = document.querySelectorAll('.student-checkbox');
+        const printButton = document.getElementById('printButton');
+        const maxSelection = 50;
+        
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                const selected = document.querySelectorAll('.student-checkbox:checked').length;
+        
+                if (selected > 0 && selected <= maxSelection) {
+                    printButton.disabled = false;
+                    printButton.classList.remove('disabled');
+                } else {
+                    printButton.disabled = true;
+                    printButton.classList.add('disabled');
+                }
+        
+                if (selected >= maxSelection) {
+                    checkboxes.forEach(box => {
+                        if (!box.checked) box.disabled = true;
+                    });
+                } else {
+                    checkboxes.forEach(box => box.disabled = false);
+                }
+            });
+        });
+        });
+        
+        

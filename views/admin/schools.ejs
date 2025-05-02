@@ -1,0 +1,73 @@
+<% layout("/layouts/boilerplate") %> 
+
+
+<body>
+    <section class="all-schools section" >
+        <div class="school-table-container">
+
+            <div class="search-bar">
+                <input type="text" id="searchSchool" placeholder="Search a school...">
+                <i class="material-icons arrow">search</i>
+            </div>
+
+
+            <table class="school-table" border="1">
+                <thead>
+                    <tr>
+                        <th>Sr No</th>
+                        <th>Logo</th>
+                        <th>School Name</th>
+                        <th>Email</th>
+                        <th>Address</th>
+                        <th>Contact</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <% schools.forEach(school=> { %>
+                    <tbody id="schoolTableBody">
+                        <tr class="school-row" data-school-id="<%= school._id %>">
+                            <td>
+                                <!-- serial number -->
+                            </td>
+
+                            <td><button class="view-image-btn" data-img="<%= school.logo %>">View</button></td>
+
+                            <td>
+                                <%= school.schoolName %>
+                            </td>
+                            <td>
+                                <%= school.email %>
+                            </td>
+                            <td>
+                                <%= school.address %>
+                            </td>
+                            <td>
+                                <%= school.contactNumber %>
+                            </td>
+                            <td><a href="/admin/schools/<%= school._id %>/classes">Show More</a></td>
+
+
+                        </tr>
+
+                        <% }); %>
+                    </tbody>
+            </table>
+
+        </div>
+
+        <!-- PAGINATION -->
+
+        <div class="pagination">
+            <button id="prevBtn">Previous</button>
+            <button id="nextBtn">Next</button>
+        </div>
+        </div>
+        <div class="popup-overlay" id="imagePopup" style="display: none;">
+            <div class="popup-form" style="max-width: 400px;">
+                <span class="close-btn" onclick="closeImagePopup()">×</span>
+                <img id="popupStudentImage" src="" alt="Student Photo"
+                    style="width: 100%; border-radius: 8px; margin-top: 15px;" />
+            </div>
+        </div>
+    </section>
+</body>
