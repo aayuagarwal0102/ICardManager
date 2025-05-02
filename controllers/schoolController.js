@@ -89,7 +89,7 @@ exports.dashboard = async (req, res) => {
         const students= await  Student.find({schoolId: schoolId});
         const school= await School.findById(schoolId);
        
-
+        req.flash("success_msg","welcome to dashboard");
         res.render("school/dashboard", {
             school,
             schoolId,
@@ -99,6 +99,7 @@ exports.dashboard = async (req, res) => {
             teachers,
             students
         });
+       
     } catch (err) {
         console.error("Dashboard error:", err);
         res.status(500).send("Server Error");

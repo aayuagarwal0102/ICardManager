@@ -10,14 +10,19 @@
     </style>
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    
+
+    <link rel="stylesheet" href="/css/flash.css">
     <link rel="stylesheet" href="/css/admin-students.css">
     <link rel="stylesheet" href="/css/admin-classes.css">
     <link rel="stylesheet" href="/css/admin-dashboard.css">
 </head>
 <body>
     <%- include('../includes/navtop.ejs') %>
-    <%- body %>
+    <div class="container">
+        <%- include('../includes/flash.ejs')%>
+        <%- body %>
+    </div>
+ 
 
     <script src="/js/admin-dashboard.js"></script>
 </body>
