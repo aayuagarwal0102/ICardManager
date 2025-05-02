@@ -1,0 +1,67 @@
+<% layout("/layouts/boilerplate") %> 
+
+<body>
+
+    <form action="/admin/select-template" method="POST">
+        <select name="selectedTemplate" required>
+          <% templates.forEach(t => { %>
+            <option value="<%= t.value %>"><%= t.name %></option>
+          <% }) %>
+        </select>
+        <button type="submit">Save Template</button>
+      </form>
+
+<section class="card-designs">
+    <div class="template1">
+        <div class="id-card">
+            <div class="id-header">
+                <img src="school-logo.jpg" alt="Logo" class="logo" />
+                <div>
+                    <div class="school-name">KARUNA MEMORIAL U.M.V</div>
+                    <div class="address">Vihar Nagar, Jhotwara-453634</div>
+                </div>
+            </div>
+
+            <div class="heading">IDENTITY CARD - SESSION 2025-2026</div>
+
+            <div class="id-body">
+                <div class="details">
+                    <div class="detail-row"><span class="detail-label">Name</span><span
+                            class="colon">:</span><span class="detail-value">Aayush Agrawal</span></div>
+                    <div class="detail-row"><span class="detail-label">Class</span><span
+                            class="colon">:</span><span class="detail-value">12th</span></div>
+                    <div class="detail-row"><span class="detail-label">Section</span><span
+                            class="colon">:</span><span class="detail-value">A</span></div>
+                    <div class="detail-row"><span class="detail-label">Roll No.</span><span
+                            class="colon">:</span><span class="detail-value">810</span></div>
+                    <div class="detail-row"><span class="detail-label">Father's Name</span><span
+                            class="colon">:</span><span class="detail-value">Mr. Agrawal</span></div>
+                    <div class="detail-row"><span class="detail-label">Mobile</span><span
+                            class="colon">:</span><span class="detail-value">6367507039</span></div>
+                    <div class="detail-row"><span class="detail-label">Address</span><span
+                            class="colon">:</span><span class="detail-value">Alwar, Rajasthan</span></div>
+                </div>
+
+                <div class="photo-signature">
+                    <img src="IMG-20240306-WA0006.jpg" alt="Student" class="student-photo" />
+                    <img src="Pi7_Tool_WhatsApp Image 2024-02-27 at 13.21.51.jpg" alt="Principal Signature"
+                        class="signature" />
+                    <div class="principal-label">PRINCIPAL</div>
+                </div>
+            </div>
+        </div>
+        <div class="buttons">
+            <div class="buttons">
+                <label>Select Card:
+                    <input type="checkbox" id="cardToggle" />
+                    <span class="switch"></span>
+                </label>
+
+                <button class="editCardBtn">Edit Card</button>
+            </div>
+
+        </div>
+    </div>
+
+</section>
+</body>

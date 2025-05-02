@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Print ID Cards</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background: white;
+      padding: 10mm;
+    }
+
+    @page {
+      size: A4 portrait;
+      margin: 10mm;
+    }
+
+    .page {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7mm;
+      justify-content: flex-start;
+    }
+
+    .preview-wrapper {
+      width: 6.3cm;
+      height: 4.5cm;
+      background: white;
+      border: 1px solid #ccc;
+      padding: 4px;
+      border-radius: 4px;
+      page-break-inside: avoid;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .logo {
+      width: 30px;
+      height: 30px;
+    }
+
+    .school-name h2 {
+      font-size: 9px;
+      margin: 0;
+    }
+
+    .school-name .address {
+      font-size: 6px;
+    }
+
+    .heading {
+      background-color: #2a4d60;
+      color: white;
+      font-size: 7px;
+      text-align: center;
+      margin: 2px 0;
+      padding: 1px;
+    }
+
+    .main-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-top: 2px;
+    }
+
+    .student-details {
+      font-size: 6.5px;
+    }
+
+    .student-details .set {
+      display: flex;
+      margin-bottom: 1px;
+    }
+
+    .key {
+      font-weight: bold;
+      width: 38px;
+    }
+
+    .colon {
+      margin: 0 2px;
+    }
+
+    .val {
+      flex: 1;
+    }
+
+    .principal-signature {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 6px;
+    }
+
+    .student-img {
+      width: 38px;
+      height: 38px;
+      object-fit: cover;
+      border: 1px solid #2a4d60;
+      border-radius: 3px;
+      margin-bottom: 2px;
+    }
+
+    .principal-signature img.signature {
+      width: 36px;
+      height: auto;
+      margin-top: 1px;
+    }
+
+    .print-button-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .print-button {
+      padding: 6px 12px;
+      font-size: 13px;
+      border: none;
+      background-color: #2a4d60;
+      color: white;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    @media print {
+      .print-button-container {
+        display: none !important;
+      }
+
+      body {
+        background: white;
+        margin: 0;
+        padding: 10mm;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page">
+    <% studentsWithQr.forEach(({ student, qrCode }) => { %>
+      <div class="preview-wrapper">
+        <div class="header">
+          <img src="<%= school.logo %>" alt="logo" class="logo">
+          <div class="school-name">
+            <h2><%= school.schoolName %></h2>
+            <div class="address"><%= school.address %></div>
+          </div>
+        </div>
+
+        <div class="heading">IDENTITY CARD | SESSION 2025-26</div>
+
+        <div class="main-content">
+          <div class="student-details">
+            <p class="set"><span class="key">Name</span><span class="colon">:</span><span class="val"><%= student.name %></span></p>
+            <p class="set"><span class="key">Class</span><span class="colon">:</span><span class="val"><%= student.class %></span></p>
+            <p class="set"><span class="key">Section</span><span class="colon">:</span><span class="val"><%= student.section %></span></p>
+            <p class="set"><span class="key">Roll No</span><span class="colon">:</span><span class="val"><%= student.rollNo %></span></p>
+            <p class="set"><span class="key">Father</span><span class="colon">:</span><span class="val"><%= student.fathername %></span></p>
+            <p class="set"><span class="key">Mobile</span><span class="colon">:</span><span class="val"><%= student.contact %></span></p>
+          </div>
+          <div class="principal-signature">
+            <img src="<%= student.photo %>" alt="Student" class="student-img">
+            <img src="<%= school.signature %>" alt="Signature" class="signature">
+            <span>PRINCIPAL</span>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+
+  <div class="print-button-container">
+    <button class="print-button" onclick="window.print()">Print</button>
+  </div>
+
+</body>
+</html>

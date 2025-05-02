@@ -56,10 +56,34 @@ router.get('/schools/:id/classes', async (req, res) => {
 
   
   router.get('/schools' ,isAdminLoggedIn, getSchools);
+
+  router.get('/select-template',async (req, res) => {
+    try {
+
+      const templates = [
+        { name: "Template 1", value: "template1" },
+        { name: "Template 2", value: "template2" },
+        { name: "Template 3", value: "template3" },
+        { name: "Template 4", value: "template4" },
+        { name: "Template 5", value: "template5" },
+        { name: "Template 6", value: "template6" }
+      ];
+
+      res.render('admin/card-design',{templates});
+  } catch (err) {
+      console.error(err);
+      res.status(500).send("Server Error");
+  }
+
+
+    });
   
 
 //  Individual School Page Route
 router.get('/:id',isAdminLoggedIn, getSchoolDetails);
+
+
+
 
 router.post('/select-template', (req, res) => {
     const { selectedTemplate } = req.body;

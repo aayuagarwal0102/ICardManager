@@ -43,16 +43,9 @@ exports.dashboard = async (req, res) => {
          // Fetch all students whose ID card is pending
          const pendingStudents = await Student.find({ idCardStatus: "Pending" }).populate("schoolId", "schoolName");
 
-         const templates = [
-            { name: "Template 1", value: "template1" },
-            { name: "Template 2", value: "template2" },
-            { name: "Template 3", value: "template3" },
-            { name: "Template 4", value: "template4" },
-            { name: "Template 5", value: "template5" },
-            { name: "Template 6", value: "template6" }
-          ];
+         
 
-        res.render("admin/dashboard", { layout: "layouts/boilerplate", totalSchools, totalStudents, pendingRequests ,pendingStudents,templates });
+        res.render("admin/dashboard", { layout: "layouts/boilerplate", totalSchools, totalStudents, pendingRequests ,pendingStudents});
     } catch (error) {
         res.status(500).send("Error loading dashboard");
     }

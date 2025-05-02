@@ -23,11 +23,12 @@
                         <th>Action</th>
                     </tr>
                 </thead>
+                <% let serial=1 %>
                 <% schools.forEach(school=> { %>
                     <tbody id="schoolTableBody">
                         <tr class="school-row" data-school-id="<%= school._id %>">
                             <td>
-                                <!-- serial number -->
+                               <%= serial++ %>
                             </td>
 
                             <td><button class="view-image-btn" data-img="<%= school.logo %>">View</button></td>

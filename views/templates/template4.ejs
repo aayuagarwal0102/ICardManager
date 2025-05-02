@@ -9,6 +9,7 @@
   padding: 50px;
 }
 
+
 .id-card {
   width: 8.56cm;
   height: 5.4cm;
@@ -146,11 +147,83 @@ border-radius: none;
 display: none;
 }
 }
+.card-designs {
+  padding: 1cm;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1cm;
+  justify-items: center;
+  align-items: start;
+  page-break-inside: avoid;
+}
+
+@media print {
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  .card-designs {
+    padding: 1cm;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1cm;
+    justify-items: center;
+    align-items: start;
+    page-break-inside: avoid;
+  }
+
+  .id-card {
+    box-shadow: none;
+    border: 1px solid #2a4d60;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .print-btn,
+  .print-button-container {
+    display: none !important;
+  }
+}
+
+@page {
+  size: A4 portrait;
+  margin: 10mm;
+}
+
+@media print {
+  body {
+    margin: 0;
+    padding: 0;
+    background: white;
+  }
+
+  .page {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10mm; /* proper gap between cards */
+    justify-content: start;
+    align-items: start;
+  }
+
+  .preview-wrapper {
+    width: 6cm; /* fixed width */
+    height: auto;
+    page-break-inside: avoid;
+  }
+
+  .print-button-container {
+    display: none; /* hide print button */
+  }
+}
+
 
   </style>
 </head>
+
 <body onload="window.print()">
 
+  <div class="card-designs">
   <% studentsWithQr.forEach(({ student, qrCode }) => { %>
   <div class="id-card">
     <div class="id-header">
@@ -191,6 +264,7 @@ display: none;
    
   </div>
   <% }); %>
+</div>
 
   <div class="print-button-container">
     <button class="print-button" onclick="window.print()">Print</button>
