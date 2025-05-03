@@ -54,9 +54,6 @@ app.use((req, res, next) => {
 
 
 
-app.get("/getOtp",(req,res)=>{
-    res.render("otp.ejs");
-})
 
 const generateOtp = () => Math.floor(100000 + Math.random() * 900000).toString();
 
@@ -135,9 +132,10 @@ const transporter = nodemailer.createTransport({
       const schoolData = req.session.tempSchoolData;
       console.log(schoolData);
       req.session.otp = null;
-     return res.render('school/register.ejs',  { showOtpStep: false, showFinalStep: true });
+      req.flash("success_msg","otp verified");
+      res.render('school/register.ejs',  { showOtpStep: false, showFinalStep: true });
     } else {
-      
+      req.flash("error_msg","wrong otp, please see again");
       res.render('school/register.ejs',  { showOtpStep: true, showFinalStep: false, error: "Incorrect OTP" });
     }
   });
