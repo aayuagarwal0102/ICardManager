@@ -44,7 +44,7 @@ exports.dashboard = async (req, res) => {
          const pendingStudents = await Student.find({ idCardStatus: "Pending" }).populate("schoolId", "schoolName");
 
          
-
+       
         res.render("admin/dashboard", { layout: "layouts/boilerplate", totalSchools, totalStudents, pendingRequests ,pendingStudents});
     } catch (error) {
         res.status(500).send("Error loading dashboard");
@@ -108,49 +108,13 @@ exports.getSchoolDetails = async (req, res) => {
 
 
 exports.printStudentId = async (req, res) => {
-    // try {
-    //     const student = await Student.findById(req.params.studentId);
-    //     const school =await School.findById(student.schoolId);
-
-    //     const ids = Array.isArray(selectedIds) ? selectedIds : [selectedIds];
-    //     if (ids.length < 1 || ids.length > 9) {
-    //         return res.status(400).send("You must select between 1 to 9 students.");
-    //     }
-
-    //     if (!student) {
-    //         return res.status(404).send("Student Not Found");
-    //     }
-
-    //     // QR Code Data
-    //     const qrData = JSON.stringify({
-    //         name: student.name,
-    //         rollNo: student.rollNo,
-    //         class: student.class,
-    //         school: student.schoolName
-    //     });
-
-    //     // Generate QR Code
-    //     const qrCode = await QRCode.toDataURL(qrData);
-
-    //     // Update ID Card Status to "Generated"
-    //     student.idCardStatus = "Generated";
-    //     await student.save();
-
-
-    //     const selectedTemplate = req.session.selectedTemplate || 'template1';
-    //     // Render ID Card Page
-    //     res.render(`templates/${selectedTemplate}`, { student, qrCode ,school});
-
-    // } catch (error) {
-    //     console.error("Error printing ID card:", error);
-    //     res.status(500).send("Internal Server Error");
-    // }
+    
     try {
         const selectedIds = req.body.selectedStudents;
         const ids = Array.isArray(selectedIds) ? selectedIds : [selectedIds];
 
         if (ids.length < 1 || ids.length > 50) {
-            return res.status(400).send("You must select between 1 to 9 students.");
+            return res.status(400).send("You must select between 1 to 50 students.");
         }
 
         // Fetch Students

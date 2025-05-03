@@ -1,0 +1,309 @@
+*{
+    font-family: poppins;
+}
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    height: 100vh;
+    font-family: poppins;
+    background-color: #55297f;
+}
+
+.images{
+    width: 50vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.images object {
+    width: 40vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+
+.halfright {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    height: 100vh;
+    position: absolute;
+    right:0;
+ 
+}
+
+.halfright .login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+.login-container {
+
+    padding: 40px;
+    width: 400px;
+    text-align: center;
+    display: flex;
+    flex-direction: column; /* Align children (inputs, buttons, etc.) vertically */
+    align-items: center; /* Centers everything horizontally */
+    justify-content: center;
+    text-align: center; /* Ensures text is centered */
+}
+
+.welcome h1 {
+    font-size: 28px;
+    font-weight: 400;
+    margin-bottom: 0px;
+    color: #55297f;
+}
+
+.welcome p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 30px;
+    line-height: 25px;
+    margin-top: 0;
+}
+
+.halfright .hidden{
+    display: none;
+}
+
+.login-container .input-field {
+    position: relative;
+    margin-bottom: 20px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.login-container .input-field input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #5b5b5b;
+    border-radius: 8px;
+    color: #5b5b5b;   
+}
+
+.input-field input:focus{
+    border-color: #55297f;
+}
+
+.input-field input,
+.dropdown:active {
+    outline: none;
+ 
+    /* box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);       */
+}
+
+.input-field input,
+.input-field select {
+    font-family: poppins;
+    width: 100%;
+    /* Ensure consistent width across all elements */
+    padding: 10px;
+    /* Optional: for consistent padding */
+    font-size: 16px;
+    /* Match font size for uniformity */
+    box-sizing: border-box;
+    /* Includes padding and border in width */
+}
+
+.input-field select {
+    font-size: 16px;
+    font-family: poppins;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #5b5b5b;
+    border-radius: 8px;
+    background-color: #fff;
+    color: #5b5b5b;
+    /* appearance: none; Remove default dropdown arrow */
+}
+
+/* remove default arrows in mobile number field */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.input-field select:focus,
+.input-field select:valid {
+    /* border-color: #007bff; */
+    outline: none;
+}
+
+.input-field label {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 16px;
+    color: #aaa;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.input-field input:focus+label,
+.input-field input:not(:placeholder-shown)+label {
+    top: -10px;
+    left: 10px;
+    font-size: 12px;
+    color: black;
+    background: #fff;
+    padding: 0 5px;
+}
+
+
+.btn-login {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #55297f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.already{
+    font-size: 14px;
+    display: flex;
+    gap: 10px;
+
+}
+
+.already a{
+    color: #55297f;
+    text-decoration: none;
+
+}
+
+.already a:hover{
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.already, .forgot {
+    font-size: 14px;
+    white-space: nowrap; /* Prevents line breaks */
+}
+.forgot{
+    color: #55297f;
+    text-decoration: underline;
+}
+
+.downtext{
+   display: flex;
+   align-items: center;
+   justify-content: center;
+    margin-top: 20px;
+    gap: 100px;
+}
+.time {
+    display: flex;
+    justify-content: space-between;
+    width: 400px; 
+  
+}
+
+
+/* css for error message */
+#errorMessage {
+    background-color: #ffdb9b;
+    border-radius: 4px;
+    padding: 15px 35px;
+    min-width: 450px;
+    height: 50px;
+    position: absolute;
+    right: 0px;
+    top: 10px;
+    border-left: 8px solid #ffa502;
+    font-size: 14px;
+    animation: show 1s ease forwards;
+    overflow: hidden;
+    /* display: none; */
+    z-index: 100;
+  
+  }
+
+  .hide {
+    background-color: #ffdb9b;
+    border-radius: 4px;
+    padding: 15px 35px;
+    min-width: 420px;
+    height: 50px;
+    position: absolute;
+    right: 0px;
+    top: 10px;
+    border-left: 8px solid #ffa502;
+    font-size: 14px;
+    animation: show 1s ease forwards;
+    overflow: hidden;
+    display: none;
+  
+  }
+
+  @keyframes show {
+    0% {
+      transform: translateX(100%);
+    }
+  
+    40% {
+      transform: translateX(-10%);
+    }
+  
+    80% {
+      transform: translateX(0%);
+    }
+  
+    100% {}
+  }
+
+  .hide>#material-icons {
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 30px;
+    margin-left: 10px;
+    color: #ce8500;
+  
+  }
+
+  .hide>.msg {
+    padding: 0 20px;
+    /* font-size: 18px; */
+    color: #ce8500;
+    margin-right: 20px;
+  }
+  
+  .hide>#close {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    background-color: #ffd080;
+    padding: 20px 18px;
+    /* height: 50px; */
+    font-size: 18px;
+    transform: translateY(-50%);
+  
+  }
+  
+  .hide>#close:hover {
+    cursor: pointer;
+    background-color: #ffc766;
+    transition: .5s;
+  }
