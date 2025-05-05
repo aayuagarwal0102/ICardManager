@@ -3,9 +3,7 @@ const router = express.Router();
 const School = require('../models/School'); // Import School Model
 const Student = require('../models/Student');
 const ClassTeacher= require("../models/ClassTeacher");
-const  {getSchools , select_students, get_classes, select_template, save_template} = require('../controllers/adminController');
-
-const { printStudentId } = require('../controllers/adminController');
+const  {loginAdmin, showLoginPage, dashboard, logoutAdmin, getSchools , select_students, get_classes, select_template, save_template, printStudentId} = require('../controllers/adminController');
 const { isAdminLoggedIn } = require('../middleware'); // Import middleware
 
 
@@ -21,7 +19,6 @@ router.get("/dashboard",isAdminLoggedIn,dashboard);
 
 router.get('/logout', isAdminLoggedIn,logoutAdmin);
 
-router.post('/print-id', isAdminLoggedIn, printStudentId);
 
 // API route to fetch classes for a specific school
 router.get('/schools/:id/classes',isAdminLoggedIn ,get_classes );
@@ -31,6 +28,7 @@ router.get('/schools/:id/classes',isAdminLoggedIn ,get_classes );
 
   router.get('/select-template',isAdminLoggedIn,select_template);
   
+  router.post('/print-id',isAdminLoggedIn, printStudentId);
 
 
 
