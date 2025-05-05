@@ -1,24 +1,15 @@
 const nodemailer = require("nodemailer");
 
-const generateOTP = () => {
-    return Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
-  };
+const generateOtp = () => Math.floor(100000 + Math.random() * 900000).toString();
 
-const sendOTP = async (email, otp) => {
-  let transporter = nodemailer.createTransport({
-    service: "gmail",
+const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true, // TLS
     auth: {
-        user: process.env.EMAIL,
-        pass: process.env.EMAIL_PASS
-    },
+      user: process.env.EMAIL,
+      pass: process.env.EMAIL_PASS
+    }
   });
 
-  await transporter.sendMail({
-    from: process.env.EMAIL,
-    to: email,
-    subject: "Your OTP Code",
-    html: `<p>Your OTP is <b>${otp}</b>. It is valid for 5 minutes.</p>`,
-  });
-};
-
-module.exports = sendOTP;
+module.exports = {transporter, generateOtp};

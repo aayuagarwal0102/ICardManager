@@ -21,7 +21,7 @@ exports.verifyToken = (req, res, next) => {
 
 //  Middleware: Admin Only Access
 exports.adminOnly = (req, res, next) => {
-    if (req.user.role !== "admin") {
+    if (req.session.role !== "admin") {
         return res.status(403).json({ message: "Admin access required" });
     }
     next();

@@ -63,50 +63,6 @@ exports.getSchools = async (req, res) => {
 };
 
 
-
-
-// 📌 Show Manage Schools Page
-exports.manageSchools = async (req, res) => {
-    try {
-        const schools = await School.find(); // Fetch all schools from database
-        res.render('admin/manageSchools', { schools });
-    } catch (err) {
-        res.status(500).send("Error fetching schools");
-    }
-};
-
-// 📌 Delete School
-exports.deleteSchool = async (req, res) => {
-    try {
-        const schoolId = req.params.id;
-        await School.findByIdAndDelete(schoolId);
-        res.redirect('/admin/manage-schools');
-    } catch (err) {
-        res.status(500).send("Error deleting school");
-    }
-};
-
-
-
-exports.getSchoolDetails = async (req, res) => {
-    try {
-        const school = await School.findById(req.params.id);
-        if (!school) {
-            return res.status(404).send("School not found");
-        }
-
-        const students = await Student.find({ schoolId: school._id });
-
-        res.render('admin/schoolDetails', { school, students });
-    } catch (error) {
-        res.status(500).send("Error loading school details");
-    }
-};
-
-
-
-
-
 exports.printStudentId = async (req, res) => {
     
     try {
@@ -154,6 +110,54 @@ exports.printStudentId = async (req, res) => {
         res.status(500).send("Internal Server Error");
     }
 };
+
+exports.select_students=  async (req, res) => {
+    const { schoolId, classId } = req.params;
+  
+    // Fetch students of that class
+    const students = await Student.find({ classTeacherId: classId });
+  
+    res.render('admin/students',{ students, schoolId, classId });
+  };
+
+  exports.get_classes=async (req, res) => {
+    const schoolId = req.params.id;
+    
+    // Yahan database se classes fetch kar lo
+    const classes = await ClassTeacher.find({ schoolId });
+  
+    res.render('admin/classes', { layout: "layouts/boilerplate", classes, schoolId });
+    };
+
+    exports.select_template=async (req, res) => {
+        try {
+    
+          const templates = [
+            { name: "Template 1", value: "template1" },
+            { name: "Template 2", value: "template2" },
+            { name: "Template 3", value: "template3" },
+            { name: "Template 4", value: "template4" },
+            { name: "Template 5", value: "template5" },
+            { name: "Template 6", value: "template6" }
+          ];
+    
+          res.render('admin/card-design',{templates});
+      } catch (err) {
+          console.error(err);
+          res.status(500).send("Server Error");
+      }
+    
+    
+        };
+
+     exports.save_template= (req, res) => {
+         const { selectedTemplate } = req.body;
+         req.session.selectedTemplate = selectedTemplate; // store template in session
+        
+         res.redirect('/admin/dashboard'); // or wherever you want
+       };
+
+
 
 
 

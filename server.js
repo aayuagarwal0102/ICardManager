@@ -17,7 +17,6 @@ app.engine("ejs",ejsMate);
 app.use(express.static(path.join(__dirname, 'public')));
 
 const schoolRouter= require("./routes/schoolRoutes.js");
-const studentRouter= require("./routes/studentRoutes.js");
 const adminRouter= require("./routes/adminRoutes.js");
 const authRoute= require("./routes/auth.js");
 const teacherRoute=  require("./routes/teacherRoutes.js");
@@ -54,95 +53,8 @@ app.use((req, res, next) => {
 
 
 
-
-const generateOtp = () => Math.floor(100000 + Math.random() * 900000).toString();
-
-const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true, // TLS
-    auth: {
-      user: process.env.EMAIL,
-      pass: process.env.EMAIL_PASS
-    }
-  });
-
-
-    app.post("/send-otp", async (req, res) => {
-       
-        const otp = generateOtp();
-        req.session.otp = otp;
-
-        const { schoolName, contactNumber, email } = req.body;
-
-  // Store in session
-  req.session.tempSchoolData = { schoolName, contactNumber, email };
-
-        
-      
-        try {
-          await transporter.sendMail({
-            from: process.env.EMAIL,
-            to: email,
-            subject: "Your OTP Code for register your school",
-            text: `Your OTP is: ${otp}, please enter it to verify`
-          });
-          res.render('school/register.ejs', { showOtpStep: true, showFinalStep: false });
-        } catch (error) {
-          console.log(error);
-          res.send("Failed to send OTP.");
-        }
-
-      });
-
-      
-      app.get('/resend-otp', async (req, res) => {
-        const { schoolName, contactNumber, email } = req.body;
-    
-        if (!email || !contactNumber || !schoolName) {
-            return res.redirect('/registerS'); // if session expired
-        }
-    
-        const otp=generateOtp();
-        req.session.otp = otp;
-        req.session.otpExpiresAt = Date.now() + 2 * 60 * 1000;
-    
-        // use nodemailer or your sendOtp function
-        try {
-          await transporter.sendMail({
-            from: process.env.EMAIL,
-            to: email,
-            subject: "Your OTP Code for register your school",
-            text: `Your OTP is: ${otp}, please enter it to verify`
-          });
-          res.render('school/register.ejs', { showOtpStep: true, showFinalStep: false  });
-        } catch (error) {
-          console.log(error);
-          res.send("Failed to send OTP.");
-        }
-    
-     
-    });
-    
-
-
-  app.post("/verify-otp", (req, res) => {
-    const userOtp = req.body.otp.join("");
-    if (userOtp === req.session.otp) {
-      const schoolData = req.session.tempSchoolData;
-      console.log(schoolData);
-      req.session.otp = null;
-      // req.flash("success_msg","otp verified");
-      res.render('school/register.ejs',  { showOtpStep: false, showFinalStep: true });
-    } else {
-      // req.flash("error_msg","wrong otp, please see again");
-      res.render('school/register.ejs',  { showOtpStep: true, showFinalStep: false, error: "Incorrect OTP" });
-    }
-  });
-
 // routes
 app.use('/schools',schoolRouter);
-app.use('/students',studentRouter);
 app.use('/admin',adminRouter);
 app.use('/class-teacher',teacherRoute);
 app.use("/uploads", express.static("uploads"));
@@ -159,12 +71,9 @@ app.get("/registerS",(req,res)=>{
 });
 
 
-
-
 app.get("/",(req,res)=>{
     res.render("index.ejs");
 })
-
 
 
 const PORT = process.env.PORT || 5000;

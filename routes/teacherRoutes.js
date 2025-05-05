@@ -13,7 +13,7 @@ router.get('/:id', isTeacherLoggedIn, teacherController.getDashboard);
 router.post('/:id/add-student', isTeacherLoggedIn, upload.single('photo'), teacherController.saveStudent );
 
 
-router.post('/logout',teacherController.logout);
+router.post('/logout', isTeacherLoggedIn,teacherController.logout);
 
 
 
