@@ -37,8 +37,6 @@ module.exports.saveStudent= async (req, res) => {
         schoolId: teacher.schoolId,
       });
 
-      console.log(teacher.schoolId);
-
       if (existingStudent) {
         return res.status(400).send("Roll number already exists in this school.");
       }

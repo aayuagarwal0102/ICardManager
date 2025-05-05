@@ -45,13 +45,10 @@ router.post("/login",async (req, res) => {
             req.flash("error_msg", "Invalid credentials!");
             return res.redirect("/loginS");
         }
-
-        console.log("Session Created:", req.session.role);
         
         // ✅ SESSION SET
         req.session.userId = user._id;
         req.session.role = role;
-        console.log("Session Created:", req.session);
      
 
         res.json({ success: true, redirect: redPath});
@@ -71,7 +68,6 @@ router.post("/verify-otp", (req, res) => {
     const userOtp = req.body.otp.join("");
     if (userOtp === req.session.otp) {
       const schoolData = req.session.tempSchoolData;
-      console.log(schoolData);
       req.session.otp = null;
       // req.flash("success_msg","otp verified");
       res.render('school/register.ejs',  { showOtpStep: false, showFinalStep: true });
