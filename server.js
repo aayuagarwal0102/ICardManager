@@ -132,10 +132,10 @@ const transporter = nodemailer.createTransport({
       const schoolData = req.session.tempSchoolData;
       console.log(schoolData);
       req.session.otp = null;
-      req.flash("success_msg","otp verified");
+      // req.flash("success_msg","otp verified");
       res.render('school/register.ejs',  { showOtpStep: false, showFinalStep: true });
     } else {
-      req.flash("error_msg","wrong otp, please see again");
+      // req.flash("error_msg","wrong otp, please see again");
       res.render('school/register.ejs',  { showOtpStep: true, showFinalStep: false, error: "Incorrect OTP" });
     }
   });
