@@ -1,118 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>School Login</title>
-    <link rel="stylesheet" href="/css/stylelogin.css">
-    <link rel="stylesheet" href="/css/flash.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login-ATS</title>
+  <link rel="stylesheet" href="/css/stylelogin.css">
+  <link rel="stylesheet" href="/css/flash.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Anton&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
-    </style>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Anton&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
-    </style>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Anton&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+  </style>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Anton&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+  </style>
 
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=arrow_forward" />
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=arrow_back" />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=arrow_forward" />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=arrow_back" />
 
 </head>
+
 <body>
 
-  
-  
-    <!-- Flash Message Display -->
-    <% if (success_msg && success_msg.length) { %>
-      <div class="flash-message success">
-        <span><%= success_msg %></span>
-        <button class="close-btn" onclick="this.parentElement.style.display='none';">&times;</button>
-      </div>
-    <% } %>
-    
-    <% if (error_msg && error_msg.length) { %>
-      <div class="flash-message error">
-        <span><%= error_msg %></span>
-        <button class="close-btn" onclick="this.parentElement.style.display='none';">&times;</button>
-      </div>
-    <% } %>
-  
-  
-  
-  
-    <div id="errorMessage" class="hide">
-        <i class="material-icons" id="material-icons">error</i>
-        <span class="msg" id="errorTxt">error</span>
-        <i class="material-icons" id="close">close</i>
+
+
+  <!-- Flash Message Display -->
+  <% if (success_msg && success_msg.length) { %>
+    <div class="flash-message success">
+      <span><%= success_msg %></span>
+      <button class="close-btn" onclick="this.parentElement.style.display='none';">&times;</button>
     </div>
-
-
-    <div class="images">
-        <object type="image/svg+xml" data="images/login svg.svg" ></object>
+  <% } %>
+  
+  <% if (error_msg && error_msg.length) { %>
+    <div class="flash-message error">
+      <span><%= error_msg %></span>
+      <button class="close-btn" onclick="this.parentElement.style.display='none';">&times;</button>
     </div>
+  <% } %>
 
-  
-  
 
-    <div class="halfright">
-    <form class="login-container" id="step1">
-      
-        <div class="welcome">
-            <h1>Welcome back!</h1>
-            <p>Fill up the following details to sign in your School or organization.</p>
-        </div>
 
-            <div class="input-field">
-                <input type="text" name="identifier" placeholder=" " id="email" required>  <!-- Can be email or username -->
-                <label for="email"> Email/Username</label>
+          <div class="container">
+            <div class="halfleft">
+
+              <div class="images">
+                <object type="image/svg+xml" data="images/login svg.svg"></object>
+              </div>
             </div>
-    
-            <div class="input-field">
-                <input type="password" name="password" placeholder=" " id="password" required>
-                <label for="password"> Password</label>
+
+
+            <div class="halfright">
+              <form class="login-container" id="step1">
+
+                <div class="welcome">
+                  <h1>Welcome back!</h1>
+                  <p>Fill up the following details to sign in your School or organization.</p>
+                </div>
+
+                <div class="input-field">
+                  <input type="text" name="identifier" placeholder=" " id="email" required>
+                  <!-- Can be email or username -->
+                  <label for="email"> Email/Username</label>
+                </div>
+
+                <div class="input-field">
+                  <input type="password" name="password" placeholder=" " id="password" required>
+                  <label for="password"> Password</label>
+                </div>
+
+                <button class="btn-login" id="loginbtn">Log in </button>
+
+
+                <div class="downtext">
+                  <span class="already">New School?<a href="/registerS">Register</a></span>
+                  <span class="forgot"><a href="/forgot-password">Forgot password?</a></button></span>
+                </div>
+
+              </form>
             </div>
-    
-            <button class="btn-login" id="loginbtn">Log in </button>
+
+          </div>
 
 
-            <div class="downtext">
-                <span class="already">New School?<a href="/registerS">Register</a></span>
-             
-                <span class="forgot"><a href="/forgot-password">Forgot password?</a></button></span>
-            </div>
-        
-    </form>
-</div>
-   
+
+          <script>
+            document.getElementById("step1").onsubmit = async (e) => {
+              e.preventDefault();
+              let formData = new FormData(e.target);
+
+              let response = await fetch("/login", {
+                method: "POST",
+                body: new URLSearchParams(formData),
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+              });
+
+              let result = await response.json();
+
+              if (result.success) {
+                localStorage.setItem("token", result.token);  // Optional if you want to track
+                window.location.href = result.redirect;       // ✅ Proper redirect!
+              } else {
+                alert(result.error || "Login failed");
+              }
+            };
+          </script>
 
 
-<script>
-    document.getElementById("step1").onsubmit = async (e) => {
-        e.preventDefault();
-        let formData = new FormData(e.target);
-    
-        let response = await fetch("/login", {
-            method: "POST",
-            body: new URLSearchParams(formData),
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        });
-    
-        let result = await response.json();
-    
-        if (result.success) {
-            localStorage.setItem("token", result.token);  // Optional if you want to track
-            window.location.href = result.redirect;       // ✅ Proper redirect!
-        } else {
-            alert(result.error || "Login failed");
-        }
-    };
-    </script>
-    
+          <script src="/js/login.js"></script>
+          <script src="/js/flash.js"></script>
 
-    <script src="/js/login.js"></script>
 </body>
-</html>
 
+</html>

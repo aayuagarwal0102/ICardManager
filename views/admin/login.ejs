@@ -13,6 +13,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="/css/flash.css">
     <link rel="stylesheet" href="/css/admin-login.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
@@ -32,11 +33,19 @@
 </head>
 
 <body>
-    <div id="errorMessage" class="hide">
-        <i class="material-icons" id="material-icons">error</i>
-        <span class="msg" id="errorTxt">error</span>
-        <i class="material-icons" id="close">close</i>
-    </div>
+    <% if (success_msg && success_msg.length) { %>
+        <div class="flash-message success">
+          <span><%= success_msg %></span>
+          <button class="close-btn" onclick="this.parentElement.style.display='none';">&times;</button>
+        </div>
+      <% } %>
+      
+      <% if (error_msg && error_msg.length) { %>
+        <div class="flash-message error">
+          <span><%= error_msg %></span>
+          <button class="close-btn" onclick="this.parentElement.style.display='none';">&times;</button>
+        </div>
+      <% } %>
 
 
     <div class="images">
@@ -70,6 +79,7 @@
         
         </form>
 
+        <script src="/js/flash.js"></script>
 
 </body>
 
