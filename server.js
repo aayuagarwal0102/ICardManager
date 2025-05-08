@@ -70,6 +70,10 @@ app.get("/registerS",(req,res)=>{
     res.render("school/register", { showOtpStep: false, showFinalStep: false });
 });
 
+app.get("/forgot-password",(req,res)=>{
+    res.render("school/forgot-password.ejs");
+})
+
 
 app.get("/",(req,res)=>{
     res.render("index.ejs");

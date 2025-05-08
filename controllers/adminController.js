@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 
 const School = require('../models/School'); // Import School Model
+const ClassTeacher= require("../models/ClassTeacher");
 const Student = require('../models/Student');
 const QRCode = require('qrcode');
 

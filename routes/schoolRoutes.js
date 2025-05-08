@@ -1,5 +1,5 @@
 const express = require('express');
-const { registerSchool, dashboard, delete_teacher, update_teacher,  save_teacher, logoutSchool, update_profile} = require('../controllers/schoolController');
+const { registerSchool, dashboard, delete_teacher, update_teacher,  save_teacher, logoutSchool, update_profile, forgot_pass, verify_otp, set_new_password} = require('../controllers/schoolController');
 const schoolController= require('../controllers/schoolController');
 const Student = require("../models/Student");
 const router = express.Router();
@@ -14,6 +14,15 @@ router.get("/:id",isSchoolLoggedIn, dashboard);
 
 router.post('/logout',isSchoolLoggedIn,logoutSchool);
 
+
+
+router.post('/forgot-password', forgot_pass);
+
+// Verify OTP
+router.post('/verify-otp', verify_otp);
+
+// Save new password
+router.post('/set-new-password',set_new_password);
 
 
 router.post("/register", upload.fields([

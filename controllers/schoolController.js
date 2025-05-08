@@ -6,6 +6,8 @@ const Student = require('../models/Student.js');
 const session = require('express-session');
 const flash = require('connect-flash');
 const {cloudinary}= require("../config/multer.js");
+const {transporter, generateOtp}= require("../utils/sendOtp");
+const nodemailer= require("nodemailer");
 
 require('dotenv').config();
 
@@ -227,10 +229,71 @@ exports.dashboard = async (req, res) => {
     };
 
 
+exports.forgot_pass=async (req, res) => {
+    const { email, affiliationNumber } = req.body;
+    const school = await School.findOne({ email: email,affnumber: affiliationNumber });
+    console.log(school);
+  
+    if (!school) {
+      return res.send('Invalid email or affiliation number');
+    }
+  
+    const otp = generateOtp();
 
+    req.session.forgotOtp = {
+        email,
+        otp,
+        expires: Date.now() + 5 * 60 * 1000
+      };
+      
+  
+    // Send OTP via email (using nodemailer)
+    
+    try {
+        await transporter.sendMail({
+          from: process.env.EMAIL,
+          to: email,
+          subject: "otp for reset the password",
+          text: `Your OTP is: ${otp}, please enter it to verify`
+        });
+        res.render('school/verify-otp', { email });
+          } catch (error) {
+        console.log(error);
+        res.send("Failed to send OTP.");
+      }
+  };
  
 
+exports.verify_otp=(req, res) => {
+    const { email, otp, expires } = req.session.forgotOtp || {};
+    const enteredOtp= req.body.otp;
 
+if (!email || !otp || Date.now() > expires) {
+  return res.send('OTP expired or invalid session');
+}
+
+if (enteredOtp !== otp) {
+  return res.send('Invalid OTP');
+}
+    
+  
+    res.render('school/set-new-password', { email });
+  };
+
+  exports.set_new_password= async (req, res) => {
+    const { email, password } = req.body;
+  
+    const school = await School.findOne({ email });
+    if (!school) return res.send('School not found');
+  
+    school.password = await bcrypt.hash(password, 10); // You should hash it if using bcrypt
+    await school.save();
+
+    delete req.session.forgotOtp;
+
+  
+    res.redirect("/loginS");
+  };
   
     
 
