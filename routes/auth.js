@@ -29,17 +29,12 @@ router.post("/login",async (req, res) => {
             role = "classTeacher";
             redPath=`/class-teacher/${user._id}`;
         }
-        
-
-
-        
-
+     
         if (!user) {
             req.flash("error_msg", "Invalid credentials!");
             return res.redirect("/loginS");
         }
-        
-
+      
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             req.flash("error_msg", "Invalid credentials!");
@@ -53,10 +48,6 @@ router.post("/login",async (req, res) => {
 
         res.json({ success: true, redirect: redPath});
 
-        
-
-       
-
     } catch (err) {
         console.error("Login Error:", err);
         req.flash("error_msg", "Server error!");
@@ -69,11 +60,11 @@ router.post("/verify-otp", (req, res) => {
     if (userOtp === req.session.otp) {
       const schoolData = req.session.tempSchoolData;
       req.session.otp = null;
-      // req.flash("success_msg","otp verified");
-      res.render('school/register.ejs',  { showOtpStep: false, showFinalStep: true });
+      req.flash("success_msg","otp verified");
+      res.render('school/register.ejs',  { showOtpStep: false, showFinalStep: true , success_msg: req.flash("success_msg")});
     } else {
-      // req.flash("error_msg","wrong otp, please see again");
-      res.render('school/register.ejs',  { showOtpStep: true, showFinalStep: false, error: "Incorrect OTP" });
+      req.flash("error_msg","wrong otp, please see again");
+      res.render('school/register.ejs',  { showOtpStep: true, showFinalStep: false, error_msg: req.flash("error_msg") });
     }
   });
 
@@ -87,9 +78,15 @@ router.post("/verify-otp", (req, res) => {
     // Store in session
     req.session.tempSchoolData = { schoolName, contactNumber, email };
   
-          
-        
           try {
+
+            const existingSchool = await School.findOne({ email });
+
+    if (existingSchool) {
+      req.flash("error_msg", "Email already registered. Try logging in.");
+      return res.redirect("/registerS");
+    }
+
             await transporter.sendMail({
               from: process.env.EMAIL,
               to: email,
@@ -98,8 +95,8 @@ router.post("/verify-otp", (req, res) => {
             });
             res.render('school/register.ejs', { showOtpStep: true, showFinalStep: false });
           } catch (error) {
-            console.log(error);
-            res.send("Failed to send OTP.");
+            req.flash("error_msg","Failed to send OTP.");
+            res.redirect("/registerS");
           }
   
         });
@@ -125,11 +122,9 @@ router.post("/verify-otp", (req, res) => {
                   });
                   res.render('school/register.ejs', { showOtpStep: true, showFinalStep: false  });
                 } catch (error) {
-                  console.log(error);
-                  res.send("Failed to send OTP.");
+                  req.flash("error_msg","Failed to send OTP.");
+                 res.redirect("/registerS");
                 }
-            
-             
             });
 
 module.exports = router;

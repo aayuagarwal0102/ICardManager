@@ -5,6 +5,7 @@ const ejsMate= require("ejs-mate");
 const flash = require("connect-flash");
 require('dotenv').config();
 const nodemailer= require("nodemailer");
+const errorHandler = require('./middleware');
 
 const app = express();
 connectDB();  // Connect MongoDB
@@ -59,6 +60,7 @@ app.use('/admin',adminRouter);
 app.use('/class-teacher',teacherRoute);
 app.use("/uploads", express.static("uploads"));
 app.use("/",authRoute);
+
 
 
 

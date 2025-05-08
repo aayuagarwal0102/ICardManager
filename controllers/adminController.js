@@ -11,7 +11,8 @@ const QRCode = require('qrcode');
 exports.showLoginPage = (req, res) => {
     const token = req.query.key;
     if (token !== process.env.SUPER_ADMIN_SECRET_KEY) {
-        return res.status(403).send("Access Denied ❌");
+        req.flash("error_msg","Access Denied");
+        return res.redirect("/registerS");
     }
    
     res.render('admin/login');
@@ -28,7 +29,8 @@ exports.loginAdmin = async (req, res) => {
         req.session.role = "admin";
         return res.redirect("/admin/dashboard");
     } else {
-        return res.render("admin/login", { error: "Invalid credentials" });
+        req.flash("error_msg","Invalid Credientials");
+        res.render("admin/login", {error_msg: req.flash("error_msg")});
     }
 };
 
@@ -48,7 +50,8 @@ exports.dashboard = async (req, res) => {
        
         res.render("admin/dashboard", { layout: "layouts/boilerplate", totalSchools, totalStudents, pendingRequests ,pendingStudents});
     } catch (error) {
-        res.status(500).send("Error loading dashboard");
+        req.flash("error_msg","error loading dashboard, internal error ");
+        res.render("admin/login", {error_msg: req.flash("error_msg")});
     }
 };
 
@@ -59,7 +62,8 @@ exports.getSchools = async (req, res) => {
     res.render("admin/schools", { layout: "layouts/boilerplate", schools});
     }
     catch(err){
-        res.status(500).send("Error fetching schools");
+        req.flash("error_msg","Error fetching schools");
+        res.redirect("/admin/dashboard");
     }
 };
 
@@ -71,7 +75,8 @@ exports.printStudentId = async (req, res) => {
         const ids = Array.isArray(selectedIds) ? selectedIds : [selectedIds];
 
         if (ids.length < 1 || ids.length > 50) {
-            return res.status(400).send("You must select between 1 to 50 students.");
+            req.flash("error_msg","select minimum 1 and max 50");
+           return res.render("admin/dashboard", {error_msg: req.flash("error_msg")});
         }
 
         // Fetch Students
@@ -107,8 +112,9 @@ exports.printStudentId = async (req, res) => {
         res.render(`templates/${selectedTemplate}`, { studentsWithQr, school });
 
     } catch (error) {
-        console.error("Error printing multiple ID cards:", error);
-        res.status(500).send("Internal Server Error");
+        req.flash("error_msg","Error printing multiple ID cards:");
+        res.redirect("/admin/dashboard");
+       
     }
 };
 
@@ -124,7 +130,6 @@ exports.select_students=  async (req, res) => {
   exports.get_classes=async (req, res) => {
     const schoolId = req.params.id;
     
-    // Yahan database se classes fetch kar lo
     const classes = await ClassTeacher.find({ schoolId });
   
     res.render('admin/classes', { layout: "layouts/boilerplate", classes, schoolId });
@@ -144,8 +149,8 @@ exports.select_students=  async (req, res) => {
     
           res.render('admin/card-design',{templates});
       } catch (err) {
-          console.error(err);
-          res.status(500).send("Server Error");
+        req.flash("error_msg","internal error to select id cards");
+        res.redirect("/admin/select-template");
       }
     
     
