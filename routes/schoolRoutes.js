@@ -10,13 +10,15 @@ const {upload} = require("../config/multer");
 
 
 
-router.get("/:id",isSchoolLoggedIn, dashboard);
 
 router.post('/logout',isSchoolLoggedIn,logoutSchool);
 
 
 
+router.get('/forgot-password', schoolController.get_forgot);
+
 router.post('/forgot-password', forgot_pass);
+
 
 // Verify OTP
 router.post('/verify-otp', verify_otp);
@@ -32,6 +34,9 @@ router.post("/register", upload.fields([
 
 
 router.post("/delete-class-teacher/:id",isSchoolLoggedIn, delete_teacher);
+
+router.get("/:id",isSchoolLoggedIn, dashboard);
+
 
 router.post("/:id/update-profile",isSchoolLoggedIn,upload.fields([
     { name: "logo", maxCount: 1 },

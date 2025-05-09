@@ -1,6 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+   <link rel="stylesheet" href="/css/flash.css">
+</head>
+<body>
+  <% if (success_msg && success_msg.length) { %>
+  <div class="flash-message success">
+    <span><%= success_msg %></span>
+    <button class="close-btn" onclick="this.parentElement.style.display='none';">&times;</button>
+  </div>
+<% } %>
+
+<% if (error_msg && error_msg.length) { %>
+  <div class="flash-message error">
+    <span><%= error_msg %></span>
+    <button class="close-btn" onclick="this.parentElement.style.display='none';">&times;</button>
+  </div>
+<% } %>
+
 <h2>Enter OTP</h2>
 <form method="POST" action="/schools/verify-otp">
   <input type="hidden" name="email" value="<%= email %>">
   <input type="text" name="otp" placeholder="Enter OTP" required>
   <button type="submit">Verify OTP</button>
 </form>
+</body>
+</html>
+

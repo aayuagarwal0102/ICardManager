@@ -63,7 +63,7 @@ exports.getSchools = async (req, res) => {
     }
     catch(err){
         req.flash("error_msg","Error fetching schools");
-        res.redirect("/admin/dashboard");
+        return res.redirect("/admin/dashboard");
     }
 };
 
@@ -76,7 +76,7 @@ exports.printStudentId = async (req, res) => {
 
         if (ids.length < 1 || ids.length > 50) {
             req.flash("error_msg","select minimum 1 and max 50");
-           return res.render("admin/dashboard", {error_msg: req.flash("error_msg")});
+           return res.redirect("/admin/dashboard");
         }
 
         // Fetch Students
@@ -113,7 +113,7 @@ exports.printStudentId = async (req, res) => {
 
     } catch (error) {
         req.flash("error_msg","Error printing multiple ID cards:");
-        res.redirect("/admin/dashboard");
+        return res.redirect("/admin/dashboard");
        
     }
 };
@@ -123,6 +123,11 @@ exports.select_students=  async (req, res) => {
   
     // Fetch students of that class
     const students = await Student.find({ classTeacherId: classId });
+
+    if(!students || students.length==0){
+        req.flash("error_msg","there no such students find, ask school");
+        return res.redirect("/admin/dashboard");
+    }
   
     res.render('admin/students',{ students, schoolId, classId });
   };
@@ -131,6 +136,11 @@ exports.select_students=  async (req, res) => {
     const schoolId = req.params.id;
     
     const classes = await ClassTeacher.find({ schoolId });
+
+     if(!classes || classes.length==0){
+        req.flash("error_msg","there no such classes find, ask school");
+        return res.redirect("/admin/dashboard");
+    }
   
     res.render('admin/classes', { layout: "layouts/boilerplate", classes, schoolId });
     };
@@ -150,7 +160,7 @@ exports.select_students=  async (req, res) => {
           res.render('admin/card-design',{templates});
       } catch (err) {
         req.flash("error_msg","internal error to select id cards");
-        res.redirect("/admin/select-template");
+        return res.redirect("/admin/select-template");
       }
     
     

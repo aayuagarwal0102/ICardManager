@@ -25,18 +25,17 @@ exports.registerSchool = async (req, res) => {
 
 
 
-        // Check if passwords match
         if (password !== confirmPassword) {
-            return res.status(400).json({ error: "Passwords do not match!" });
+          req.flash("error_msg","Passwords do not match!");
+            res.render('school/register.ejs',  { showOtpStep: false, showFinalStep: true , error_msg: req.flash("error_msg")});
         }
 
-        // Check if school already exists
         const existingSchool = await School.findOne({ email });
         if (existingSchool) {
-            return res.status(400).json({ error: "School already registered!" });
-        }
+            req.flash("error_msg","school already registerd");
+            res.render('school/register.ejs',  { showOtpStep: false, showFinalStep: false , error_msg: req.flash("error_msg")});    
+              }
 
-        // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
 
@@ -45,19 +44,14 @@ exports.registerSchool = async (req, res) => {
         // Cloudinary URLs
         const logo = files['logo'] ? files['logo'][0].path : null;
         const signature = files['signature'] ? files['signature'][0].path : null;
-        
-
-
-       
-
-        // Create a new school
+    
         const newSchool = new School({
             schoolName,
             email,
             password: hashedPassword,
             address,
             contactNumber,
-            logo, // Save the image path in the database
+            logo, 
             signature,
             city,
             affnumber
@@ -71,8 +65,9 @@ exports.registerSchool = async (req, res) => {
         res.redirect("/loginS");
 
     } catch (err) {
-       
-        res.status(500).json({ error: "Server Error" });
+       req.flash("error_msg","server error");
+        res.render('school/register.ejs',  { showOtpStep: false, showFinalStep: false , error_msg: req.flash("error_msg")});    
+
     }
 }
 
@@ -90,6 +85,13 @@ exports.dashboard = async (req, res) => {
         const teachers = await ClassTeacher.find({ schoolId });
         const students= await  Student.find({schoolId: schoolId});
         const school= await School.findById(schoolId);
+
+        if (!school){
+           req.flash("error_msg", "School not found.");
+           return res.redirect("/loginS");
+        }
+
+
        
         req.flash("success_msg","welcome to dashboard");
         res.render("school/dashboard", {
@@ -99,12 +101,13 @@ exports.dashboard = async (req, res) => {
             totalStudents,
             pendingRequests,
             teachers,
-            students
+            students, 
+            success_msg: req.flash("success_msg")
         });
        
     } catch (err) {
-        console.error("Dashboard error:", err);
-        res.status(500).send("Server Error");
+        req.flash("error_msg", "server error.");
+        res.redirect("/loginS");
     }};
 
     exports.delete_teacher = async (req, res) => {
@@ -113,11 +116,12 @@ exports.dashboard = async (req, res) => {
     
         try {
             await ClassTeacher.findByIdAndDelete(id);
+
             req.flash("error_msg", "Class Teacher deleted successfully!");
             res.redirect(`/schools/${schoolId}`);
         } catch (err) {
-            console.error("Delete error:", err);
-            res.status(500).send("Server Error");
+             req.flash("error_msg", "server error to delete teacher.");
+             res.redirect(`/schools/${schoolId}`);
         }
     };
 
@@ -137,7 +141,8 @@ exports.dashboard = async (req, res) => {
             req.flash("success_msg", "Class Teacher updated successfully!");
             res.redirect(`/schools/${req.params.schoolId}`);
         } catch (err) {
-            res.status(500).send("Error updating teacher");
+            req.flash("error_msg", "server error");
+            res.redirect(`/schools/${req.params.schoolId}`);
         }
     }
 
@@ -158,16 +163,15 @@ exports.dashboard = async (req, res) => {
       
           if (req.files.logo) {
             const logoUpload = await cloudinary.uploader.upload(req.files.logo[0].path, {
-              folder: "school_uploads",  // ✅ your custom folder
+              folder: "school_uploads",  
               resource_type: "image"
             });
-            updateData.logo = logoUpload.secure_url; // Save URL to DB
+            updateData.logo = logoUpload.secure_url; 
           }
         
-          // ✅ Upload signature if provided
           if (req.files.signature) {
             const signatureUpload = await cloudinary.uploader.upload(req.files.signature[0].path, {
-              folder: "school_uploads",  // ✅ same folder
+              folder: "school_uploads",  
               resource_type: "image"
             });
             updateData.signature = signatureUpload.secure_url;
@@ -175,10 +179,10 @@ exports.dashboard = async (req, res) => {
       
           await School.findByIdAndUpdate(id, updateData);
       
-          res.redirect(`/schools/${id}`); // Or wherever your dashboard is
+          res.redirect(`/schools/${id}`); 
         } catch (err) {
-          console.error("Update error:", err);
-          res.status(500).send("Something went wrong");
+          req.flash("error_msg", "server error!");
+            res.redirect(`/schools/${req.params.schoolId}`);
         }
       };
    
@@ -188,20 +192,17 @@ exports.dashboard = async (req, res) => {
         const { password, confirmPassword, fullName, className, section} = req.body;
     
         if (password !== confirmPassword) {
-            return res.send("Passwords do not match");
+             req.flash("error_msg","Passwords do not match!");
+            res.redirect(`/schools/${schoolId}`);
         }
     
         try {
-            // 🔐 Hash password
             const hashedPassword = await bcrypt.hash(password, 10);
-    
-            // 🧠 Username base: from full name
             
         const base = fullName.trim().toLowerCase().split(" ")[0]; // First name
         let suffix = 1;
         let username;
 
-        // 🧪 Loop until a unique username is found
         while (true) {
             username = `${base}${String(suffix).padStart(3, '0')}`;
             const existing = await ClassTeacher.findOne({ username });
@@ -223,8 +224,8 @@ exports.dashboard = async (req, res) => {
             req.flash("success_msg", `Class Teacher added successfully. Username: ${username}`);
             res.redirect(`/schools/${schoolId}`);
         } catch (err) {
-            console.error("Error adding class teacher:", err);
-            res.status(500).send("Server Error");
+            req.flash("error_msg", "server error!");
+            res.redirect(`/schools/${schoolId}`);
         }
     };
 
@@ -232,10 +233,10 @@ exports.dashboard = async (req, res) => {
 exports.forgot_pass=async (req, res) => {
     const { email, affiliationNumber } = req.body;
     const school = await School.findOne({ email: email,affnumber: affiliationNumber });
-    console.log(school);
   
     if (!school) {
-      return res.send('Invalid email or affiliation number');
+           req.flash("error_msg", "school not found!");
+            res.redirect(`/registerS`);
     }
   
     const otp = generateOtp();
@@ -245,10 +246,7 @@ exports.forgot_pass=async (req, res) => {
         otp,
         expires: Date.now() + 5 * 60 * 1000
       };
-      
-  
-    // Send OTP via email (using nodemailer)
-    
+          
     try {
         await transporter.sendMail({
           from: process.env.EMAIL,
@@ -258,10 +256,15 @@ exports.forgot_pass=async (req, res) => {
         });
         res.render('school/verify-otp', { email });
           } catch (error) {
-        console.log(error);
-        res.send("Failed to send OTP.");
+        req.flash("error_msg","Failed to send OTP.");
+           res.render('school/forgot-password', {error_msg: req.flash("error_msg") });
       }
   };
+
+  exports.get_forgot= (req,res)=>{
+
+    res.render("school/forgot-password.ejs");
+  }
  
 
 exports.verify_otp=(req, res) => {
@@ -269,11 +272,14 @@ exports.verify_otp=(req, res) => {
     const enteredOtp= req.body.otp;
 
 if (!email || !otp || Date.now() > expires) {
-  return res.send('OTP expired or invalid session');
+       req.flash("error_msg","OTP expired or invalid session");
+      return res.redirect("/loginS");
 }
 
 if (enteredOtp !== otp) {
-  return res.send('Invalid OTP');
+  req.flash("error_msg","OTP does not match");
+
+    res.render("school/verify-otp", {email, error_msg: req.flash("error_msg")});
 }
     
   
@@ -281,13 +287,20 @@ if (enteredOtp !== otp) {
   };
 
   exports.set_new_password= async (req, res) => {
-    const { email, password } = req.body;
+    const { email, pass } = req.body;
   
     const school = await School.findOne({ email });
-    if (!school) return res.send('School not found');
+    console.log(school);
+
+    console.log(school);
+    if (!school){
+           req.flash("error_msg", "school not found!");
+            res.redirect(`/registerS`);
+    } 
   
-    school.password = await bcrypt.hash(password, 10); // You should hash it if using bcrypt
-    await school.save();
+  
+   const hash = await bcrypt.hash(pass, 10);
+await School.findByIdAndUpdate(school._id, { password: hash });
 
     delete req.session.forgotOtp;
 
@@ -300,10 +313,6 @@ if (enteredOtp !== otp) {
 //  Logout School
 exports.logoutSchool =  (req, res) => {
     req.session.destroy((err) => {
-        if (err) {
-            console.log("Logout error:", err);
-            return res.send("Error logging out");
-        }
       
         res.clearCookie("connect.sid");
       
