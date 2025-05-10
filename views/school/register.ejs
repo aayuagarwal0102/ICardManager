@@ -17,12 +17,19 @@
         @import url('https://fonts.googleapis.com/css2?family=Anton&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
     </style>
 
+ 
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=arrow_forward" />
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=arrow_back" />
 
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
+
+        <!-- CropperJS CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+
+        <!-- Cropper JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
         
 </head>
 
@@ -155,8 +162,9 @@
                         </div>
 
                         <div class="input-field">
-                            <input type="file" name="signature" id="signature" accept="image/*">
-                            <label for="signature"> Upload signature</label>
+                            <input type="file" name="signature" id="signature" accept="image/*" >
+                            <label for="signature">Upload Principal's Signature</label>
+
 
                         </div>
 
@@ -177,27 +185,28 @@
                     </form>
                     </div>
                     <% } %>
+
                         </form>
     </div>
 
-    <!-- Cropper Modal HTML (Same for Photo or Signature) -->
-<div id="cropperModal" class="cropper-modal" style="display: none;">
-    <div class="cropper-modal-content">
-      <img id="cropperImage" style="max-width: 100%;" />
-      <div style="margin-top: 10px;">
-        <button id="cropButton">Crop & Save</button>
-        <button id="cancelCrop">Cancel</button>
+ <div id="cropperModal" class="modal">
+    <div class="modal-content">
+      <h2>Crop Your signature</h2>
+      <div class="image-container">
+        <img id="imageToCrop" alt="To be cropped" />
+      </div>
+      <div class="button-group">
+        <button id="cropButton" class="btn-primary">Crop & Save</button>
+        <button id="cancelCrop" class="btn-secondary">Cancel</button>
       </div>
     </div>
   </div>
 
 
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
-
-
+   <script src="/js/signup.js"></script>
   <script src="/js/flash.js"></script>
-    <script src="/js/signup.js"></script>
+   
 </body>
 
 </html>

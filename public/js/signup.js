@@ -1,3 +1,58 @@
+ const photoInput = document.getElementById('signature');
+    const cropperModal = document.getElementById('cropperModal');
+    const imageToCrop = document.getElementById('imageToCrop');
+    let cropper;
+
+    photoInput.addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (event) {
+            imageToCrop.src = event.target.result;
+            cropperModal.style.display = 'block';
+
+            if (cropper) {
+                cropper.destroy();
+            }
+
+            cropper = new Cropper(imageToCrop, {
+                aspectRatio: 4/1,  // Passport size ratio
+                viewMode: 1,
+                autoCropArea: 1,
+                movable: true,
+                zoomable: true,
+                rotatable: false,
+                scalable: false,
+                minContainerWidth: 400,
+                minContainerHeight: 100,
+            });
+        };
+        reader.readAsDataURL(file);
+    });
+
+    document.getElementById('cropButton').addEventListener('click', function () {
+        const canvas = cropper.getCroppedCanvas({
+            width: 400,
+            height: 100,
+        });
+
+        canvas.toBlob(function (blob) {
+            const newFile = new File([blob], "cropped_photo.jpg", { type: 'image/jpeg' });
+
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(newFile);
+            photoInput.files = dataTransfer.files;
+
+            cropperModal.style.display = 'none';
+        }, 'image/jpeg');
+    });
+
+    document.getElementById('cancelCrop').addEventListener('click', function () {
+        cropperModal.style.display = 'none';
+        photoInput.value = ''; // Reset input if cancel
+    });
+
 // code for next button
 document.getElementById("nextBtn").addEventListener("click", function (e) {
     
@@ -101,7 +156,7 @@ function validateInput(input, index) {
 }
 
 // Start timer when page loads
-window.onload = startTimer;
+// window.onload = startTimer;
 // function validateInput(input, index) {
 //     const inputs = document.querySelectorAll('.otp-input input');
 //     input.value = input.value.replace(/\D/g, ''); // Allow only digits
@@ -147,81 +202,6 @@ window.onload = startTimer;
 // });
 
 
-
-
-
-
-
-
-
-
-
-//  cropper images
-// Variables
-const photoInput = document.getElementById('signature');
-const cropperModal = document.getElementById('cropperModal');
-const imageToCrop = document.getElementById('imageToCrop');
-const cropButton = document.getElementById('cropButton');
-const cancelCrop = document.getElementById('cancelCrop');
-
-let cropper; // global cropper instance
-
-photoInput.addEventListener('change', function (e) {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = function (event) {
-        imageToCrop.src = event.target.result;
-        cropperModal.style.display = 'block';
-
-        if (cropper) {
-            cropper.destroy();
-        }
-
-        cropper = new Cropper(imageToCrop, {
-            aspectRatio: 4 / 1,
-            viewMode: 1,
-            autoCropArea: 1,
-            movable: true,
-            zoomable: true,
-            rotatable: false,
-            scalable: false,
-            minContainerWidth: 300,
-            minContainerHeight: 200,
-        });
-    };
-    reader.readAsDataURL(file);
-});
-
-// Crop & Save Button
-cropButton.addEventListener('click', function () {
-    if (!cropper) return;
-
-    cropper.getCroppedCanvas({
-        width: 400,
-        height: 100,
-    }).toBlob(function (blob) {
-        const newFile = new File([blob], "cropped_signature.jpg", { type: 'image/jpeg' });
-
-        const dataTransfer = new DataTransfer();
-        dataTransfer.items.add(newFile);
-        photoInput.files = dataTransfer.files;
-
-        cropperModal.style.display = 'none';
-        cropper.destroy();
-        cropper = null;
-    }, 'image/jpeg');
-});
-
-// Cancel Button
-cancelCrop.addEventListener('click', function () {
-    if (cropper) {
-        cropper.destroy();
-        cropper = null;
-    }
-    cropperModal.style.display = 'none';
-});
 
 
 
@@ -318,6 +298,8 @@ function showError(message) {
         errorBox.style.display = 'none';
     };
 }
+
+
 
 
 

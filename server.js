@@ -18,33 +18,6 @@ const expressValidator = require('express-validator');
 const app = express();
 connectDB();  // Connect MongoDB
 
-// Security Middleware
-app.use(helmet({
-    contentSecurityPolicy: {
-        directives: {
-            defaultSrc: ["'self'"],
-            connectSrc: ["'self'"],
-            objectSrc: ["'none'"],
-            mediaSrc: ["'self'"],
-            frameSrc: ["'none'"],
-            scriptSrc: ["'self'", "https://cdn.jsdelivr.net", "'unsafe-inline'"],
-            styleSrc: ["'self'", "https://fonts.googleapis.com", "'unsafe-inline'"],
-            fontSrc: ["'self'", "https://fonts.gstatic.com"],
-            imgSrc: ["'self'", "data:", "blob:", "https://res.cloudinary.com"]
-        },
-    },
-    crossOriginEmbedderPolicy: true,
-    crossOriginOpenerPolicy: true,
-    crossOriginResourcePolicy: { policy: "same-site" },
-    dnsPrefetchControl: { allow: false },
-    frameguard: { action: "deny" },
-    hidePoweredBy: true,
-    hsts: { maxAge: 31536000, includeSubDomains: true, preload: true },
-    ieNoOpen: true,
-    noSniff: true,
-    referrerPolicy: { policy: "strict-origin-when-cross-origin" },
-    xssFilter: true
-}));
 
 // Prevent NoSQL injection
 app.use(mongoSanitize());

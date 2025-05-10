@@ -93,7 +93,6 @@ exports.dashboard = async (req, res) => {
 
 
        
-        req.flash("success_msg","welcome to dashboard");
         res.render("school/dashboard", {
             school,
             schoolId,
@@ -102,7 +101,6 @@ exports.dashboard = async (req, res) => {
             pendingRequests,
             teachers,
             students, 
-            success_msg: req.flash("success_msg")
         });
        
     } catch (err) {
@@ -288,12 +286,10 @@ if (enteredOtp !== otp) {
 
   exports.set_new_password= async (req, res) => {
     const { email, pass } = req.body;
-  
-    const school = await School.findOne({ email });
-    console.log(school);
+    
+      const school = await School.findOne({ email });
 
-    console.log(school);
-    if (!school){
+    if (!school || school==null){
            req.flash("error_msg", "school not found!");
             res.redirect(`/registerS`);
     } 
@@ -304,7 +300,7 @@ await School.findByIdAndUpdate(school._id, { password: hash });
 
     delete req.session.forgotOtp;
 
-  
+    req.flash("success_msg","password successfully changed");
     res.redirect("/loginS");
   };
   
