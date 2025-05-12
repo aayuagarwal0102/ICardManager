@@ -305,25 +305,18 @@
                     <td><%= teacher.section %></td>
                     <td>
 
-                      <form action="/schools/delete-class-teacher/<%= teacher._id %>?schoolId=<%= schoolId %>"
-                        method="POST">
-                        <button type="submit">Remove</button>
-                      </form>
+                        <button onclick="confirmDelete('<%= teacher._id %>', '<%= schoolId %>')">Remove</button>
 
-
-                      <button 
-                        onclick="openEditForm('<%= teacher._id %>', '<%= teacher.fullName %>', '<%= teacher.class %>', '<%= schoolId %>','<%= teacher.username %>', '<%= teacher.section %>' )"
+                        <button  onclick="openEditForm('<%= teacher._id %>', '<%= teacher.fullName %>', '<%= teacher.class %>', '<%= schoolId %>','<%= teacher.username %>', '<%= teacher.section %>' )"
                         type="submit">Update </button>
 
-
                     </td>
-
                   </tr>
                   <% }) %>
 
               </tbody>
               <% } else { %>
-                <p class="no-student-found">No teacher found :(</p>
+                <p class="no-student-found">No teacher found :</p>
                 <% } %>
             </table>
         </div>
@@ -414,12 +407,12 @@
         <!-- 🔍 Search and 🔽 Section Filter -->
         <div class="filter-bar">
           <div class="searchbar">
-            <input type="text" id="searchInput" placeholder="Search by name or roll no...">
+            <input type="text" id="searchInput1" placeholder="Search by name or roll no...">
 
             <i class="material-icons arrow">search</i>
 
           </div>
-          <select id="sectionFilter">
+          <select id="sectionFilter1">
             <option value="">All Sections</option>
             <option value="A">Section A</option>
             <option value="B">Section B</option>
@@ -584,6 +577,10 @@
       </div>
     </div>
   </main>
+
+  <!-- for delete form -->
+   <form id="deleteForm" method="POST" style="display: none;"></form>
+
 
 
   <script src="/js/flash.js"></script>

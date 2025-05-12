@@ -18,27 +18,32 @@ router.post("/login",async (req, res) => {
 
         let user, role, redPath;
 
+         
+
         if (identifier.includes("@")) {
             user = await School.findOne({ email: identifier });
+            if (!user ) {
+            return res.status(401).json({ success: false, message: "Invalid credentials!" });
+        }
          
             role = "school";
             redPath=`/schools/${user._id}`;
         } else {
             user = await ClassTeacher.findOne({ username: identifier });
-         
+           if (!user ) {
+            return res.status(401).json({ success: false, message: "Invalid credentials!" });
+        }
             role = "classTeacher";
             redPath=`/class-teacher/${user._id}`;
         }
      
-        if (!user) {
-            req.flash("error_msg", "Invalid credentials!");
-            return res.redirect("/loginS");
-        }
+          
+      
       
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             req.flash("error_msg", "Invalid credentials!");
-            return res.redirect("/loginS");
+            return res.status(401).json({ success: false, message: "Invalid credentials!" });
         }
         
         // ✅ SESSION SET

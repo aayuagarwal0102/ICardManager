@@ -24,8 +24,9 @@
                     </tr>
                 </thead>
                 <% let serial=1 %>
+                 <tbody id="schoolTableBody">
                 <% schools.forEach(school=> { %>
-                    <tbody id="schoolTableBody">
+               
                         <tr class="school-row" data-school-id="<%= school._id %>">
                             <td>
                                <%= serial++ %>

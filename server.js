@@ -137,8 +137,8 @@ app.use((err, req, res, next) => {
     console.error(err.stack);
     
     const status = err.status || 500;
-    const message = err.message || 'Something went wrong!';
-    const description = err.description || 'An unexpected error occurred. Please try again later.';
+    const message =  'Something went wrong!';
+    const description =  'An unexpected error occurred. Please try again later.';
 
     res.status(status).render('error', {
         status,

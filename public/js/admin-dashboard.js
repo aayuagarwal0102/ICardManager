@@ -33,40 +33,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Section switching
-    const dashboardSection = document.getElementById('dashboard');
-    const allSchoolsSection = document.querySelector('.all-schools');
-    const cardDesignsSection = document.querySelector('.card-designs');
-
-    function hideAllSections() {
-        dashboardSection.style.display = 'none';
-        allSchoolsSection.style.display = 'none';
-        cardDesignsSection.style.display = 'none';
-    }
-
-    document.querySelector('a[href="#card-designs"]').addEventListener('click', (e) => {
-        e.preventDefault();
-        hideAllSections();
-        cardDesignsSection.style.display = 'block';
+  
       
-        // Rebind the edit button now that it's in the DOM
-        document.querySelectorAll(".editCardBtn").forEach((btn) => {
-          btn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            const template = e.target.closest(".template-1"); // wrapper
-            activeCard = template.querySelector(".id-card"); // find card inside it
-            if (activeCard) {
-              document.getElementById("editCardModal").style.display = "block";
-            }
-          });
-        });
-      });
-      
-
-    document.querySelector('a[href="#school"]').addEventListener('click', (e) => {
-        e.preventDefault();
-        hideAllSections();
-        allSchoolsSection.style.display = 'block';
-    });
 
     // School row handling
     const schoolRows = document.querySelectorAll('.school-row');
@@ -156,4 +124,22 @@ function closeImagePopup() {
         });
         });
         
+        // search logic for schools
+
+    const searchInput = document.getElementById('searchSchool');
+    const tableBody = document.getElementById('schoolTableBody');
+
+    searchInput.addEventListener('keyup', function () {
+        const searchTerm = this.value.toLowerCase();
+        const rows = tableBody.querySelectorAll('.school-row');
+
+        rows.forEach(row => {
+            const schoolName = row.children[2].textContent.toLowerCase(); // 3rd <td> is school name
+            if (schoolName.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
         

@@ -1,189 +1,273 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Print ID Cards</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dynamic ID Card Styling</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    :root {
+      --id-bg: white;
+      --id-font-size: 7pt;
+      --id-font-family: Arial;
+      --heading-bg: #2a4d60;
+      --heading-color: white;
     }
 
-    body {
-      font-family: 'Arial', sans-serif;
-      background: white;
-      padding: 10mm;
-    }
-
-    @page {
-      size: A4 portrait;
-      margin: 10mm;
-    }
-
-    .page {
+    .print-container {
       display: flex;
       flex-wrap: wrap;
-      gap: 7mm;
-      justify-content: flex-start;
-    }
-
-    .preview-wrapper {
-      width: 6.3cm;
-      height: 4.5cm;
-      background: white;
-      border: 1px solid #ccc;
-      padding: 4px;
-      border-radius: 4px;
-      page-break-inside: avoid;
-    }
-
-    .header {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-    }
-
-    .logo {
-      width: 30px;
-      height: 30px;
-    }
-
-    .school-name h2 {
-      font-size: 9px;
-      margin: 0;
-    }
-
-    .school-name .address {
-      font-size: 6px;
-    }
-
-    .heading {
-      background-color: #2a4d60;
-      color: white;
-      font-size: 7px;
-      text-align: center;
-      margin: 2px 0;
-      padding: 1px;
-    }
-
-    .main-content {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-top: 2px;
-    }
-
-    .student-details {
-      font-size: 6.5px;
-    }
-
-    .student-details .set {
-      display: flex;
-      margin-bottom: 1px;
-    }
-
-    .key {
-      font-weight: bold;
-      width: 38px;
-    }
-
-    .colon {
-      margin: 0 2px;
-    }
-
-    .val {
-      flex: 1;
-    }
-
-    .principal-signature {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      font-size: 6px;
-    }
-
-    .student-img {
-      width: 38px;
-      height: 38px;
-      object-fit: cover;
-      border: 1px solid #2a4d60;
-      border-radius: 3px;
-      margin-bottom: 2px;
-    }
-
-    .principal-signature img.signature {
-      width: 36px;
-      height: auto;
-      margin-top: 1px;
-    }
-
-    .print-button-container {
-      text-align: center;
-      margin-top: 20px;
-    }
-
-    .print-button {
-      padding: 6px 12px;
-      font-size: 13px;
-      border: none;
-      background-color: #2a4d60;
-      color: white;
-      cursor: pointer;
-      border-radius: 4px;
     }
 
     @media print {
-      .print-button-container {
-        display: none !important;
+      @page {
+        size: A4;
+        margin: 10px;
       }
 
-      body {
-        background: white;
-        margin: 0;
-        padding: 10mm;
+      body * {
+        visibility: hidden;
       }
+
+      .print-container, .print-container * {
+        visibility: visible;
+      }
+
+      .style-controls {
+        display: none;
+      }
+
+      .id-card {
+        box-shadow: none !important;
+        border: 1px solid #2a4d60;
+        border-radius: 0;
+        page-break-inside: avoid;
+      }
+
+      .print-btn {
+        display: none;
+      }
+    }
+
+    .style-controls {
+      background: #fff;
+      padding: 15px;
+      border: 1px solid #ccc;
+      margin: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .style-controls label {
+      display: flex;
+      flex-direction: column;
+      font-weight: bold;
+    }
+
+    .id-card {
+      width: 8.56cm;
+      height: 5.4cm;
+      padding: 0.3cm;
+      background: var(--id-bg);
+      font-size: var(--id-font-size);
+      font-family: var(--id-font-family);
+      border-radius: 6px;
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .id-header {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .logo {
+      width: 1.3cm;
+      height: 1.3cm;
+      object-fit: contain;
+    }
+
+    .school-name {
+      font-size: 10pt;
+      font-weight: 600;
+      color: #2a4d60;
+      line-height: 1.1;
+    }
+
+    .address {
+      font-size: 7pt;
+      color: #555;
+    }
+
+    .heading {
+      background-color: var(--heading-bg);
+      color: var(--heading-color);
+      font-size: 8pt;
+      padding: 4px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .id-body {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .details {
+      line-height: 1.7;
+      flex: 1;
+    }
+
+    .detail-row {
+      display: flex;
+    }
+
+    .detail-label {
+      width: 1.9cm;
+      font-weight: 600;
+    }
+
+    .colon {
+      width: 0.2cm;
+    }
+
+    .detail-value {
+      flex: 1;
+    }
+
+    .photo-signature {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .student-photo {
+      width: 1.5cm;
+      height: 2.0cm;
+      border: 1px solid #2a4d60;
+      object-fit: cover;
+    }
+
+    .signature {
+      width: 1.6cm;
+      height: auto;
+    }
+
+    .principal-label {
+      font-weight: 600;
+    }
+
+    .print-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #2a4d60;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
     }
   </style>
 </head>
+
 <body>
 
-  <div class="page">
+  <!-- 🌈 Styling Controls -->
+  <div class="style-controls">
+    <h3>Customize ID Card</h3>
+
+    <label>Background Color:
+      <input type="color" id="bgColorInput" value="#ffffff">
+    </label>
+
+    <label>Font Size:
+      <input type="number" id="fontSizeInput" value="7"> pt
+    </label>
+
+    <label>Font Family:
+      <select id="fontFamilyInput">
+        <option value="Arial">Arial</option>
+        <option value="Georgia">Georgia</option>
+        <option value="Courier New">Courier</option>
+      </select>
+    </label>
+
+    <label>Heading Background:
+      <input type="color" id="headingBgInput" value="#2a4d60">
+    </label>
+
+    <label>Heading Text Color:
+      <input type="color" id="headingColorInput" value="#ffffff">
+    </label>
+
+    <button class="print-btn" onclick="window.print()">🖨️ Print</button>
+  </div>
+
+  <!-- 🪪 ID Cards -->
+  <div class="print-container">
     <% studentsWithQr.forEach(({ student, qrCode }) => { %>
-      <div class="preview-wrapper">
-        <div class="header">
-          <img src="<%= school.logo %>" alt="logo" class="logo">
-          <div class="school-name">
-            <h2><%= school.schoolName %></h2>
-            <div class="address"><%= school.address %></div>
-          </div>
-        </div>
-
-        <div class="heading">IDENTITY CARD | SESSION 2025-26</div>
-
-        <div class="main-content">
-          <div class="student-details">
-            <p class="set"><span class="key">Name</span><span class="colon">:</span><span class="val"><%= student.name %></span></p>
-            <p class="set"><span class="key">Class</span><span class="colon">:</span><span class="val"><%= student.class %></span></p>
-            <p class="set"><span class="key">Section</span><span class="colon">:</span><span class="val"><%= student.section %></span></p>
-            <p class="set"><span class="key">Roll No</span><span class="colon">:</span><span class="val"><%= student.rollNo %></span></p>
-            <p class="set"><span class="key">Father</span><span class="colon">:</span><span class="val"><%= student.fathername %></span></p>
-            <p class="set"><span class="key">Mobile</span><span class="colon">:</span><span class="val"><%= student.contact %></span></p>
-          </div>
-          <div class="principal-signature">
-            <img src="<%= student.photo %>" alt="Student" class="student-img">
-            <img src="<%= school.signature %>" alt="Signature" class="signature">
-            <span>PRINCIPAL</span>
-          </div>
+    <div class="id-card">
+      <div class="id-header">
+        <img src="<%= school.logo %>" alt="Logo" class="logo" />
+        <div>
+          <div class="school-name"><%= school.schoolName %></div>
+          <div class="address"><%= school.address %></div>
         </div>
       </div>
-    <% }) %>
+
+      <div class="heading">IDENTITY CARD - SESSION 2025–2026</div>
+
+      <div class="id-body">
+        <div class="details">
+          <div class="detail-row"><span class="detail-label">Name</span><span class="colon">:</span><span class="detail-value"><%= student.name %></span></div>
+          <div class="detail-row"><span class="detail-label">Class</span><span class="colon">:</span><span class="detail-value"><%= student.class %></span></div>
+          <div class="detail-row"><span class="detail-label">Section</span><span class="colon">:</span><span class="detail-value"><%= student.section %></span></div>
+          <div class="detail-row"><span class="detail-label">Roll No.</span><span class="colon">:</span><span class="detail-value"><%= student.rollNo %></span></div>
+          <div class="detail-row"><span class="detail-label">Father's Name</span><span class="colon">:</span><span class="detail-value"><%= student.fathername %></span></div>
+          <div class="detail-row"><span class="detail-label">Mobile</span><span class="colon">:</span><span class="detail-value"><%= student.contact %></span></div>
+          <div class="detail-row"><span class="detail-label">Address</span><span class="colon">:</span><span class="detail-value"><%= student.address %></span></div>
+        </div>
+
+        <div class="photo-signature">
+          <img src="<%= student.photo %>" alt="Student" class="student-photo" />
+          <img src="<%= school.signature %>" alt="Principal Signature" class="signature" />
+          <div class="principal-label">PRINCIPAL</div>
+        </div>
+      </div>
+    </div>
+    <% }); %>
   </div>
 
-  <div class="print-button-container">
-    <button class="print-button" onclick="window.print()">Print</button>
-  </div>
+  <script>
+    document.getElementById('bgColorInput').addEventListener('input', e => {
+      document.documentElement.style.setProperty('--id-bg', e.target.value);
+    });
+
+    document.getElementById('fontSizeInput').addEventListener('input', e => {
+      document.documentElement.style.setProperty('--id-font-size', e.target.value + 'pt');
+    });
+
+    document.getElementById('fontFamilyInput').addEventListener('change', e => {
+      document.documentElement.style.setProperty('--id-font-family', e.target.value);
+    });
+
+    document.getElementById('headingBgInput').addEventListener('input', e => {
+      document.documentElement.style.setProperty('--heading-bg', e.target.value);
+    });
+
+    document.getElementById('headingColorInput').addEventListener('input', e => {
+      document.documentElement.style.setProperty('--heading-color', e.target.value);
+    });
+  </script>
 
 </body>
 </html>

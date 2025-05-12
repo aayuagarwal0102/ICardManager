@@ -138,7 +138,7 @@ rows.forEach(row => {
   const section = row.children[4].textContent.toLowerCase();
 
   const matchesSearch = firstName.includes(searchText) || lastName.includes(searchText) || classAssigned.includes(searchText);
-  const matchesSection = sectionValue === '' || section === sectionValue;
+  const matchesSection = sectionValue === '' || section.includes(sectionValue);
 
   row.style.display = (matchesSearch && matchesSection) ? '' : 'none';
 });
@@ -167,23 +167,33 @@ function showUpdateForm() {
 
 // <--------------------student table------------------------>
 
-const searchInpu = document.getElementById("searchInput");
-const rows = document.querySelectorAll("#stu-table tbody tr");
+const searchInput1 = document.getElementById('searchInput1');
+  const sectionFilter1 = document.getElementById('sectionFilter1');
+  const tableRows = document.querySelectorAll('#teacherTableBody tr');
 
-searchInpu.addEventListener("keyup", function () {
-  const searchValue = this.value.toLowerCase();
+  function filterTable() {
+    const searchTerm = searchInput1.value.toLowerCase();
+    const selectedSection = sectionFilter1.value;
 
-  rows.forEach(row => {
-    const name = row.cells[1].textContent.toLowerCase();
-    const rollNo = row.cells[3].textContent.toLowerCase();
+    tableRows.forEach(row => {
+      const name = row.children[1].textContent.toLowerCase();  // Full Name
+      const rollNo = row.children[3].textContent.toLowerCase(); // Roll No
+      const section = row.children[5].textContent.trim();       // Section
 
-    if (name.includes(searchValue) || rollNo.includes(searchValue)) {
-      row.style.display = "";
-    } else {
-      row.style.display = "none";
-    }
-  });
-});
+      const matchesSearch = name.includes(searchTerm) || rollNo.includes(searchTerm);
+      const matchesSection = selectedSection === "" || section === selectedSection;
+
+      if (matchesSearch && matchesSection) {
+        row.style.display = "";
+      } else {
+        row.style.display = "none";
+      }
+    });
+  }
+
+  searchInput1.addEventListener('input', filterTable);
+  sectionFilter1.addEventListener('change', filterTable);
+
 
 
 function showStudents(){
@@ -206,7 +216,6 @@ function closeImagePopup() {
  
 
 }
-
 document.addEventListener("DOMContentLoaded", function () {
   const imageBtns = document.querySelectorAll(".view-image-btn");
   const imagePopup = document.getElementById("imagePopup");
@@ -419,6 +428,17 @@ cancelCrop.addEventListener('click', function () {
         cropper.destroy();
     }
 });
+
+// for confirm delete
+function confirmDelete(teacherId, schoolId) {
+    const confirmed = confirm("Are you sure you want to delete this teacher?");
+    if (confirmed) {
+      const form = document.getElementById("deleteForm");
+      form.action = `/schools/delete-class-teacher/${teacherId}?schoolId=${schoolId}`;
+      form.submit();
+    }
+  }
+
 
 
 

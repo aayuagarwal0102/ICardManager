@@ -126,7 +126,7 @@ exports.select_students=  async (req, res) => {
 
     if(!students || students.length==0){
         req.flash("error_msg","there no such students find, ask school");
-        return res.redirect("/admin/dashboard");
+        return res.redirect("/admin/schools");
     }
   
     res.render('admin/students',{ students, schoolId, classId });
@@ -139,7 +139,7 @@ exports.select_students=  async (req, res) => {
 
      if(!classes || classes.length==0){
         req.flash("error_msg","there no such classes find, ask school");
-        return res.redirect("/admin/dashboard");
+        return res.redirect("/admin/schools");
     }
   
     res.render('admin/classes', { layout: "layouts/boilerplate", classes, schoolId });
