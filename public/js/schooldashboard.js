@@ -115,6 +115,7 @@ document.getElementById("nextMonth").addEventListener("click", () => {
 function showAddTeacherForm() {
   document.getElementById('dashboard').style.display = 'none'; // Hide dashboard
   document.getElementById('teacher-table').style.display = 'none'; // Hide dashboard
+  document.getElementById('student-table').style.display = 'none';
 
   document.getElementById('add-teacher-form').style.display = 'block'; // Show form
 }

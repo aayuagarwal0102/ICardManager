@@ -39,7 +39,7 @@ module.exports.saveStudent= async (req, res) => {
 
       if (existingStudent) {
          req.flash("error_msg","Roll number already exists in this school.");
-         res.redirect(`/class-teacher/${teacherId}`);
+        return  res.redirect(`/class-teacher/${teacherId}`);
       }
 
     try {

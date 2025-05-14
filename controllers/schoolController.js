@@ -27,13 +27,13 @@ exports.registerSchool = async (req, res) => {
 
         if (password !== confirmPassword) {
           req.flash("error_msg","Passwords do not match!");
-            res.render('school/register.ejs',  { showOtpStep: false, showFinalStep: true , error_msg: req.flash("error_msg")});
+          return  res.render('school/register.ejs',  { showOtpStep: false, showFinalStep: true , error_msg: req.flash("error_msg")});
         }
 
         const existingSchool = await School.findOne({ email });
         if (existingSchool) {
             req.flash("error_msg","school already registerd");
-            res.render('school/register.ejs',  { showOtpStep: false, showFinalStep: false , error_msg: req.flash("error_msg")});    
+           return  res.render('school/register.ejs',  { showOtpStep: false, showFinalStep: false , error_msg: req.flash("error_msg")});    
               }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -191,7 +191,7 @@ exports.dashboard = async (req, res) => {
     
         if (password !== confirmPassword) {
              req.flash("error_msg","Passwords do not match!");
-            res.redirect(`/schools/${schoolId}`);
+           return res.redirect(`/schools/${schoolId}`);
         }
     
         try {
@@ -234,7 +234,7 @@ exports.forgot_pass=async (req, res) => {
   
     if (!school) {
            req.flash("error_msg", "school not found!");
-            res.redirect(`/registerS`);
+          return  res.redirect(`/registerS`);
     }
   
     const otp = generateOtp();
@@ -277,7 +277,7 @@ if (!email || !otp || Date.now() > expires) {
 if (enteredOtp !== otp) {
   req.flash("error_msg","OTP does not match");
 
-    res.render("school/verify-otp", {email, error_msg: req.flash("error_msg")});
+  return  res.render("school/verify-otp", {email, error_msg: req.flash("error_msg")});
 }
     
   
@@ -291,7 +291,7 @@ if (enteredOtp !== otp) {
 
     if (!school || school==null){
            req.flash("error_msg", "school not found!");
-            res.redirect(`/registerS`);
+          return  res.redirect(`/registerS`);
     } 
   
   

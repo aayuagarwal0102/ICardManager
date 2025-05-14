@@ -7,6 +7,84 @@
    <link rel="stylesheet" href="/css/flash.css">
 </head>
 <body>
+  <style>
+    /* Reset some defaults */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: #f7f9fc;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h2 {
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+/* OTP Form */
+form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 400px;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+input[type="text"] {
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  transition: 0.3s;
+}
+
+input[type="text"]:focus {
+  border-color: #4a90e2;
+  outline: none;
+}
+
+button[type="submit"] {
+  padding: 0.75rem;
+  background-color: #4a90e2;
+  color: #fff;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button[type="submit"]:hover {
+  background-color: #357abd;
+}
+
+/* Animation */
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+}
+
+  </style>
+
+
   <% if (success_msg && success_msg.length) { %>
   <div class="flash-message success">
     <span><%= success_msg %></span>
@@ -27,6 +105,8 @@
   <input type="text" name="otp" placeholder="Enter OTP" required>
   <button type="submit">Verify OTP</button>
 </form>
+
+<script src="/js/flash.js"></script>
 </body>
 </html>
 

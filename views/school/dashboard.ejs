@@ -424,7 +424,7 @@
         <!-- 📊 Table -->
 
         <% let serial = 1; %>
-        <div style="overflow-x: auto;">
+        <div >
           <% if (students && students.length> 0) { %>
             <table class="teacher-table" id="stu-table">
               <thead>
@@ -478,11 +478,11 @@
                   </tr>
                  
                   <% }) %>
-                </tbody>
             
               <% } else { %>
                 <p class="no-student-found">No student found :(</p>
                 <% } %>
+                 </tbody>
             </table>
         </div>
 

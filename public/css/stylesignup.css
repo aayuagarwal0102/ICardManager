@@ -1,10 +1,27 @@
-body {
+*{
+    font-family: poppins;
     margin: 0;
     padding: 0;
+
+}
+
+
+.container{
     display: flex;
+}
+
+.container-main{
+    display: flex;
+}
+
+.halfleft{
+      background-color: #55297f;
     height: 100vh;
-    font-family: poppins;
-    background-color: #55297f;
+    width: 50vw;
+    box-shadow: 10px 0 50px rgba(0, 0, 0, 0.2);
+    z-index: 99;
+    display: flex;
+    align-items: center;
 }
 
 .images{
@@ -12,12 +29,15 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 100%;
 }
 
-.images img{
-    width: 600px;
-    border-radius: 10px;
+
+.images object{
+    width: 80%;
 }
+
+
 
 .halfright {
     width: 50%;
@@ -36,21 +56,23 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+}
+
+
+
+.login-container {
+
     padding: 40px;
-    max-width: 400px;
+    width: 400px;
     text-align: center;
 }
+
 
 .login-container h1 {
     font-size: 28px;
     font-weight: 400;
     margin-bottom: 10px;
     color: #55297f;
-}
-
-#step3 h1{
-    margin-top: 0;
-    font-size: 22px;
 }
 
 .login-container p {
@@ -67,12 +89,11 @@ body {
     position: relative;
     margin-bottom: 20px;
     width: 100%;
-     display: block;
-    align-items: center; 
+    display: flex;
+    align-items: center;
 }
 
 .login-container .input-field input {
-    box-sizing: border-box;
     width: 100%;
     padding: 10px;
     border: 1px solid #5b5b5b;
@@ -99,15 +120,20 @@ body {
 .dropdown:active {
     outline: none;
  
+    /* box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);       */
 }
 
 .input-field input,
 .input-field select {
     font-family: poppins;
     width: 100%;
+    /* Ensure consistent width across all elements */
     padding: 10px;
+    /* Optional: for consistent padding */
     font-size: 16px;
+    /* Match font size for uniformity */
     box-sizing: border-box;
+    /* Includes padding and border in width */
 }
 
 .input-field select {
@@ -121,7 +147,7 @@ body {
     border-radius: 8px;
     background-color: #fff;
     color: #5b5b5b;
-  
+    /* appearance: none; Remove default dropdown arrow */
 }
 
 /* remove default arrows in mobile number field */
@@ -133,6 +159,7 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .input-field select:focus,
 .input-field select:valid {
+    /* border-color: #007bff; */
     outline: none;
 }
 
@@ -203,11 +230,6 @@ input[type="number"]::-webkit-outer-spin-button {
     cursor: pointer;
 }
 
-/* <-----------------           ------------------> */
-/* <----------------- TIMER    ------------------> */
-/* <-----------------           ------------------> */
-
-
 .time {
     display: flex;
     justify-content: space-between;
@@ -243,11 +265,8 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 
-/* <-------------------                          ---------------> */
-/*<--------------------  CSS for otp verification -------------->  */
-/* <-------------------                          ---------------> */
 
-
+/* CSS for otp verification  */
 .container {
     background: white;
     padding: 20px;
@@ -281,6 +300,8 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 
+
+
 .btn-google {
     display: flex;
     align-items: center;
@@ -312,8 +333,12 @@ input[type="number"]::-webkit-outer-spin-button {
     font-size: 16px;
     border: none;
     cursor: pointer;
+    /* border-radius: 5px;   */
     transition: background 0.3s ease;
+    /* margin-top: 8px; */
     height: 100%;
+
+
 }
 
 .location {
@@ -347,14 +372,12 @@ border-radius: none;
     cursor: pointer;
     border-radius: 5px;  
     transition: background 0.3s ease;
+    /* margin-top: 8px; */
     height: 100%;
     width: 100%;    
 }
 
-/* <-------------------                     ------------------> */
-/* <-------------------css for error message------------------> */
-/* <-------------------                     ------------------> */
-
+/* css for error message */
 #errorMessage {
     background-color: #ffdb9b;
     border-radius: 4px;
@@ -441,165 +464,55 @@ border-radius: none;
     background-color: #ffc766;
     transition: .5s;
   }
+  
+   /* responsiveness */
+  @media (max-width: 768px) {
+    body {
+        flex-direction: column;
+        height: auto;
+    }
 
- /* css for croper model */
-  
-  .modal {
-    display: none; 
-    position: fixed; 
-    z-index: 9999; 
-    left: 0;
-    top: 0;
-    width: 100%; 
-    height: 100%; 
-    overflow: auto; 
-    background-color: rgba(0,0,0,0.6); /* dark background */
-  }
-  
-  .modal-content {
-    background-color: #fff;
-    margin: 5% auto;
-    padding: 20px 30px;
-    border-radius: 8px;
-    width: 50%;
-    max-width: 600px;
-    text-align: center;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    animation: fadeIn 0.5s;
-  }
-  
-  @keyframes fadeIn {
-    from {opacity: 0;}
-    to {opacity: 1;}
-  }
-  
-  .image-container {
-    max-height: 400px;
-    overflow: hidden;
-    margin: 15px 0;
-  }
-  
-  #imageToCrop {
-    max-width: 100%;
-    height: auto;
-    border-radius: 6px;
-  }
-  
-  /* Buttons */
-  .button-group {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 20px;
-  }
-  
-  .btn-primary, .btn-secondary {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 16px;
-  }
-  
-  .btn-primary {
-    background-color: #4CAF50;
-    color: white;
-  }
-  
-  .btn-secondary {
-    background-color: #f44336;
-    color: white;
-  }
-  
-  .btn-primary:hover {
-    background-color: #45a049;
-  }
-  
-  .btn-secondary:hover {
-    background-color: #e53935;
-  }
-  
+    .container-main {
+        flex-direction: column;
+        height: auto;
+        box-shadow: none;
+    }
 
-  
- 
-  
+    .images {
+        width: 100vw;
+        height: auto;
+        padding: 20px;
+    }
 
-/* croper model */
+    .images object {
+        width: 80%;
+        max-width: 300px;
+    }
 
-  /* Modal Styles */
-  .modal {
-    display: none; 
-    position: fixed; 
-    z-index: 9999; 
-    left: 0;
-    top: 0;
-    width: 100%; 
-    height: 100%; 
-    overflow: auto; 
-    background-color: rgba(0,0,0,0.6); /* dark background */
-  }
-  
-  .modal-content {
-    background-color: #fff;
-    margin: 5% auto;
-    padding: 20px 30px;
-    border-radius: 8px;
-    width: 50%;
-    max-width: 600px;
-    text-align: center;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    animation: fadeIn 0.5s;
-  }
-  
-  @keyframes fadeIn {
-    from {opacity: 0;}
-    to {opacity: 1;}
-  }
-  
-  .image-container {
-    max-height: 400px;
-    overflow: hidden;
-    margin: 15px 0;
-  }
-  
-  #imageToCrop {
-    max-width: 100%;
-    height: auto;
-    border-radius: 6px;
-  }
-  
-  /* Buttons */
-  .button-group {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 20px;
-  }
-  
-  .btn-primary, .btn-secondary {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 16px;
-  }
-  
-  .btn-primary {
-    background-color: #4CAF50;
-    color: white;
-  }
-  
-  .btn-secondary {
-    background-color: #f44336;
-    color: white;
-  }
-  
-  .btn-primary:hover {
-    background-color: #45a049;
-  }
-  
-  .btn-secondary:hover {
-    background-color: #e53935;
+    .halfleft{
+        width: 100vw;
+        height: auto;
+    }
+
+    .halfright {
+        width: 100vw;
+        height: auto;
+        position: static;
+        padding: 20px 10px;
+    }
+
+    .login-container {
+        width: 80%;
+        padding: 20px;
+    }
+
+
+    .downtext {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .flash-message {
+        font-size: 12px;
+    }
   }

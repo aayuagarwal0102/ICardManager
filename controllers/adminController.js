@@ -47,6 +47,7 @@ exports.dashboard = async (req, res) => {
          const pendingStudents = await Student.find({ idCardStatus: "Pending" }).populate("schoolId", "schoolName");
 
          
+         
        
         res.render("admin/dashboard", { layout: "layouts/boilerplate", totalSchools, totalStudents, pendingRequests ,pendingStudents});
     } catch (error) {
