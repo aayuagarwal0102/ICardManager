@@ -24,3 +24,6 @@ const studentSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model('Student', studentSchema);
+
+
+// house , mother name(required) , nic code , pen no. ,   

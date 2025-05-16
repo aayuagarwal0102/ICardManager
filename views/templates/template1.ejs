@@ -144,7 +144,7 @@
     }
 
     .student-photo {
-      width: 1.5cm;
+      width: 1.75cm;
       height: 2.0cm;
       border: 1px solid #2a4d60;
       object-fit: cover;
@@ -172,6 +172,25 @@
       border-radius: 6px;
       cursor: pointer;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .controls {
+      margin-bottom: 10px;
+    }
+
+    .detail-label[contenteditable="true"] {
+      border-bottom: 1px dashed #ccc;
+      cursor: text;
+    }
+
+    .delete-btn {
+      margin-left: 5px;
+      background-color: #f44336;
+      color: white;
+      border: none;
+      padding: 2px 5px;
+      border-radius: 3px;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -225,6 +244,85 @@
     <button class="print-button" onclick="window.print()">Print</button>
   </div>
 
+  <script>
+    function addField() {
+      const idCards = document.querySelectorAll('.id-card');
+      idCards.forEach(card => {
+        const detailsDiv = card.querySelector('.details');
+        const newField = document.createElement('div');
+        newField.className = 'detail-row';
+        newField.innerHTML = `
+          <span class="detail-label" contenteditable="true">New Field</span><span class="colon">:</span><span class="detail-value"><input type="text" placeholder="Enter value" /></span>
+        `;
+        detailsDiv.appendChild(newField);
+      });
+    }
+
+    function toggleDeleteButtons() {
+      const idCards = document.querySelectorAll('.id-card');
+      idCards.forEach(card => {
+        const deleteButtons = card.querySelectorAll('.delete-btn');
+        if (deleteButtons.length === 0) {
+          const detailRows = card.querySelectorAll('.detail-row');
+          detailRows.forEach(row => {
+            const deleteButton = document.createElement('button');
+            deleteButton.className = 'delete-btn';
+            deleteButton.textContent = 'Delete';
+            deleteButton.onclick = () => row.remove();
+            row.appendChild(deleteButton);
+          });
+        } else {
+          deleteButtons.forEach(button => button.remove());
+        }
+      });
+    }
+
+    function togglePhotoShape() {
+  const idCards = document.querySelectorAll('.id-card');
+  idCards.forEach(card => {
+    const photo = card.querySelector('.student-photo');
+    if (photo) {
+      if (photo.style.borderRadius === '50%') {
+        photo.style.borderRadius = '0';
+      } else {
+        photo.style.height="1.75cm";
+        photo.style.borderRadius = '50%';
+        
+      }
+    }
+  });
+}
+
+
+    function saveChanges() {
+      const idCards = document.querySelectorAll('.id-card');
+      idCards.forEach(card => {
+        const detailRows = card.querySelectorAll('.detail-row');
+        detailRows.forEach(row => {
+          const input = row.querySelector('input');
+          if (input) {
+            const value = input.value;
+            const valueSpan = document.createElement('span');
+            valueSpan.className = 'detail-value';
+            valueSpan.textContent = value;
+            input.parentElement.replaceChild(valueSpan, input);
+          }
+        });
+      });
+      alert('Changes saved!');
+    }
+  </script>
+
+  <div class="controls">
+    <button onclick="addField()">Add Field</button>
+    <button onclick="toggleDeleteButtons()">Delete Field</button>
+    <button onclick="togglePhotoShape()">Toggle Photo Shape</button>
+    <button onclick="saveChanges()">Save</button>
+  </div>
+
 </body>
 
 </html>
+
+
+
