@@ -4,21 +4,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>ID Card Editor</title>
   <style>
-    /* .id-card:nth-child(6n) {
-      page-break-after: always;
-    } */
-
     .print-container {
       display: flex;
       flex-wrap: wrap;
-      /* justify-content: center; */
     }
 
-
-
-    /* For clean print layout */
     @media print {
       @page {
         size: A4;
@@ -41,7 +33,6 @@
         flex-wrap: wrap;
         gap: 6mm;
         justify-content: center;
-        /
       }
 
       .id-card {
@@ -55,11 +46,6 @@
       .print-btn {
         display: none;
       }
-    }
-
-
-    .card-designs {
-      padding: 50px;
     }
 
     .id-card {
@@ -90,7 +76,6 @@
       font-size: 10pt;
       font-weight: 600;
       color: #2a4d60;
-      line-height: 1.1;
     }
 
     .address {
@@ -99,7 +84,7 @@
     }
 
     .heading {
-      background-color: #2a4d60 !important;
+      background-color: #2a4d60;
       color: white;
       font-size: 8pt;
       padding: 4px;
@@ -120,12 +105,17 @@
     }
 
     .detail-row {
-      display: flex;
+      margin-bottom: 2px;
+      align-items: center;
+      min-height: 1.2em;
     }
 
     .detail-label {
-      width: 1.9cm;
+      width: 2.2cm;
       font-weight: 600;
+      font-size: 1.1em;
+      letter-spacing: 0.5px;
+      color: #d32f2f;
     }
 
     .colon {
@@ -134,6 +124,10 @@
 
     .detail-value {
       flex: 1;
+      font-size: 1.4em;
+      letter-spacing: 0.2px;
+      padding-left: 0.2cm;
+      font-weight: bold;
     }
 
     .photo-signature {
@@ -145,8 +139,9 @@
 
     .student-photo {
       width: 1.75cm;
-      height: 2.0cm;
+      height: 1.75cm;
       border: 1px solid #2a4d60;
+      border-radius: 50%;
       object-fit: cover;
     }
 
@@ -160,169 +155,184 @@
       font-weight: 600;
     }
 
-    .print-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: #2a4d60;
-      color: white;
-      border: none;
-      padding: 10px 18px;
-      font-size: 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    .print-button-container {
+      text-align: center;
+      margin: 20px 0;
     }
 
     .controls {
-      margin-bottom: 10px;
-    }
-
-    .detail-label[contenteditable="true"] {
-      border-bottom: 1px dashed #ccc;
-      cursor: text;
-    }
-
-    .delete-btn {
-      margin-left: 5px;
-      background-color: #f44336;
-      color: white;
-      border: none;
-      padding: 2px 5px;
-      border-radius: 3px;
-      cursor: pointer;
+      margin: 10px;
     }
   </style>
 </head>
 
-<body onload="window.print()">
-  <div class="print-container">
-    <% studentsWithQr.forEach(({ student, qrCode }) => { %>
-    <div class="id-card">
-      <div class="id-header">
-        <img src="<%= school.logo %>" alt="Logo" class="logo" />
-        <div>
-          <div class="school-name"><%= school.schoolName %></div>
-          <div class="address"><%= school.address %></div>
-        </div>
-      </div>
-
-      <div class="heading">IDENTITY CARD - SESSION 2025–2026</div>
-
-      <div class="id-body">
-        <div class="details">
-          <div class="detail-row"><span class="detail-label">Name</span><span class="colon">:</span><span
-              class="detail-value"><%= student.name %></span></div>
-          <div class="detail-row"><span class="detail-label">Class</span><span class="colon">:</span><span
-              class="detail-value"><%= student.class %></span></div>
-          <div class="detail-row"><span class="detail-label">Section</span><span class="colon">:</span><span
-              class="detail-value"><%= student.section %></span></div>
-          <div class="detail-row"><span class="detail-label">Roll No.</span><span class="colon">:</span><span
-              class="detail-value"><%= student.rollNo %></span></div>
-          <div class="detail-row"><span class="detail-label">Father's Name</span><span class="colon">:</span><span
-              class="detail-value"><%= student.fathername %></span></div>
-          <div class="detail-row"><span class="detail-label">Mobile</span><span class="colon">:</span><span
-              class="detail-value"><%= student.contact %></span></div>
-          <div class="detail-row"><span class="detail-label">Address</span><span class="colon">:</span><span
-              class="detail-value"><%= student.address %></span></div>
-        </div>
-
-        <div class="photo-signature">
-          <img src="<%= student.photo %>" alt="Student" class="student-photo" />
-          <img src="<%= school.signature %>" alt="Principal Signature" class="signature" />
-          <div class="principal-label">PRINCIPAL</div>
-        </div>
+<body>
+  <div class="controls">
+    <label>Add Field(s):</label>
+    <div id="multi-select-fields" style="display:inline-block; position:relative;">
+      <button type="button" onclick="toggleFieldDropdown()" style="padding:4px 10px;">Select Fields ▼</button>
+      <div id="field-dropdown" style="display:none; position:absolute; background:#fff; border:1px solid #ccc; z-index:10; padding:8px; min-width:160px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+        <label><input type="checkbox" value="Name"> Name</label><br>
+        <label><input type="checkbox" value="Class"> Class</label><br>
+        <label><input type="checkbox" value="Section"> Section</label><br>
+        <label><input type="checkbox" value="Roll No."> Roll No.</label><br>
+        <label><input type="checkbox" value="Father's Name"> Father's Name</label><br>
+        <label><input type="checkbox" value="Mother's Name"> Mother's Name</label><br>
+        <label><input type="checkbox" value="Mobile"> Mobile</label><br>
+        <label><input type="checkbox" value="Address"> Address</label><br>
+        <label><input type="checkbox" value="DOB"> DOB</label><br>
+        <label><input type="checkbox" value="House"> House</label><br>
+        <button type="button" onclick="closeFieldDropdown()" style="margin-top:6px;">Close</button>
       </div>
     </div>
+    <button onclick="addSelectedFields()">Add</button>
+    <button onclick="togglePhotoShape()">Toggle Photo Shape</button>
+    <button id="toggleDeleteBtn" onclick="toggleDeleteMode()">Delete Field</button>
+    <button id="editFieldsBtn" onclick="enableEditMode()">Edit</button>
+    <button id="saveFieldsBtn" onclick="saveFieldEdits()" style="display:none;">Save</button>
+  </div>
 
-
-
-
+  <div class="print-container">
+    <% studentsWithQr.forEach(({ student, qrCode }, cardIdx) => { %>
+      <div class="id-card">
+        <div class="id-header">
+          <img src="<%= school && school.logo ? school.logo : '' %>" alt="Logo" class="logo" />
+          <div>
+            <div class="school-name"><%= school && school.schoolName ? school.schoolName : '' %></div>
+            <div class="address"><%= school && school.address ? school.address : '' %></div>
+          </div>
+        </div>
+        <div class="heading">IDENTITY CARD - SESSION 2025–2026</div>
+        <div class="id-body">
+          <div class="details"></div>
+          <div class="photo-signature">
+            <img src="<%= student.photo %>" alt="Student" class="student-photo" />
+            <img src="<%= school && school.signature ? school.signature : '' %>" alt="Principal Signature" class="signature" />
+            <div class="principal-label">PRINCIPAL</div>
+          </div>
+        </div>
+      </div>
     <% }); %>
   </div>
+
   <div class="print-button-container">
     <button class="print-button" onclick="window.print()">Print</button>
   </div>
 
   <script>
-    function addField() {
-      const idCards = document.querySelectorAll('.id-card');
-      idCards.forEach(card => {
+    let globalFields = [];
+    let cardFieldValues = {};
+    const fieldKeyMap = {
+      "Name": "name",
+      "Class": "class",
+      "Section": "section",
+      "Roll No.": "rollNo",
+      "Father's Name": "fathername",
+      "Mother's Name": "mothername",
+      "Mobile": "contact",
+      "Address": "address",
+      "DOB": "dob",
+      "House": "house"
+    };
+    let deleteMode = false;
+    let editMode = false;
+
+    function toggleFieldDropdown() {
+      const dropdown = document.getElementById('field-dropdown');
+      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function closeFieldDropdown() {
+      document.getElementById('field-dropdown').style.display = 'none';
+    }
+
+    function addSelectedFields() {
+      const checkboxes = document.querySelectorAll('#field-dropdown input[type=checkbox]:checked');
+      checkboxes.forEach(cb => {
+        const selectedField = cb.value;
+        const key = fieldKeyMap[selectedField] || selectedField.toLowerCase().replace(/[^a-z0-9]/g, '_');
+        // Prevent duplicate fields
+        if (!globalFields.some(f => f.key === key)) {
+          globalFields.push({ label: selectedField, key });
+        }
+      });
+      // Uncheck all after adding
+      document.querySelectorAll('#field-dropdown input[type=checkbox]').forEach(cb => cb.checked = false);
+      closeFieldDropdown();
+      renderFieldsOnAllCards();
+    }
+
+    function toggleDeleteMode() {
+      deleteMode = !deleteMode;
+      renderFieldsOnAllCards();
+    }
+
+    function enableEditMode() {
+      editMode = true;
+      document.getElementById('editFieldsBtn').style.display = 'none';
+      document.getElementById('saveFieldsBtn').style.display = '';
+      renderFieldsOnAllCards();
+    }
+
+    function saveFieldEdits() {
+      editMode = false;
+      document.getElementById('editFieldsBtn').style.display = '';
+      document.getElementById('saveFieldsBtn').style.display = 'none';
+      renderFieldsOnAllCards();
+    }
+
+    function renderFieldsOnAllCards() {
+      const cards = document.querySelectorAll('.id-card');
+      cards.forEach((card, cardIdx) => {
         const detailsDiv = card.querySelector('.details');
-        const newField = document.createElement('div');
-        newField.className = 'detail-row';
-        newField.innerHTML = `
-          <span class="detail-label" contenteditable="true">New Field</span><span class="colon">:</span><span class="detail-value"><input type="text" placeholder="Enter value" /></span>
-        `;
-        detailsDiv.appendChild(newField);
+        detailsDiv.innerHTML = '';
+        if (!cardFieldValues[cardIdx]) cardFieldValues[cardIdx] = {};
+        globalFields.forEach((field, idx) => {
+          let value = cardFieldValues[cardIdx][field.key];
+          if (typeof value === 'undefined') {
+            const studentData = window.studentsWithQr && window.studentsWithQr[cardIdx] ? window.studentsWithQr[cardIdx].student : {};
+            value = studentData[field.key] || '';
+            if (field.key === 'dob' && value) {
+              try { value = new Date(value).toLocaleDateString(); } catch {}
+            }
+          }
+          const row = document.createElement('div');
+          row.className = 'detail-row';
+          row.innerHTML = `
+            <span class="detail-label" contenteditable="${editMode ? 'true' : 'false'}" ${editMode ? `onblur="updateFieldLabel(${idx}, this.innerText)"` : ''}>${field.label}</span>
+            <span class="colon">:</span>
+            <span class="detail-value" contenteditable="${editMode ? 'true' : 'false'}" ${editMode ? `onblur="updateFieldValue(${cardIdx}, '${field.key}', this.innerText)"` : ''}>${value}</span>
+            ${deleteMode ? `<button type="button" class="remove-field-btn" style="margin-left:8px; color:#fff; background:#d9534f; border:none; border-radius:3px; padding:2px 8px; cursor:pointer; font-size:12px;" onclick="removeField(${idx})">Delete</button>` : ''}
+          `;
+          detailsDiv.appendChild(row);
+        });
       });
     }
 
-    function toggleDeleteButtons() {
-      const idCards = document.querySelectorAll('.id-card');
-      idCards.forEach(card => {
-        const deleteButtons = card.querySelectorAll('.delete-btn');
-        if (deleteButtons.length === 0) {
-          const detailRows = card.querySelectorAll('.detail-row');
-          detailRows.forEach(row => {
-            const deleteButton = document.createElement('button');
-            deleteButton.className = 'delete-btn';
-            deleteButton.textContent = 'Delete';
-            deleteButton.onclick = () => row.remove();
-            row.appendChild(deleteButton);
-          });
-        } else {
-          deleteButtons.forEach(button => button.remove());
-        }
-      });
+    function removeField(idx) {
+      globalFields.splice(idx, 1);
+      renderFieldsOnAllCards();
+    }
+
+    function updateFieldLabel(idx, newLabel) {
+      globalFields[idx].label = newLabel;
+      renderFieldsOnAllCards();
+    }
+
+    function updateFieldValue(cardIdx, key, newValue) {
+      if (!cardFieldValues[cardIdx]) cardFieldValues[cardIdx] = {};
+      cardFieldValues[cardIdx][key] = newValue;
     }
 
     function togglePhotoShape() {
-  const idCards = document.querySelectorAll('.id-card');
-  idCards.forEach(card => {
-    const photo = card.querySelector('.student-photo');
-    if (photo) {
-      if (photo.style.borderRadius === '50%') {
-        photo.style.borderRadius = '0';
-      } else {
-        photo.style.height="1.75cm";
-        photo.style.borderRadius = '50%';
-        
-      }
-    }
-  });
-}
-
-
-    function saveChanges() {
-      const idCards = document.querySelectorAll('.id-card');
-      idCards.forEach(card => {
-        const detailRows = card.querySelectorAll('.detail-row');
-        detailRows.forEach(row => {
-          const input = row.querySelector('input');
-          if (input) {
-            const value = input.value;
-            const valueSpan = document.createElement('span');
-            valueSpan.className = 'detail-value';
-            valueSpan.textContent = value;
-            input.parentElement.replaceChild(valueSpan, input);
-          }
-        });
+      const photos = document.querySelectorAll('.student-photo');
+      photos.forEach(photo => {
+        photo.style.borderRadius = photo.style.borderRadius === '50%' ? '0%' : '50%';
       });
-      alert('Changes saved!');
     }
+
+    window.studentsWithQr = JSON.parse('<%- JSON.stringify(studentsWithQr || []) %>');
   </script>
-
-  <div class="controls">
-    <button onclick="addField()">Add Field</button>
-    <button onclick="toggleDeleteButtons()">Delete Field</button>
-    <button onclick="togglePhotoShape()">Toggle Photo Shape</button>
-    <button onclick="saveChanges()">Save</button>
-  </div>
-
 </body>
 
 </html>
-
-
-
