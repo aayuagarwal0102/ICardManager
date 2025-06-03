@@ -1,8 +1,7 @@
-
-
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const path = require('path');
 
 
 cloudinary.config({
@@ -38,7 +37,31 @@ const upload = multer({
     },
 });
 
+// Local storage for Excel files
+const excelStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, path.join(__dirname, '../uploads/'));
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + '-' + file.originalname);
+    }
+});
+
+const uploadExcel = multer({
+    storage: excelStorage,
+    fileFilter: (req, file, cb) => {
+        const filetypes = /xlsx|xls/;
+        const extname = filetypes.test(file.originalname.toLowerCase().split('.').pop());
+        const mimetype = file.mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+            file.mimetype === 'application/vnd.ms-excel';
+        if (extname && mimetype) {
+            return cb(null, true);
+        }
+        cb(new Error('Only Excel files are allowed (.xlsx, .xls)!'));
+    }
+});
+
 module.exports={
-    cloudinary,upload
+    cloudinary,upload,uploadExcel
   };
 
