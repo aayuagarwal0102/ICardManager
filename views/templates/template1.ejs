@@ -219,6 +219,15 @@
     <button class="print-button" onclick="window.print()">Print</button>
   </div>
 
+  <div class="excelUploadSection" style="margin: 2em 0;">
+    <h3>Bulk Upload Students via Excel</h3>
+    <form action="/class-teacher/<%= teacher._id %>/upload-students-excel" method="POST" enctype="multipart/form-data">
+      <input type="file" name="excelFile" accept=".xlsx,.xls" required>
+      <button type="submit" class="submit-btn">Upload Excel</button>
+    </form>
+    <p style="font-size: 0.9em; color: #555;">Excel columns should include: rollNo, name, contact, address, dob, fathername, mothername, house, nicCode, penNo, section</p>
+  </div>
+
   <script>
     let globalFields = [];
     let cardFieldValues = {};

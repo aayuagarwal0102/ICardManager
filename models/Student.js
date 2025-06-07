@@ -7,7 +7,7 @@ const studentSchema = new mongoose.Schema({
     classTeacherId: { type: mongoose.Schema.Types.ObjectId, ref: 'classteacher' },
     schoolName: { type: String },
     class: { type: String, trim: true },
-    contact: { type: String, match: [/^[0-9]{10}$/, 'Contact number must be 10 digits'] },
+    contact: { type: String, },
     address: { type: String, trim: true },
     dob: { type: Date },
     section: { type: String, trim: true },
