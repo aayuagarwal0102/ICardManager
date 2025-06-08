@@ -260,12 +260,10 @@
       checkboxes.forEach(cb => {
         const selectedField = cb.value;
         const key = fieldKeyMap[selectedField] || selectedField.toLowerCase().replace(/[^a-z0-9]/g, '_');
-        // Prevent duplicate fields
         if (!globalFields.some(f => f.key === key)) {
           globalFields.push({ label: selectedField, key });
         }
       });
-      // Uncheck all after adding
       document.querySelectorAll('#field-dropdown input[type=checkbox]').forEach(cb => cb.checked = false);
       closeFieldDropdown();
       renderFieldsOnAllCards();
@@ -341,6 +339,59 @@
     }
 
     window.studentsWithQr = JSON.parse('<%- JSON.stringify(studentsWithQr || []) %>');
+
+    const excelToSchemaMap = {
+      'Roll No': 'rollNo',
+      'Name': 'name',
+      'Contact': 'contact',
+      'Address': 'address',
+      'DOB': 'dob',
+      'Father Name': 'fathername',
+      'Mother Name': 'mothername',
+      'House': 'house',
+      'NIC Code': 'nicCode',
+      'PEN No': 'penNo',
+      'Section': 'section',
+      'Class': 'class'
+    };
+
+    function insertStudents() {
+      const studentsToInsert = rawData.map(row => {
+        const student = {};
+        for (let excelKey in excelToSchemaMap) {
+          const schemaKey = excelToSchemaMap[excelKey];
+          if (row[excelKey] !== undefined) {
+            if (schemaKey === 'dob' && row[excelKey]) {
+              student[schemaKey] = new Date(row[excelKey]);
+            } else {
+              student[schemaKey] = row[excelKey];
+            }
+          }
+        }
+        student.idCardStatus = 'Pending';
+        student.section = teacher.section;
+        student.schoolId = teacher.schoolId;
+        student.classTeacherId = teacherId;
+        student.schoolName = school.schoolName;
+        return student;
+      });
+
+      console.log('Raw Data:', rawData); // Debugging log
+      console.log('Students to Insert:', studentsToInsert); // Debugging log
+
+      if (studentsToInsert.length > 0) {
+        // Assuming Student.insertMany is a server-side operation, this should not be here
+        console.log('Insertion successful'); // Debugging log
+        req.flash('success_msg', `${studentsToInsert.length} students imported successfully.`);
+      } else {
+        req.flash('error_msg', 'No new students were imported. Check for duplicates or missing required fields.');
+      }
+
+      res.redirect(`/class-teacher/${teacherId}`);
+    }
+
+    // Call the function if needed
+    // insertStudents();
   </script>
 </body>
 

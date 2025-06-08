@@ -106,11 +106,14 @@ exports.printStudentId = async (req, res) => {
         // Get School (assume all students are from same school)
         const school = await School.findById(students[0].schoolId);
 
+        // Fetch the teacher object
+        const teacher = await ClassTeacher.findById(students[0].classTeacherId);
+
         // Get selected template from session
         const selectedTemplate = req.session.selectedTemplate || 'template1';
 
         // Render
-        res.render(`templates/${selectedTemplate}`, { studentsWithQr, school });
+        res.render(`templates/${selectedTemplate}`, { studentsWithQr, school, teacher });
 
     } catch (error) {
         req.flash("error_msg","Error printing multiple ID cards:");

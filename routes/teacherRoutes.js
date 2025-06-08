@@ -16,7 +16,6 @@ router.post('/:id/upload-students-excel', isTeacherLoggedIn, uploadExcel.single(
 
 router.post('/logout', isTeacherLoggedIn,teacherController.logout);
 
-
-
+router.post('/:teacherId/upload-photo/:studentId', isTeacherLoggedIn, upload.single('photo'), teacherController.uploadStudentPhoto);
 
 module.exports = router;

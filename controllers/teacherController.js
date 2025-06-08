@@ -165,37 +165,37 @@ module.exports.importStudentsFromExcel = async (req, res) => {
       'house', 'nicCode', 'penNo'
     ];
 
+    const excelToSchemaMap = {
+      'name': 'name',
+      'fathername': 'fathername',
+      'mothername': 'mothername',
+      'class': 'class',
+      'contact': 'contact',
+      'address': 'address',
+      'dob': 'dob'
+    };
+
     // Step 3: Map and save only valid fields
     const studentsToInsert = rawData.map(row => {
       const student = {};
-
-  // Create trimmed version of row with clean keys
-  const cleanedRow = {};
-  for (let key in row) {
-    cleanedRow[key.trim()] = row[key];
-  }
-
-  // Allowed fields as per schema
-  const allowedFields = [
-    'rollNo', 'name', 'class', 'contact', 'address',
-    'dob', 'section', 'fathername', 'mothername',
-    'house', 'nicCode', 'penNo'
-  ];
-
-  for (let key of allowedFields) {
-    if (cleanedRow[key] !== undefined) {
-      student[key] = cleanedRow[key];
-    }
-  }
-
-  // Add default fields
-  student.idCardStatus = 'Pending';
-  student.section = teacher.section;
-  student.schoolId = teacher.schoolId;
-  student.classTeacherId = teacherId;
-  student.schoolName = school.schoolName;
-
-  return student;
+      for (let excelKey in row) {
+        const trimmedKey = excelKey.trim(); // Trim the key
+        const schemaKey = excelToSchemaMap[trimmedKey];
+        if (schemaKey && row[excelKey] !== undefined) {
+          if (schemaKey === 'dob' && row[excelKey]) {
+            student[schemaKey] = new Date(row[excelKey]);
+          } else {
+            student[schemaKey] = row[excelKey];
+          }
+        }
+      }
+      // Add default fields
+      student.idCardStatus = 'Pending';
+      student.section = teacher.section;
+      student.schoolId = teacher.schoolId;
+      student.classTeacherId = teacherId;
+      student.schoolName = school.schoolName;
+      return student;
     });
 
     if (studentsToInsert.length > 0) {
@@ -212,4 +212,56 @@ module.exports.importStudentsFromExcel = async (req, res) => {
      req.flash('error_msg', 'Error importing students from Excel.');
        res.redirect(`/class-teacher/${teacherId}`);
   }
+};
+
+module.exports.uploadStudentPhoto = async (req, res) => {
+    const { teacherId, studentId } = req.params;
+
+    console.log('Teacher ID:', teacherId);
+    console.log('Student ID:', studentId);
+    console.log('Uploaded File:', req.file);
+
+    if (!req.file) {
+        req.flash('error_msg', 'No file uploaded.');
+        const teacher = await ClassTeacher.findById(teacherId);
+        const students = await Student.find({ classTeacherId: teacherId });
+        const totalStudents = students.length;
+        const pendingCount = students.filter(s => s.idCardStatus === 'Pending').length;
+        console.log('Total Students (No file):', totalStudents);
+        return res.render('classTeacher/dashboard', { teacher, students, totalStudents, pendingCount, error_msg: req.flash('error_msg') });
+    }
+
+    try {
+        const student = await Student.findById(studentId);
+        if (!student) {
+            req.flash('error_msg', 'Student not found.');
+            const teacher = await ClassTeacher.findById(teacherId);
+            const students = await Student.find({ classTeacherId: teacherId });
+            const totalStudents = students.length;
+            const pendingCount = students.filter(s => s.idCardStatus === 'Pending').length;
+            console.log('Total Students (Student not found):', totalStudents);
+            return res.render('classTeacher/dashboard', { teacher, students, totalStudents, pendingCount, error_msg: req.flash('error_msg') });
+        }
+
+        // Update the student's photo
+        student.photo = req.file.path;
+        await student.save();
+
+        req.flash('success_msg', 'Photo uploaded successfully.');
+        const teacher = await ClassTeacher.findById(teacherId);
+        const students = await Student.find({ classTeacherId: teacherId });
+        const totalStudents = students.length;
+        const pendingCount = students.filter(s => s.idCardStatus === 'Pending').length;
+        console.log('Total Students (Success):', totalStudents);
+        res.render('classTeacher/dashboard', { teacher, students, totalStudents, pendingCount, success_msg: req.flash('success_msg') });
+    } catch (err) {
+        console.error(err);
+        req.flash('error_msg', 'Error uploading photo.');
+        const teacher = await ClassTeacher.findById(teacherId);
+        const students = await Student.find({ classTeacherId: teacherId });
+        const totalStudents = students.length;
+        const pendingCount = students.filter(s => s.idCardStatus === 'Pending').length;
+        console.log('Total Students (Error):', totalStudents);
+        res.render('classTeacher/dashboard', { teacher, students, totalStudents, pendingCount, error_msg: req.flash('error_msg') });
+    }
 };

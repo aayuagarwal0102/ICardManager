@@ -230,10 +230,12 @@
                             <td>
                                 <% if(student.photo) { %>
                                     <button class="view-image-btn" data-img="<%= student.photo %>">View</button>
-                                    <% } else { %>
-                                        <em>No Image</em>
-                                        <% } %>
-                              
+                                <% } else { %>
+                                    <form action="/class-teacher/<%= teacher._id %>/upload-photo/<%= student._id %>" method="POST" enctype="multipart/form-data" style="display:inline;">
+                                        <input type="file" name="photo" accept="image/*" required style="display:none;" onchange="this.form.submit()">
+                                        <button type="button" onclick="this.previousElementSibling.click()">Upload Photo</button>
+                                    </form>
+                                <% } %>
                             </td>
 
                             <td>
