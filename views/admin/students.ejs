@@ -5,93 +5,72 @@
 
 
   <form id="print-form" method="POST" action="/admin/print-id" target="_blank" class="student-table-container">
-    <div class="listInfo">
-    
+    <div class="listInfo" style="display: flex; justify-content: space-between; align-items: center;">
       <h3>School Name: <%= students[0].schoolName %></h3>
-
     </div>
-    <% if (students.length> 0) { %>
-      <table class="student-table">
-        <thead>
-          <tr>
-            <th>
-             Select
-            </th>
-            <th>Photo</th>
-            <th>Roll No</th>
-            <th>Name</th>
-            <th>Class</th>
-            <th>Section</th>
-            <th>Father's Name</th>
-            <th>Contact</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% students.forEach(student=> { %>
+    <% if (students.length > 0) { %>
+      <div class="student-list-container" style="max-height: 400px; overflow-y: auto;">
+        <table class="student-table">
+          <thead>
             <tr>
-              <td>
+              <th>
                 <label class="custom-checkbox">
-                  <input type="checkbox" name="selectedStudents" class="student-checkbox" value="<%= student._id %>">
+                  <input type="checkbox" id="selectAll" onclick="toggleSelectAll()">
                   <span class="checkmark"></span>
                 </label>
-
-              </td>
-              <td>
-                <% if(student.photo) { %>
-                  <div class="view-image-btn" data-img="<%= student.photo %>"> View </div>
+              </th>
+              <th>Photo</th>
+              <th>Roll No</th>
+              <th>Name</th>
+              <th>Class</th>
+              <th>Section</th>
+              <th>Father's Name</th>
+              <th>Contact</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% students.forEach(student => { %>
+              <tr>
+                <td>
+                  <label class="custom-checkbox">
+                    <input type="checkbox" name="selectedStudents" class="student-checkbox" value="<%= student._id %>">
+                    <span class="checkmark"></span>
+                  </label>
+                </td>
+                <td>
+                  <% if(student.photo) { %>
+                    <div class="view-image-btn" data-img="<%= student.photo %>"> View </div>
                   <% } else { %>
                     <em>No Image</em>
-                    <% } %>
-
-              </td>
-              <td>
-                <%= student.rollNo %>
-              </td>
-              <td>
-                <%= student.name %>
-              </td>
-              <td>
-                <%= student.class %>
-              </td>
-              <td>
-                <%= student.section %>
-              </td>
-              <td>
-                <%= student.fathername %>
-              </td>
-              <td>
-                <%= student.contact %>
-              </td>
-              <td>
-                <%= student.idCardStatus %>
-              </td>
-            </tr>
-            
+                  <% } %>
+                </td>
+                <td><%= student.rollNo %></td>
+                <td><%= student.name %></td>
+                <td><%= student.class %></td>
+                <td><%= student.section %></td>
+                <td><%= student.fathername %></td>
+                <td><%= student.contact %></td>
+                <td><%= student.idCardStatus %></td>
+              </tr>
             <% }) %>
-        </tbody>
-      </table>
-
-      
-
-      <!-- Print button -->
-       <div class="button">
-        <button type="submit" id="printButton" class="disabled" disabled><i class="material-icons ">print</i>Print</button>
+          </tbody>
+        </table>
+      </div>
+      <div class="button" style="display: flex; justify-content: space-between;">
+        <button type="submit" id="printButton" class="disabled" disabled><i class="material-icons">print</i>Print</button>
         <a href="/admin/schools/<%= schoolId %>/classes" id="back">Back to Classes</a>
-       </div>
-
-      <% } else { %>
-        <p class="noStudentFound">No students found to print :(</p>
-        <% } %>
-
+      </div>
+    <% } else { %>
+      <p class="noStudentFound">No students found to print :(</p>
+    <% } %>
   </form>
 
   <div class="popup-overlay" id="imagePopup" style="display: none;">
     <div class="popup-form" style="max-width: 400px;">
       <span class="close-btn" onclick="closeImagePopup()">×</span>
       <h2>Student Image</h2>
-      <img id="popupStudentImage" src="" alt="Student Photo"
-        style="width: 100%; border-radius: 8px; margin-top: 15px;" />
+      <img id="popupStudentImage" src="" alt="Student Photo" style="width: 100%; border-radius: 8px; margin-top: 15px;" />
     </div>
   </div>
 

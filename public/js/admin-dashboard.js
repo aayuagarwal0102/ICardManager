@@ -97,32 +97,30 @@ function closeImagePopup() {
     // for print button in student.ejs 
 
     document.addEventListener('DOMContentLoaded', () => {
-        const checkboxes = document.querySelectorAll('.student-checkbox');
+        const selectAllCheckbox = document.getElementById('selectAll');
+        const studentCheckboxes = document.querySelectorAll('.student-checkbox');
         const printButton = document.getElementById('printButton');
         const maxSelection = 50;
         
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', () => {
-                const selected = document.querySelectorAll('.student-checkbox:checked').length;
-        
-                if (selected > 0 && selected <= maxSelection) {
-                    printButton.disabled = false;
-                    printButton.classList.remove('disabled');
-                } else {
-                    printButton.disabled = true;
-                    printButton.classList.add('disabled');
-                }
-        
-                if (selected >= maxSelection) {
-                    checkboxes.forEach(box => {
-                        if (!box.checked) box.disabled = true;
-                    });
-                } else {
-                    checkboxes.forEach(box => box.disabled = false);
-                }
+        function toggleSelectAll() {
+            const isChecked = selectAllCheckbox.checked;
+            studentCheckboxes.forEach(checkbox => {
+                checkbox.checked = isChecked;
             });
+            updatePrintButtonState();
+        }
+
+        function updatePrintButtonState() {
+            const selectedCount = document.querySelectorAll('.student-checkbox:checked').length;
+            printButton.disabled = selectedCount === 0;
+            printButton.classList.toggle('disabled', selectedCount === 0);
+        }
+
+        selectAllCheckbox.addEventListener('change', toggleSelectAll);
+        studentCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updatePrintButtonState);
         });
-        });
+    });
         
         // search logic for schools
 
