@@ -59,6 +59,11 @@ module.exports.saveStudent= async (req, res) => {
             address,
             dob,
             fathername,
+            mothername, 
+            house,
+            nicCode,
+            penNo,
+            idCardStatus: 'Pending',
             photo: req.file ? req.file.path : null
         });
 
@@ -158,6 +163,8 @@ module.exports.importStudentsFromExcel = async (req, res) => {
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
     const rawData = xlsx.utils.sheet_to_json(sheet);
 
+    console.log('Raw Data:', rawData); // Log raw data to debug
+
     // Step 2: Allowed fields as per your schema
     const allowedFields = [
       'rollNo', 'name', 'class', 'contact', 'address',
@@ -172,7 +179,12 @@ module.exports.importStudentsFromExcel = async (req, res) => {
       'class': 'class',
       'contact': 'contact',
       'address': 'address',
-      'dob': 'dob'
+      'dob': 'dob',
+      'rollNo': 'rollNo',
+      'house': 'house',
+      'nicCode': 'nicCode',
+      'penNo': 'penNo',
+      'section': 'section'
     };
 
     // Step 3: Map and save only valid fields
@@ -182,6 +194,7 @@ module.exports.importStudentsFromExcel = async (req, res) => {
         const trimmedKey = excelKey.trim(); // Trim the key
         const schemaKey = excelToSchemaMap[trimmedKey];
         if (schemaKey && row[excelKey] !== undefined) {
+          console.log(`Mapping Excel Key: ${excelKey} to Schema Key: ${schemaKey} with Value: ${row[excelKey]}`); // Log mapping process
           if (schemaKey === 'dob' && row[excelKey]) {
             student[schemaKey] = new Date(row[excelKey]);
           } else {
@@ -198,10 +211,17 @@ module.exports.importStudentsFromExcel = async (req, res) => {
       return student;
     });
 
+    console.log('Students to Insert:', studentsToInsert); // Log students to insert to debug
+
     if (studentsToInsert.length > 0) {
-          console.log(rawData);
+          console.log('Attempting to insert students:', studentsToInsert); // Log before insertion
+          try {
             await Student.insertMany(studentsToInsert);
             req.flash('success_msg', `${studentsToInsert.length} students imported successfully.`);
+          } catch (insertErr) {
+            console.error('Error inserting students:', insertErr); // Log insertion error
+            req.flash('error_msg', 'Error inserting students into the database.');
+          }
         } else {
             req.flash('error_msg', 'No new students were imported. Check for duplicates or missing required fields.');
         }
