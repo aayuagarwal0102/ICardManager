@@ -22,7 +22,7 @@ const storage = new CloudinaryStorage({
 // File size limit: 200 KB (200 * 1024 = 204800 bytes)
 const upload = multer({
     storage,
-    limits: { fileSize: 200 * 1024 }, // 200 KB limit
+    limits: { fileSize: 3* 1024 * 1024 }, // 200 KB limit
     fileFilter: (req, file, cb) => {
         const filetypes = /jpeg|jpg|png|gif/;
         const extname = filetypes.test(
