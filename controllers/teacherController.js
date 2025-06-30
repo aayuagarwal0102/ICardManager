@@ -85,6 +85,27 @@ module.exports.logout =  (req, res) => {
     });
 };
 
+// Helper to parse date in DD-MM-YYYY or DD/MM/YYYY format
+function parseExcelDate(dateVal) {
+  if (!dateVal) return null;
+  if (dateVal instanceof Date) return dateVal;
+  // Handle Excel serial numbers
+  if (typeof dateVal === 'number') {
+    // Excel's epoch starts at 1899-12-30
+    const excelEpoch = new Date(Date.UTC(1899, 11, 30));
+    excelEpoch.setUTCDate(excelEpoch.getUTCDate() + dateVal);
+    return excelEpoch;
+  }
+  // If it's a string in DD-MM-YYYY or DD/MM/YYYY
+  const match = /^(\d{2})[-\/](\d{2})[-\/](\d{4})$/.exec(dateVal);
+  if (match) {
+    const [ , dd, mm, yyyy ] = match;
+    return new Date(`${yyyy}-${mm}-${dd}`);
+  }
+  // Fallback: try Date constructor
+  return new Date(dateVal);
+}
+
 module.exports.importStudentsFromExcel = async (req, res) => {
     // const teacherId = req.params.id;
     // if (!req.file) {
@@ -163,8 +184,6 @@ module.exports.importStudentsFromExcel = async (req, res) => {
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
     const rawData = xlsx.utils.sheet_to_json(sheet);
 
-    console.log('Raw Data:', rawData); // Log raw data to debug
-
     // Step 2: Allowed fields as per your schema
     const allowedFields = [
       'rollNo', 'name', 'class', 'contact', 'address',
@@ -194,7 +213,6 @@ module.exports.importStudentsFromExcel = async (req, res) => {
         const trimmedKey = excelKey.trim(); // Trim the key
         const schemaKey = excelToSchemaMap[trimmedKey];
         if (schemaKey && row[excelKey] !== undefined) {
-          console.log(`Mapping Excel Key: ${excelKey} to Schema Key: ${schemaKey} with Value: ${row[excelKey]}`); // Log mapping process
           if (schemaKey === 'dob' && row[excelKey]) {
             const excelDate = parseInt(row[excelKey], 10);
             if (!isNaN(excelDate)) {
@@ -218,10 +236,7 @@ module.exports.importStudentsFromExcel = async (req, res) => {
       return student;
     });
 
-    console.log('Students to Insert:', studentsToInsert); // Log students to insert to debug
-
     if (studentsToInsert.length > 0) {
-          console.log('Attempting to insert students:', studentsToInsert); // Log before insertion
           try {
             await Student.insertMany(studentsToInsert);
             req.flash('success_msg', `${studentsToInsert.length} students imported successfully.`);
