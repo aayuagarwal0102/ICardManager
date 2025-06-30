@@ -196,7 +196,14 @@ module.exports.importStudentsFromExcel = async (req, res) => {
         if (schemaKey && row[excelKey] !== undefined) {
           console.log(`Mapping Excel Key: ${excelKey} to Schema Key: ${schemaKey} with Value: ${row[excelKey]}`); // Log mapping process
           if (schemaKey === 'dob' && row[excelKey]) {
-            student[schemaKey] = new Date(row[excelKey]);
+            const excelDate = parseInt(row[excelKey], 10);
+            if (!isNaN(excelDate)) {
+              // Excel date serial number to JavaScript Date
+              const jsDate = new Date((excelDate - (25567 + 2)) * 86400 * 1000);
+              student[schemaKey] = jsDate;
+            } else {
+              student[schemaKey] = null; // or handle invalid date case as needed
+            }
           } else {
             student[schemaKey] = row[excelKey];
           }
