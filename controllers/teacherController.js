@@ -184,8 +184,6 @@ module.exports.importStudentsFromExcel = async (req, res) => {
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
     const rawData = xlsx.utils.sheet_to_json(sheet);
 
-    console.log('Raw Data:', rawData); // Log raw data to debug
-
     // Step 2: Allowed fields as per your schema
     const allowedFields = [
       'rollNo', 'name', 'class', 'contact', 'address',
@@ -215,9 +213,15 @@ module.exports.importStudentsFromExcel = async (req, res) => {
         const trimmedKey = excelKey.trim(); // Trim the key
         const schemaKey = excelToSchemaMap[trimmedKey];
         if (schemaKey && row[excelKey] !== undefined) {
-          console.log(`Mapping Excel Key: ${excelKey} to Schema Key: ${schemaKey} with Value: ${row[excelKey]}`); // Log mapping process
           if (schemaKey === 'dob' && row[excelKey]) {
-            student[schemaKey] = parseExcelDate(row[excelKey]);
+            const excelDate = parseInt(row[excelKey], 10);
+            if (!isNaN(excelDate)) {
+              // Excel date serial number to JavaScript Date
+              const jsDate = new Date((excelDate - (25567 + 2)) * 86400 * 1000);
+              student[schemaKey] = jsDate;
+            } else {
+              student[schemaKey] = null; // or handle invalid date case as needed
+            }
           } else {
             student[schemaKey] = row[excelKey];
           }
@@ -232,10 +236,7 @@ module.exports.importStudentsFromExcel = async (req, res) => {
       return student;
     });
 
-    console.log('Students to Insert:', studentsToInsert); // Log students to insert to debug
-
     if (studentsToInsert.length > 0) {
-          console.log('Attempting to insert students:', studentsToInsert); // Log before insertion
           try {
             await Student.insertMany(studentsToInsert);
             req.flash('success_msg', `${studentsToInsert.length} students imported successfully.`);
