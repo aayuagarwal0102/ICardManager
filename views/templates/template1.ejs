@@ -15,9 +15,14 @@
     }
 
     .print-container {
-      display: flex;
-      flex-wrap: wrap;
-    }
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, auto);
+  gap: 0.8cm; /* Spacing between cards */
+  padding: 1cm;
+  box-sizing: border-box;
+}
+
 
     @media print {
       @page {
@@ -71,8 +76,8 @@
     }
 
     .id-card {
-      width: 7.0cm;
-      height: 4.5cm;
+      width: 8.4cm;
+      height: 5.4cm;
       padding: 0.3cm;
       background: var(--id-bg);
       font-size: var(--id-font-size);
@@ -82,7 +87,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-        position: relative;
+      position: relative;
 
     }
 
@@ -306,14 +311,22 @@
   </div>
 
   <script>
-document.querySelectorAll(".draggable-signature").forEach(sig => {
+ const signaturePositions = { top: 0, left: 0 };
+
+  function updateAllSignaturePositions() {
+    document.querySelectorAll(".draggable-signature").forEach(sig => {
+      sig.style.top = signaturePositions.top + "px";
+      sig.style.left = signaturePositions.left + "px";
+    });
+  }
+
+  document.querySelectorAll(".draggable-signature").forEach(sig => {
     let isDragging = false, offsetX = 0, offsetY = 0;
 
     sig.addEventListener("mousedown", (e) => {
       isDragging = true;
       offsetX = e.clientX - sig.getBoundingClientRect().left;
       offsetY = e.clientY - sig.getBoundingClientRect().top;
-      sig.style.zIndex = 10;
     });
 
     document.addEventListener("mousemove", (e) => {
@@ -322,8 +335,10 @@ document.querySelectorAll(".draggable-signature").forEach(sig => {
       const bounds = wrapper.getBoundingClientRect();
       const x = e.clientX - bounds.left - offsetX;
       const y = e.clientY - bounds.top - offsetY;
-      sig.style.left = `${x}px`;
-      sig.style.top = `${y}px`;
+
+      signaturePositions.left = x;
+      signaturePositions.top = y;
+      updateAllSignaturePositions();
     });
 
     document.addEventListener("mouseup", () => {
