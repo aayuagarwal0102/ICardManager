@@ -82,6 +82,8 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+        position: relative;
+
     }
 
     .id-header {
@@ -149,7 +151,14 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 2px;
+      gap: 6px;
+      position: relative;
+    }
+
+    .signature-wrapper{
+      position: relative;
+  width: 1.6cm;
+  height: 1.0cm;
     }
 
     .student-photo {
@@ -159,17 +168,28 @@
       object-fit: cover;
     }
 
-    .signature {
-      width: 1.3cm;
-      height: auto;
-      border: 1px solid #2a4d60;
-      background-color: rgba(255, 255, 255, 0.8);
-      padding: 1px;
-      filter: grayscale(100%);
-      opacity: 0.7;
-      border-radius: 3px;
-      box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
-    }
+    .draggable-signature {
+  position: absolute;
+  top:0; left:0;
+  cursor: move;
+  z-index: 10;
+}
+
+
+
+   .signature {
+  width: 100%;
+  height: auto;
+  background: transparent;
+  border: none;
+  padding: 0;
+  filter: none;
+  opacity: 1;
+  box-shadow: none;
+  border-radius: 3px;
+  pointer-events: none;
+}
+
 
     .principal-label {
       font-weight: 600;
@@ -260,11 +280,20 @@
         <div class="heading">IDENTITY CARD - SESSION 2025–2026</div>
         <div class="id-body">
           <div class="details"></div>
-          <div class="photo-signature">
-            <img src="<%= student.photo %>" alt="Student" class="student-photo" />
-            <img src="<%= school && school.signature ? school.signature : '' %>" alt="Principal Signature" class="signature" />
-            <div class="principal-label">PRINCIPAL</div>
-          </div>
+         <div class="photo-signature">
+  <img src="<%= student.photo %>" alt="Student" class="student-photo" />
+  
+  <!-- Signature container with proper spacing -->
+  <div class="signature-wrapper">
+    <div class="draggable-signature" id="sig-<%= cardIdx %>">
+      <img src="<%= school.signature %>" alt="Principal Signature" class="signature" />
+    </div>
+      
+  </div>
+  
+  
+</div>
+
         </div>
       </div>
     <% }); %>
@@ -275,6 +304,33 @@
   </div>
 
   <script>
+document.querySelectorAll(".draggable-signature").forEach(sig => {
+    let isDragging = false, offsetX = 0, offsetY = 0;
+
+    sig.addEventListener("mousedown", (e) => {
+      isDragging = true;
+      offsetX = e.clientX - sig.getBoundingClientRect().left;
+      offsetY = e.clientY - sig.getBoundingClientRect().top;
+      sig.style.zIndex = 10;
+    });
+
+    document.addEventListener("mousemove", (e) => {
+      if (!isDragging) return;
+      const wrapper = sig.closest(".signature-wrapper");
+      const bounds = wrapper.getBoundingClientRect();
+      const x = e.clientX - bounds.left - offsetX;
+      const y = e.clientY - bounds.top - offsetY;
+      sig.style.left = `${x}px`;
+      sig.style.top = `${y}px`;
+    });
+
+    document.addEventListener("mouseup", () => {
+      isDragging = false;
+    });
+  });
+
+
+
     let globalFields = [];
     let cardFieldValues = {};
     const fieldKeyMap = {
