@@ -212,6 +212,21 @@
       border-radius: 6px;
       cursor: pointer;
     }
+
+    .print-container.back {
+    page-break-before: always;
+    display: none;
+  }
+
+  .print-container.back.active {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, auto);
+    gap: 0.8cm;
+    padding: 1cm;
+    box-sizing: border-box;
+  }
+
   </style>
 </head>
 
@@ -244,6 +259,13 @@
   </div>
 
   <!-- 🌈 Styling Controls -->
+   <div style="margin: 20px;">
+  <label>
+    <input type="checkbox" id="toggleBackCheckbox" onchange="toggleBackSide()">
+    Enable Back Side Printing
+  </label>
+</div>
+
   <div class="style-controls">
     <h3>Customize ID Card</h3>
 
@@ -306,6 +328,26 @@
     <% }); %>
   </div>
 
+  <div class="print-container back">
+  <% studentsWithQr.forEach(({ student }, cardIdx) => { %>
+    <div class="id-card">
+      <div class="heading">ID CARD (Back Side)</div>
+      <div style="font-size: 6pt; line-height: 1.4;">
+        <strong>Blood Group:</strong> <%= student.bloodGroup || 'N/A' %><br>
+        <strong>Emergency Contact:</strong> <%= student.contact || 'N/A' %><br>
+        <strong>Address:</strong> <%= student.address || 'N/A' %><br>
+        <strong>School Rules:</strong>
+        <ul style="padding-left: 14px; margin: 0;">
+          <li>Always wear ID card in school.</li>
+          <li>Keep it neat and visible.</li>
+          <li>Loss must be reported immediately.</li>
+        </ul>
+      </div>
+    </div>
+  <% }); %>
+</div>
+
+
   <div class="print-button-container">
     <button class="print-button" onclick="window.print()">Print</button>
   </div>
@@ -345,6 +387,16 @@
       isDragging = false;
     });
   });
+
+   function toggleBackSide() {
+    const isChecked = document.getElementById('toggleBackCheckbox').checked;
+    const backContainer = document.querySelector('.print-container.back');
+    if (isChecked) {
+      backContainer.classList.add('active');
+    } else {
+      backContainer.classList.remove('active');
+    }
+  }
 
 
 
