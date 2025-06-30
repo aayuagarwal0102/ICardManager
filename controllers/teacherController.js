@@ -85,6 +85,27 @@ module.exports.logout =  (req, res) => {
     });
 };
 
+// Helper to parse date in DD-MM-YYYY or DD/MM/YYYY format
+function parseExcelDate(dateVal) {
+  if (!dateVal) return null;
+  if (dateVal instanceof Date) return dateVal;
+  // Handle Excel serial numbers
+  if (typeof dateVal === 'number') {
+    // Excel's epoch starts at 1899-12-30
+    const excelEpoch = new Date(Date.UTC(1899, 11, 30));
+    excelEpoch.setUTCDate(excelEpoch.getUTCDate() + dateVal);
+    return excelEpoch;
+  }
+  // If it's a string in DD-MM-YYYY or DD/MM/YYYY
+  const match = /^(\d{2})[-\/](\d{2})[-\/](\d{4})$/.exec(dateVal);
+  if (match) {
+    const [ , dd, mm, yyyy ] = match;
+    return new Date(`${yyyy}-${mm}-${dd}`);
+  }
+  // Fallback: try Date constructor
+  return new Date(dateVal);
+}
+
 module.exports.importStudentsFromExcel = async (req, res) => {
     // const teacherId = req.params.id;
     // if (!req.file) {
@@ -196,7 +217,7 @@ module.exports.importStudentsFromExcel = async (req, res) => {
         if (schemaKey && row[excelKey] !== undefined) {
           console.log(`Mapping Excel Key: ${excelKey} to Schema Key: ${schemaKey} with Value: ${row[excelKey]}`); // Log mapping process
           if (schemaKey === 'dob' && row[excelKey]) {
-            student[schemaKey] = new Date(row[excelKey]);
+            student[schemaKey] = parseExcelDate(row[excelKey]);
           } else {
             student[schemaKey] = row[excelKey];
           }
