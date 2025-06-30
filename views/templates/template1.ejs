@@ -234,6 +234,8 @@
     <button id="toggleDeleteBtn" onclick="toggleDeleteMode()">Delete Field</button>
     <button id="editFieldsBtn" onclick="enableEditMode()">Edit</button>
     <button id="saveFieldsBtn" onclick="saveFieldEdits()" style="display:none;">Save</button>
+    <button id="layoutEditBtn" onclick="enableLayoutEditMode()">Reorder Fields</button>
+    <button id="layoutSaveBtn" onclick="disableLayoutEditMode()" style="display:none;">Done</button>
   </div>
 
   <!-- 🌈 Styling Controls -->
@@ -347,6 +349,7 @@ document.querySelectorAll(".draggable-signature").forEach(sig => {
     };
     let deleteMode = false;
     let editMode = false;
+    let layoutEditMode = false;
 
     function toggleFieldDropdown() {
       const dropdown = document.getElementById('field-dropdown');
@@ -389,6 +392,59 @@ document.querySelectorAll(".draggable-signature").forEach(sig => {
       document.getElementById('saveFieldsBtn').style.display = 'none';
       renderFieldsOnAllCards();
     }
+
+    function enableLayoutEditMode() {
+  layoutEditMode = true;
+  document.getElementById('layoutEditBtn').style.display = 'none';
+  document.getElementById('layoutSaveBtn').style.display = '';
+  document.querySelectorAll('.detail-row').forEach(row => {
+    row.setAttribute('draggable', 'true');
+    row.style.cursor = 'move';
+    row.addEventListener('dragstart', dragStart);
+    row.addEventListener('dragover', dragOver);
+    row.addEventListener('drop', dropField);
+  });
+}
+
+function disableLayoutEditMode() {
+  layoutEditMode = false;
+  document.getElementById('layoutEditBtn').style.display = '';
+  document.getElementById('layoutSaveBtn').style.display = 'none';
+  document.querySelectorAll('.detail-row').forEach(row => {
+    row.removeAttribute('draggable');
+    row.style.cursor = '';
+    row.removeEventListener('dragstart', dragStart);
+    row.removeEventListener('dragover', dragOver);
+    row.removeEventListener('drop', dropField);
+  });
+}
+
+// Implement dragStart, dragOver, dropField functions to reorder fields in globalFields array
+let dragSrcIdx = null;
+
+function dragStart(e) {
+  dragSrcIdx = Array.from(this.parentNode.children).indexOf(this);
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', dragSrcIdx);
+}
+
+function dragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+}
+
+function dropField(e) {
+  e.preventDefault();
+  const dropIdx = Array.from(this.parentNode.children).indexOf(this);
+  const srcIdx = parseInt(e.dataTransfer.getData('text/plain'), 10);
+  if (srcIdx !== dropIdx && srcIdx >= 0 && dropIdx >= 0) {
+    // Move the field in globalFields
+    const moved = globalFields.splice(srcIdx, 1)[0];
+    globalFields.splice(dropIdx, 0, moved);
+    renderFieldsOnAllCards();
+    enableLayoutEditMode(); // Re-enable drag after re-render
+  }
+}
 
     function renderFieldsOnAllCards() {
       const cards = document.querySelectorAll('.id-card');
