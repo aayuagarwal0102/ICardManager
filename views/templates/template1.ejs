@@ -227,6 +227,110 @@
     box-sizing: border-box;
   }
 
+  .back-card {
+    background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+    border: 1px solid #dee2e6;
+    padding: 0.4cm;
+  }
+
+  .back-header {
+    background-color: #2a4d60;
+    color: white;
+    text-align: center;
+    padding: 0.2cm;
+    margin: -0.4cm -0.4cm 0.3cm -0.4cm;
+    border-radius: 5px 5px 0 0;
+  }
+
+  .back-header h2 {
+    margin: 0;
+    font-size: 10pt;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+
+  .back-content {
+    font-family: 'Arial', sans-serif;
+    padding: 0.2cm;
+  }
+
+  .info-group {
+    margin-bottom: 0.3cm;
+  }
+
+  .info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.15cm;
+    font-size: 7pt;
+    color: #333;
+  }
+
+  .info-item i {
+    width: 0.4cm;
+    color: #2a4d60;
+    margin-right: 0.1cm;
+  }
+
+  .info-item .label {
+    font-weight: 600;
+    color: #2a4d60;
+    width: 2.5cm;
+  }
+
+  .info-item .value {
+    flex: 1;
+  }
+
+  .rules-section {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    padding: 0.2cm;
+    margin-bottom: 0.2cm;
+  }
+
+  .rules-section h3 {
+    color: #2a4d60;
+    font-size: 8pt;
+    margin: 0 0 0.1cm 0;
+    font-weight: 600;
+  }
+
+  .rules-section ul {
+    margin: 0;
+    padding-left: 0.4cm;
+    list-style-type: square;
+  }
+
+  .rules-section li {
+    font-size: 6.5pt;
+    color: #495057;
+    margin-bottom: 0.1cm;
+    line-height: 1.3;
+  }
+
+  .validity {
+    text-align: center;
+    font-size: 7pt;
+    color: #2a4d60;
+    font-weight: 600;
+    margin-top: 0.2cm;
+    border-top: 1px dashed #dee2e6;
+    padding-top: 0.2cm;
+  }
+
+  .validity p {
+    margin: 0;
+  }
+
+  @media print {
+    .back-card {
+      break-inside: avoid;
+      background: white !important;
+    }
+  }
+
   </style>
 </head>
 
@@ -330,18 +434,42 @@
 
   <div class="print-container back">
   <% studentsWithQr.forEach(({ student }, cardIdx) => { %>
-    <div class="id-card">
-      <div class="heading">ID CARD (Back Side)</div>
-      <div style="font-size: 6pt; line-height: 1.4;">
-        <strong>Blood Group:</strong> <%= student.bloodGroup || 'N/A' %><br>
-        <strong>Emergency Contact:</strong> <%= student.contact || 'N/A' %><br>
-        <strong>Address:</strong> <%= student.address || 'N/A' %><br>
-        <strong>School Rules:</strong>
-        <ul style="padding-left: 14px; margin: 0;">
-          <li>Always wear ID card in school.</li>
-          <li>Keep it neat and visible.</li>
-          <li>Loss must be reported immediately.</li>
-        </ul>
+    <div class="id-card back-card">
+      <div class="back-header">
+        <h2>STUDENT INFORMATION</h2>
+      </div>
+      <div class="back-content">
+        <div class="info-group">
+          <div class="info-item">
+            <i class="fas fa-tint"></i>
+            <span class="label">Blood Group:</span>
+            <span class="value"><%= student.bloodGroup || 'N/A' %></span>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-phone-alt"></i>
+            <span class="label">Emergency Contact:</span>
+            <span class="value"><%= student.contact || 'N/A' %></span>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <span class="label">Address:</span>
+            <span class="value"><%= student.address || 'N/A' %></span>
+          </div>
+        </div>
+        
+        <div class="rules-section">
+          <h3>SCHOOL RULES</h3>
+          <ul>
+            <li>Always wear ID card in school premises</li>
+            <li>Keep the ID card neat and visible at all times</li>
+            <li>Loss of ID card must be reported immediately</li>
+            <li>ID card is non-transferable</li>
+          </ul>
+        </div>
+
+        <div class="validity">
+          <p>Valid until: March 31, 2026</p>
+        </div>
       </div>
     </div>
   <% }); %>
