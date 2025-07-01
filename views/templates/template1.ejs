@@ -6,248 +6,251 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ID Card Editor</title>
   <style>
-    :root {
-      --id-bg: white;
-      --id-font-size: 7pt;
-      --id-font-family: Arial;
-      --heading-bg: #2a4d60;
-      --heading-color: white;
-    }
-
-    .print-container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, auto);
-  gap: 0.8cm; /* Spacing between cards */
-  padding: 1cm;
-  box-sizing: border-box;
-}
-
-
-    @media print {
-      @page {
-        size: A4;
-        margin: 0;
-      }
-
-      @page:first {
-        margin-top: 0;
-      }
-
-      body * {
-        visibility: hidden;
-      }
-
-      .print-container, .print-container * {
-        visibility: visible;
-      }
-
-      .style-controls {
-        display: none;
-      }
-
-      .id-card {
-        box-shadow: none !important;
-        border: 1px solid #2a4d60;
-        border-radius: 0;
-        page-break-inside: avoid;
-      }
-
-      .print-btn {
-        display: none;
-      }
-
-      .print-container:not(.back) {
-        display: grid !important;
-        grid-template-columns: repeat(2, 8.4cm);
-        grid-template-rows: repeat(5, 5.4cm);
-        gap: 0.5cm;
-        padding: 0.5cm;
-        box-sizing: border-box;
-        width: 18.3cm; /* 2*8.4 + 0.5 */
-        height: 28.0cm; /* 5*5.4 + 0.5 */
-        margin: 0 auto;
-        page-break-after: always;
-        overflow: hidden;
-      }
-
-      .id-card {
-        width: 8.4cm !important;
-        height: 5.4cm !important;
-        box-sizing: border-box;
-        break-inside: avoid;
-      }
-    }
-
-    .style-controls {
-      background: #fff;
-      padding: 15px;
-      border: 1px solid #ccc;
-      margin: 20px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      align-items: center;
-    }
-
-    .style-controls label {
-      display: flex;
-      flex-direction: column;
-      font-weight: bold;
-    }
-
-    .id-card {
-      width: 8.4cm;
-      height: 5.4cm;
-      padding: 0.3cm;
-      background: var(--id-bg);
-      font-size: var(--id-font-size);
-      font-family: var(--id-font-family);
-      border-radius: 6px;
-      box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      position: relative;
-
-    }
-
-    .id-header {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .logo {
-      width: 1.3cm;
-      height: 1.3cm;
-      object-fit: contain;
-    }
-
-    .school-name {
-      font-size: 10pt;
-      font-weight: 600;
-      color: #2a4d60;
-      line-height: 1.1;
-    }
-
-    .address {
-      font-size: 7pt;
-      color: #555;
-    }
-
-    .heading {
-      background-color: var(--heading-bg);
-      color: var(--heading-color);
-      font-size: 8pt;
-      padding: 4px;
-      text-align: center;
-      font-weight: bold;
-    }
-
-    .id-body {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-    }
-
-    .details {
-      line-height: 1.7;
-      flex: 1;
-    }
-
-    .detail-row {
-      display: flex;
-    }
-
-    .detail-label {
-      width: 1.9cm;
-      font-weight: 600;
-    }
-
-    .colon {
-      width: 0.2cm;
-    }
-
-    .detail-value {
-      flex: 1;
-    }
-
-    .photo-signature {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      position: relative;
-    }
-
-    .signature-wrapper{
-      position: relative;
-  width: 1.6cm;
-  height: 1.0cm;
-    }
-
-    .student-photo {
-      width: 1.3cm;
-      height: 1.7cm;
-      border: 1px solid #2a4d60;
-      object-fit: cover;
-    }
-
-    .draggable-signature {
-  position: absolute;
-  top:0; left:0;
-  cursor: move;
-  z-index: 10;
-}
-
-
-
-   .signature {
-  width: 100%;
-  height: auto;
-  background: transparent;
-  border: none;
-  padding: 0;
-  filter: none;
-  opacity: 1;
-  box-shadow: none;
-  border-radius: 3px;
-  pointer-events: none;
-}
-
-
-    .principal-label {
-      font-weight: 600;
-    }
-
-    .print-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: #2a4d60;
-      color: white;
-      border: none;
-      padding: 10px 18px;
-      font-size: 14px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    .print-container.back {
-    page-break-before: always;
-    display: none;
+  :root {
+    --id-bg: white;
+    --id-font-size: 7pt;
+    --id-font-family: Arial;
+    --heading-bg: #2a4d60;
+    --heading-color: white;
   }
 
-  .print-container.back.active {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, auto);
-    gap: 0.8cm;
-    padding: 1cm;
+  html, body {
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
   }
 
+  .print-container {
+    display: grid;
+    margin-top: 0;
+    grid-template-columns: repeat(2, 9.1cm);
+    grid-template-rows: repeat(5, 5.7cm);
+    gap: 0.2cm;
+    padding: 0.2cm;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .id-card {
+    width: 9.1cm;
+    height: 5.7cm;
+    padding: 0.3cm;
+    background: var(--id-bg);
+    font-size: var(--id-font-size);
+    font-family: var(--id-font-family);
+    border-radius: 6px;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    box-sizing: border-box;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  @media print {
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    .top{
+    display: none !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+    html, body {
+      margin: 0 !important;
+      padding: 0 !important;
+       height: 100%;
+    width: 100%;
+    }
+
+    body * {
+      visibility: hidden;
+    }
+
+    .print-container, .print-container * {
+      visibility: visible;
+    }
+
+    .print-btn, .style-controls {
+      display: none !important;
+    }
+
+    .print-container {
+      page-break-after: always;
+      overflow: hidden;
+    }
+
+    .print-container.back {
+      display: none;
+    }
+
+    .print-container.back.active {
+      display: grid !important;
+      grid-template-columns: repeat(2, 9.1cm);
+      grid-template-rows: repeat(5, 5.7cm);
+      gap: 0.2cm;
+      padding: 0.2cm;
+    }
+
+    .id-card {
+      box-shadow: none !important;
+      border-radius: 0;
+      border: 1px solid #2a4d60;
+    }
+
+    .back-card {
+      background: white !important;
+      break-inside: avoid;
+    }
+  }
+
+  /* ---------- Other Elements Remain Same ---------- */
+  .style-controls {
+    background: #fff;
+    padding: 15px;
+    border: 1px solid #ccc;
+    margin: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .style-controls label {
+    display: flex;
+    flex-direction: column;
+    font-weight: bold;
+  }
+
+  .id-header {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .logo {
+    width: 1.3cm;
+    height: 1.3cm;
+    object-fit: contain;
+  }
+
+  .school-name {
+    font-size: 10pt;
+    font-weight: 600;
+    color: #2a4d60;
+    line-height: 1.1;
+  }
+
+  .address {
+    font-size: 7pt;
+    color: #555;
+  }
+
+  .heading {
+    background-color: var(--heading-bg);
+    color: var(--heading-color);
+    font-size: 8pt;
+    padding: 4px;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .id-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .details {
+    line-height: 1.6;
+    flex: 1;
+  }
+
+  .detail-row {
+    display: flex;
+  }
+
+  .detail-label {
+    width: 1.9cm;
+    font-weight: 600;
+  }
+
+  .colon {
+    width: 0.2cm;
+  }
+
+  .detail-value {
+    flex: 1;
+  }
+
+  .photo-signature {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+  }
+
+  .signature-wrapper {
+    position: relative;
+    width: 1.6cm;
+    height: 1.0cm;
+  }
+
+  .student-photo {
+    width: 1.3cm;
+    height: 1.7cm;
+    border: 1px solid #2a4d60;
+    object-fit: cover;
+  }
+
+  .draggable-signature {
+    position: absolute;
+    top: 0;
+    left: 0;
+    cursor: move;
+    z-index: 10;
+  }
+
+  .signature {
+    width: 100%;
+    height: auto;
+    background: transparent;
+    border: none;
+    padding: 0;
+    filter: none;
+    opacity: 1;
+    box-shadow: none;
+    border-radius: 3px;
+    pointer-events: none;
+  }
+
+  .principal-label {
+    font-weight: 600;
+  }
+
+  .print-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #2a4d60;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    font-size: 14px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  /* ---------- BACK SIDE STYLES ---------- */
   .back-card {
     background: linear-gradient(to bottom, #ffffff, #f8f9fa);
     border: 1px solid #dee2e6;
@@ -344,18 +347,12 @@
   .validity p {
     margin: 0;
   }
+</style>
 
-  @media print {
-    .back-card {
-      break-inside: avoid;
-      background: white !important;
-    }
-  }
-
-  </style>
 </head>
 
 <body>
+  <div class="top">
   <div class="controls">
     <label>Add Field(s):</label>
     <div id="multi-select-fields" style="display:inline-block; position:relative;">
@@ -419,6 +416,7 @@
     </label>
 
     <button class="print-btn" onclick="window.print()">🖨️ Print</button>
+  </div>
   </div>
 
   <div class="print-container">
@@ -488,9 +486,7 @@
           </ul>
         </div>
 
-        <div class="validity">
-          <p>Valid until: March 31, 2026</p>
-        </div>
+
       </div>
     </div>
   <% }); %>
