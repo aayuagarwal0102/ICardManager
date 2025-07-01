@@ -9,14 +9,88 @@
     <link rel="stylesheet" href="/css/teacher-dashboard.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Anton&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+
+        /* Cropper Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        .image-container {
+            max-height: 500px;
+            margin: 20px 0;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-primary {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-secondary {
+            background-color: #f44336;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+
+        .btn-secondary:hover {
+            background-color: #da190b;
+        }
+
+        /* Photo upload button styles */
+        .upload-trigger-btn {
+            background-color: #2196F3;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .upload-trigger-btn:hover {
+            background-color: #0b7dda;
+        }
     </style>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
     <!-- CropperJS CSS -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
 
-<!-- CropperJS JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <!-- CropperJS JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
 </head>
 
@@ -230,9 +304,9 @@
                                 <% if(student.photo) { %>
                                     <button class="view-image-btn" data-img="<%= student.photo %>">View</button>
                                 <% } else { %>
-                                    <form action="/class-teacher/<%= teacher._id %>/upload-photo/<%= student._id %>" method="POST" enctype="multipart/form-data" style="display:inline;">
-                                        <input type="file" name="photo" accept="image/*" required style="display:none;" onchange="this.form.submit()">
-                                        <button type="button" onclick="this.previousElementSibling.click()">Upload Photo</button>
+                                    <form action="/class-teacher/<%= teacher._id %>/upload-photo/<%= student._id %>" method="POST" enctype="multipart/form-data" style="display:inline;" class="photo-upload-form">
+                                        <input type="file" name="photo" accept="image/*" required style="display:none;" class="photo-input">
+                                        <button type="button" class="upload-trigger-btn">Upload Photo</button>
                                     </form>
                                 <% } %>
                             </td>
@@ -263,6 +337,119 @@
 
     <script src="/js/flash.js"></script>
     <script src="/js/teacherdashboard.js" ></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize cropper for both new student form and existing student photo uploads
+            function initializeCropper(fileInput, form) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imageToCrop.src = e.target.result;
+                    cropperModal.style.display = 'block';
+                    
+                    if (cropper) {
+                        cropper.destroy();
+                    }
+                    
+                    cropper = new Cropper(imageToCrop, {
+                        aspectRatio: 3/4,  // Passport size ratio
+                        viewMode: 1,
+                        autoCropArea: 1,
+                        movable: true,
+                        zoomable: true,
+                        rotatable: false,
+                        scalable: false,
+                        minContainerWidth: 300,
+                        minContainerHeight: 400,
+                    });
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+
+                // Store the form that triggered the crop
+                cropperModal.dataset.activeForm = form ? form.id : 'newStudentForm';
+            }
+
+            // Handle photo upload for new student form
+            const newStudentPhotoInput = document.getElementById('photo');
+            if (newStudentPhotoInput) {
+                newStudentPhotoInput.addEventListener('change', function(e) {
+                    if (this.files && this.files.length > 0) {
+                        initializeCropper(this);
+                    }
+                });
+            }
+
+            // Handle photo upload for existing students
+            const photoUploadForms = document.querySelectorAll('.photo-upload-form');
+            photoUploadForms.forEach((form, index) => {
+                // Assign unique ID to each form
+                form.id = `photoUploadForm_${index}`;
+                
+                const fileInput = form.querySelector('.photo-input');
+                const uploadButton = form.querySelector('.upload-trigger-btn');
+                
+                uploadButton.addEventListener('click', () => fileInput.click());
+                
+                fileInput.addEventListener('change', function(e) {
+                    if (this.files && this.files.length > 0) {
+                        e.preventDefault();
+                        initializeCropper(this, form);
+                    }
+                });
+            });
+
+            // Handle crop button click
+            document.getElementById('cropButton').addEventListener('click', function() {
+                const canvas = cropper.getCroppedCanvas({
+                    width: 300,
+                    height: 400,
+                });
+
+                canvas.toBlob(function(blob) {
+                    const newFile = new File([blob], "cropped_photo.jpg", { type: 'image/jpeg' });
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(newFile);
+
+                    // Get the active form ID from the modal's dataset
+                    const activeFormId = cropperModal.dataset.activeForm;
+                    
+                    if (activeFormId === 'newStudentForm') {
+                        // For new student form
+                        newStudentPhotoInput.files = dataTransfer.files;
+                    } else {
+                        // For existing student photo upload
+                        const activeForm = document.getElementById(activeFormId);
+                        const fileInput = activeForm.querySelector('.photo-input');
+                        fileInput.files = dataTransfer.files;
+                        activeForm.submit();
+                    }
+
+                    cropperModal.style.display = 'none';
+                    if (cropper) {
+                        cropper.destroy();
+                    }
+                }, 'image/jpeg');
+            });
+
+            // Handle cancel button click
+            document.getElementById('cancelCrop').addEventListener('click', function() {
+                cropperModal.style.display = 'none';
+                if (cropper) {
+                    cropper.destroy();
+                }
+                
+                // Reset the file input of the active form
+                const activeFormId = cropperModal.dataset.activeForm;
+                if (activeFormId === 'newStudentForm') {
+                    newStudentPhotoInput.value = '';
+                } else {
+                    const activeForm = document.getElementById(activeFormId);
+                    const fileInput = activeForm.querySelector('.photo-input');
+                    fileInput.value = '';
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

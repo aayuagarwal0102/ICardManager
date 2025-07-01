@@ -265,45 +265,26 @@ module.exports.uploadStudentPhoto = async (req, res) => {
 
     if (!req.file) {
         req.flash('error_msg', 'No file uploaded.');
-        const teacher = await ClassTeacher.findById(teacherId);
-        const students = await Student.find({ classTeacherId: teacherId });
-        const totalStudents = students.length;
-        const pendingCount = students.filter(s => s.idCardStatus === 'Pending').length;
-        console.log('Total Students (No file):', totalStudents);
-        return res.render('classTeacher/dashboard', { teacher, students, totalStudents, pendingCount, error_msg: req.flash('error_msg') });
+        return res.redirect(`/class-teacher/${teacherId}`);
     }
 
     try {
         const student = await Student.findById(studentId);
         if (!student) {
             req.flash('error_msg', 'Student not found.');
-            const teacher = await ClassTeacher.findById(teacherId);
-            const students = await Student.find({ classTeacherId: teacherId });
-            const totalStudents = students.length;
-            const pendingCount = students.filter(s => s.idCardStatus === 'Pending').length;
-            console.log('Total Students (Student not found):', totalStudents);
-            return res.render('classTeacher/dashboard', { teacher, students, totalStudents, pendingCount, error_msg: req.flash('error_msg') });
+            return res.redirect(`/class-teacher/${teacherId}`);
         }
 
-        // Update the student's photo
+        // The image is already cropped on the frontend using CropperJS
+        // Just save the path of the cropped image
         student.photo = req.file.path;
         await student.save();
 
-        req.flash('success_msg', 'Photo uploaded successfully.');
-        const teacher = await ClassTeacher.findById(teacherId);
-        const students = await Student.find({ classTeacherId: teacherId });
-        const totalStudents = students.length;
-        const pendingCount = students.filter(s => s.idCardStatus === 'Pending').length;
-        console.log('Total Students (Success):', totalStudents);
-        res.render('classTeacher/dashboard', { teacher, students, totalStudents, pendingCount, success_msg: req.flash('success_msg') });
+        req.flash('success_msg', 'Photo uploaded and cropped successfully.');
+        res.redirect(`/class-teacher/${teacherId}`);
     } catch (err) {
         console.error(err);
         req.flash('error_msg', 'Error uploading photo.');
-        const teacher = await ClassTeacher.findById(teacherId);
-        const students = await Student.find({ classTeacherId: teacherId });
-        const totalStudents = students.length;
-        const pendingCount = students.filter(s => s.idCardStatus === 'Pending').length;
-        console.log('Total Students (Error):', totalStudents);
-        res.render('classTeacher/dashboard', { teacher, students, totalStudents, pendingCount, error_msg: req.flash('error_msg') });
+        res.redirect(`/class-teacher/${teacherId}`);
     }
 };
