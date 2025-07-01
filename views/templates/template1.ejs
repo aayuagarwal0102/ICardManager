@@ -56,6 +56,27 @@
       .print-btn {
         display: none;
       }
+
+      .print-container:not(.back) {
+        display: grid !important;
+        grid-template-columns: repeat(2, 8.4cm);
+        grid-template-rows: repeat(5, 5.4cm);
+        gap: 0.5cm;
+        padding: 0.5cm;
+        box-sizing: border-box;
+        width: 18.3cm; /* 2*8.4 + 0.5 */
+        height: 28.0cm; /* 5*5.4 + 0.5 */
+        margin: 0 auto;
+        page-break-after: always;
+        overflow: hidden;
+      }
+
+      .id-card {
+        width: 8.4cm !important;
+        height: 5.4cm !important;
+        box-sizing: border-box;
+        break-inside: avoid;
+      }
     }
 
     .style-controls {
@@ -516,15 +537,18 @@
     });
   });
 
-   function toggleBackSide() {
-    const isChecked = document.getElementById('toggleBackCheckbox').checked;
-    const backContainer = document.querySelector('.print-container.back');
-    if (isChecked) {
-      backContainer.classList.add('active');
-    } else {
-      backContainer.classList.remove('active');
-    }
+ function toggleBackSide() {
+  const isChecked = document.getElementById('toggleBackCheckbox')?.checked;
+  const backContainer = document.querySelector('.print-container.back');
+  if (!backContainer) return;
+
+  if (isChecked) {
+    backContainer.classList.add('active');
+  } else {
+    backContainer.classList.remove('active');
   }
+}
+
 
 
 
