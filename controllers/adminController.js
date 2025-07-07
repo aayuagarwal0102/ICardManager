@@ -75,8 +75,8 @@ exports.printStudentId = async (req, res) => {
         const selectedIds = req.body.selectedStudents;
         const ids = Array.isArray(selectedIds) ? selectedIds : [selectedIds];
 
-        if (ids.length < 1 || ids.length > 50) {
-            req.flash("error_msg","select minimum 1 and max 50");
+        if (ids.length < 1) {
+            req.flash("error_msg","select minimum 1");
            return res.redirect("/admin/dashboard");
         }
 

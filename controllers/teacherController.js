@@ -107,68 +107,7 @@ function parseExcelDate(dateVal) {
 }
 
 module.exports.importStudentsFromExcel = async (req, res) => {
-    // const teacherId = req.params.id;
-    // if (!req.file) {
-    //     req.flash('error_msg', 'No file uploaded.');
-    //     return res.redirect(`/class-teacher/${teacherId}`);
-    // }
-    // try {
-    //     const teacher = await ClassTeacher.findById(teacherId);
-    //     const school = await School.findById(teacher.schoolId);
-    //     const filePath = req.file.path;
-    //     const workbook = xlsx.readFile(filePath);
-    //     const sheetName = workbook.SheetNames[0];
-    //     const sheet = workbook.Sheets[sheetName];
-    //     const data = xlsx.utils.sheet_to_json(sheet, { defval: '' });
-    //     let studentsToInsert = [];
-    //     let rowIndex = 1;
-    //     for (const row of data) {
-    //         // Map Excel columns to schema fields
-    //         const name = row['NAME'] || '';
-    //         const fathername = row['F.NAME'] || '';
-    //         const mothername = row['Mother Name'] || '';
-    //         const studentClass = row['CLASS'] || teacher.class;
-    //         const contact = row['MOBILE NO'] || '';
-    //         const address = row['ADDRESS'] || '';
-    //         const dob = row['DOB'] ? new Date(row['DOB']) : undefined;
-    //         // Use row index as rollNo since it's missing
-    //         const rollNo = rowIndex.toString();
-    //         rowIndex++;
-    //         // Only require name and fathername
-    //         if (!name || !fathername) continue;
-    //         // Check for duplicate (by name and fathername in this school)
-    //         const exists = await Student.findOne({ name, fathername, schoolId: teacher.schoolId });
-    //         if (exists) continue;
-    //         studentsToInsert.push({
-    //             rollNo,
-    //             name,
-    //             schoolId: teacher.schoolId,
-    //             classTeacherId: teacher._id,
-    //             schoolName: school.schoolName,
-    //             class: studentClass,
-    //             section: teacher.section,
-    //             contact,
-    //             address,
-    //             dob,
-    //             fathername,
-    //             mothername,
-    //             idCardStatus: 'Pending'
-    //         });
-    //     }
-    //     if (studentsToInsert.length > 0) {
-    //         await Student.insertMany(studentsToInsert);
-    //         req.flash('success_msg', `${studentsToInsert.length} students imported successfully.`);
-    //     } else {
-    //         req.flash('error_msg', 'No new students were imported. Check for duplicates or missing required fields.');
-    //     }
-    //     res.redirect(`/class-teacher/${teacherId}`);
-    // } catch (err) {
-    //     console.log(err);
-    //     req.flash('error_msg', 'Error importing students from Excel.');
-    //     res.redirect(`/class-teacher/${teacherId}`);
-    // }
-
-
+   
      try {
     if (!req.file) return res.status(400).send('No file uploaded');
 
