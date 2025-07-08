@@ -88,6 +88,15 @@
       flex: 1;
     }
 
+    .detail-row {
+      margin-bottom: 2px;
+    }
+
+    .detail-value {
+      font-size: 10pt;
+      font-weight: 500;
+    }
+
     .photo-signature {
       display: flex;
       flex-direction: column;
@@ -510,8 +519,6 @@ function dropField(e) {
           const row = document.createElement('div');
           row.className = 'detail-row';
           row.innerHTML = `
-            <span class="detail-label" contenteditable="${editMode ? 'true' : 'false'}" ${editMode ? `onblur="updateFieldLabel(${idx}, this.innerText)"` : ''}>${field.label}</span>
-            <span class="colon">:</span>
             <span class="detail-value" contenteditable="${editMode ? 'true' : 'false'}" ${editMode ? `onblur="updateFieldValue(${cardIdx}, '${field.key}', this.innerText)"` : ''}>${value}</span>
             ${deleteMode ? `<button type="button" class="remove-field-btn" style="margin-left:8px; color:#fff; background:#d9534f; border:none; border-radius:3px; padding:2px 8px; cursor:pointer; font-size:12px;" onclick="removeField(${idx})">Delete</button>` : ''}
           `;
