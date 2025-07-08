@@ -49,6 +49,9 @@
     box-sizing: border-box;
     page-break-inside: avoid;
     break-inside: avoid;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
   }
 
   @media print {
@@ -415,6 +418,11 @@
       <input type="color" id="headingColorInput" value="#ffffff">
     </label>
 
+    <label>Upload Background Image:
+      <input type="file" id="bgImageInput" accept="image/*">
+    </label>
+    <div id="bgImagePreview" style="margin-top:8px;"></div>
+
     <button class="print-btn" onclick="window.print()">🖨️ Print</button>
   </div>
   </div>
@@ -768,6 +776,7 @@ function dropField(e) {
 
     document.getElementById('bgColorInput').addEventListener('input', e => {
       document.documentElement.style.setProperty('--id-bg', e.target.value);
+      setAllCardBackground();
     });
 
     document.getElementById('fontSizeInput').addEventListener('input', e => {
@@ -785,6 +794,39 @@ function dropField(e) {
     document.getElementById('headingColorInput').addEventListener('input', e => {
       document.documentElement.style.setProperty('--heading-color', e.target.value);
     });
+
+    // --- Background Image Upload Logic ---
+    let bgImageDataUrl = null;
+    document.getElementById('bgImageInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        bgImageDataUrl = evt.target.result;
+        setAllCardBackground();
+        // Show preview
+        document.getElementById('bgImagePreview').innerHTML = `<img src="${bgImageDataUrl}" style="max-width:120px; max-height:60px; border:1px solid #ccc; border-radius:4px;">`;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function setAllCardBackground() {
+      const cards = document.querySelectorAll('.id-card');
+      cards.forEach(card => {
+        if (bgImageDataUrl) {
+          card.style.backgroundImage = `url('${bgImageDataUrl}')`;
+        } else {
+          card.style.backgroundImage = '';
+        }
+      });
+    }
+
+    // Set background on render
+    const origRenderFieldsOnAllCards = renderFieldsOnAllCards;
+    renderFieldsOnAllCards = function() {
+      origRenderFieldsOnAllCards.apply(this, arguments);
+      setAllCardBackground();
+    }
   </script>
 </body>
 

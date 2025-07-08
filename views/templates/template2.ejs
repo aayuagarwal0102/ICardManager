@@ -23,18 +23,22 @@
     }
 
     .id-card {
-      width: 53mm;
-      height: 85mm;
-      padding: 0.5mm;
+      width: 9.1cm;
+      height: 5.7cm;
+      padding: 0.3cm;
       background: var(--id-bg);
-      font-size: 6.5pt;
+      font-size: var(--id-font-size);
       font-family: var(--id-font-family);
-      border-radius: 6px;
-      box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+      border: 1px solid #2a4d60;
+      border-radius: 0;
+      box-shadow: none;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       position: relative;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center center;
     }
 
     .id-header {
@@ -243,36 +247,21 @@
       <input type="color" id="headingColorInput" value="#ffffff">
     </label>
 
+    <label>Upload Background Image:
+      <input type="file" id="bgImageInput" accept="image/*">
+    </label>
+    <div id="bgImagePreview" style="margin-top:8px;"></div>
+
     <button class="print-btn" onclick="window.print()">🖨️ Print</button>
   </div>
 
   <div class="print-container">
     <% studentsWithQr.forEach(({ student, qrCode }, cardIdx) => { %>
-      <div class="id-card">
-        <div class="id-header">
-          <img src="<%= school && school.logo ? school.logo : '' %>" alt="Logo" class="logo" />
-          <div>
-            <div class="school-name"><%= school && school.schoolName ? school.schoolName : '' %></div>
-            <div class="address"><%= school && school.address ? school.address : '' %></div>
-          </div>
-        </div>
-        <div class="heading">IDENTITY CARD - SESSION 2025–2026</div>
-        <div class="id-body">
-          <div class="details"></div>
-         <div class="photo-signature">
-  <img src="<%= student.photo %>" alt="Student" class="student-photo" />
-  
-  <!-- Signature container with proper spacing -->
-  <div class="signature-wrapper">
-    <div class="draggable-signature" id="sig-<%= cardIdx %>">
-      <img src="<%= school.signature %>" alt="Principal Signature" class="signature" />
-    </div>
-      
-  </div>
-  
-  
-</div>
-
+      <div class="id-card" style="position: relative;">
+        <div class="details"></div>
+        <div class="draggable-photo" id="photo-<%= cardIdx %>" style="position: absolute; left: 0; top: 0; cursor: move;">
+          <img src="<%= student.photo %>" alt="Student" class="student-photo resizable-photo" data-idx="<%= cardIdx %>" style="pointer-events: none; width: 2.5cm; height: 3.2cm; object-fit: cover; border: 1px solid #2a4d60; resize: both; overflow: auto;" />
+          <div class="resize-handle" style="position:absolute; right:0; bottom:0; width:16px; height:16px; background:#2a4d60; cursor: se-resize; border-radius:3px;"></div>
         </div>
       </div>
     <% }); %>
@@ -589,7 +578,40 @@ function dropField(e) {
 
     document.getElementById('bgColorInput').addEventListener('input', e => {
       document.documentElement.style.setProperty('--id-bg', e.target.value);
+      setAllCardBackground();
     });
+    // --- Background Image Upload Logic ---
+    let bgImageDataUrl = null;
+    document.getElementById('bgImageInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        bgImageDataUrl = evt.target.result;
+        setAllCardBackground();
+        // Show preview
+        document.getElementById('bgImagePreview').innerHTML = `<img src="${bgImageDataUrl}" style="max-width:120px; max-height:60px; border:1px solid #ccc; border-radius:4px;">`;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function setAllCardBackground() {
+      const cards = document.querySelectorAll('.id-card');
+      cards.forEach(card => {
+        if (bgImageDataUrl) {
+          card.style.backgroundImage = `url('${bgImageDataUrl}')`;
+        } else {
+          card.style.backgroundImage = '';
+        }
+      });
+    }
+
+    // Set background on render
+    const origRenderFieldsOnAllCards = renderFieldsOnAllCards;
+    renderFieldsOnAllCards = function() {
+      origRenderFieldsOnAllCards.apply(this, arguments);
+      setAllCardBackground();
+    }
 
     document.getElementById('fontSizeInput').addEventListener('input', e => {
       document.documentElement.style.setProperty('--id-font-size', e.target.value + 'pt');
@@ -605,6 +627,67 @@ function dropField(e) {
 
     document.getElementById('headingColorInput').addEventListener('input', e => {
       document.documentElement.style.setProperty('--heading-color', e.target.value);
+    });
+    // Make student photo draggable
+    // Make all student photos draggable and resizable independently
+    const photoStates = {};
+    document.querySelectorAll('.draggable-photo').forEach((photoDiv, idx) => {
+      let isDraggingPhoto = false, offsetXPhoto = 0, offsetYPhoto = 0;
+      let isResizing = false, startW = 0, startH = 0, startX = 0, startY = 0;
+      if (!photoStates[idx]) photoStates[idx] = { left: 0, top: 0, width: 2.5, height: 3.2 };
+      photoDiv.style.left = photoStates[idx].left + 'px';
+      photoDiv.style.top = photoStates[idx].top + 'px';
+      const img = photoDiv.querySelector('.resizable-photo');
+      img.style.width = photoStates[idx].width + 'cm';
+      img.style.height = photoStates[idx].height + 'cm';
+      // Drag
+      photoDiv.addEventListener('mousedown', function(e) {
+        if (e.target.classList.contains('resize-handle')) return;
+        isDraggingPhoto = true;
+        offsetXPhoto = e.clientX - photoDiv.getBoundingClientRect().left;
+        offsetYPhoto = e.clientY - photoDiv.getBoundingClientRect().top;
+      });
+      document.addEventListener('mousemove', function(e) {
+        if (isDraggingPhoto) {
+          const parent = photoDiv.parentElement;
+          const bounds = parent.getBoundingClientRect();
+          let x = e.clientX - bounds.left - offsetXPhoto;
+          let y = e.clientY - bounds.top - offsetYPhoto;
+          // Clamp within parent
+          x = Math.max(0, Math.min(x, parent.offsetWidth - photoDiv.offsetWidth));
+          y = Math.max(0, Math.min(y, parent.offsetHeight - photoDiv.offsetHeight));
+          photoDiv.style.left = x + 'px';
+          photoDiv.style.top = y + 'px';
+          photoDiv.style.position = 'absolute';
+          photoDiv.style.zIndex = 20;
+          photoStates[idx].left = x;
+          photoStates[idx].top = y;
+        } else if (isResizing) {
+          let newW = startW + (e.clientX - startX);
+          let newH = startH + (e.clientY - startY);
+          // Convert px to cm (1cm ≈ 37.8px)
+          let wCm = Math.max(1, newW / 37.8);
+          let hCm = Math.max(1, newH / 37.8);
+          img.style.width = wCm + 'cm';
+          img.style.height = hCm + 'cm';
+          photoStates[idx].width = wCm;
+          photoStates[idx].height = hCm;
+        }
+      });
+      document.addEventListener('mouseup', function() {
+        isDraggingPhoto = false;
+        isResizing = false;
+      });
+      // Resize
+      const handle = photoDiv.querySelector('.resize-handle');
+      handle.addEventListener('mousedown', function(e) {
+        e.stopPropagation();
+        isResizing = true;
+        startW = img.offsetWidth;
+        startH = img.offsetHeight;
+        startX = e.clientX;
+        startY = e.clientY;
+      });
     });
   </script>
 </body>
