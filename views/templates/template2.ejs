@@ -98,11 +98,30 @@
       background: transparent;
       padding: 2px;
       user-select: none;
+      display: inline-block;
     }
 
     .detail-value {
       font-size: 10pt;
       font-weight: 500;
+      display: inline-block;
+    }
+
+    .text-resize-handle {
+      position: absolute;
+      right: -8px;
+      bottom: -8px;
+      width: 8px;
+      height: 8px;
+      background-color: #2a4d60;
+      border-radius: 2px;
+      cursor: se-resize;
+      opacity: 0;
+      z-index: 100;
+    }
+
+    .detail-row:hover .text-resize-handle {
+      opacity: 1;
     }
 
     .photo-signature {
@@ -511,9 +530,12 @@ function dropField(e) {
 
     // Store field positions for each card
     const fieldPositions = {};
+    const fieldSizes = {};
     let activeField = null;
     let isDragging = false;
+    let isResizing = false;
     let initialX, initialY, xOffset, yOffset;
+    let initialFontSize = 10;
 
     function updateAllFieldPositions(fieldKey, left, top) {
       document.querySelectorAll(`.detail-row[data-field-id="${fieldKey}"]`).forEach(field => {
@@ -522,9 +544,26 @@ function dropField(e) {
       });
     }
 
+    function updateAllFieldSizes(fieldKey, fontSize) {
+      document.querySelectorAll(`.detail-row[data-field-id="${fieldKey}"] .detail-value`).forEach(field => {
+        field.style.fontSize = fontSize + 'pt';
+      });
+    }
+
     function makeDraggable(element, cardIdx, fieldKey) {
+      const resizeHandle = element.querySelector('.text-resize-handle');
+      const valueSpan = element.querySelector('.detail-value');
+      
       element.addEventListener("mousedown", e => {
         if (editMode || deleteMode) return;
+        
+        if (e.target.classList.contains('text-resize-handle')) {
+          isResizing = true;
+          activeField = { element, fieldKey, valueSpan };
+          initialFontSize = parseFloat(window.getComputedStyle(valueSpan).fontSize);
+          e.stopPropagation();
+          return;
+        }
         
         const rect = element.getBoundingClientRect();
         initialX = e.clientX - rect.left;
@@ -539,34 +578,50 @@ function dropField(e) {
 
     // Handle mouse events at document level
     document.addEventListener("mousemove", e => {
-      if (!isDragging || !activeField) return;
+      if (!activeField) return;
       e.preventDefault();
 
-      const parentRect = activeField.element.parentElement.getBoundingClientRect();
-      
-      // Calculate new position
-      let newX = e.clientX - parentRect.left - initialX;
-      let newY = e.clientY - parentRect.top - initialY;
+      if (isDragging) {
+        const parentRect = activeField.element.parentElement.getBoundingClientRect();
+        
+        // Calculate new position
+        let newX = e.clientX - parentRect.left - initialX;
+        let newY = e.clientY - parentRect.top - initialY;
 
-      // Constrain to parent bounds
-      newX = Math.max(0, Math.min(newX, parentRect.width - activeField.element.offsetWidth));
-      newY = Math.max(0, Math.min(newY, parentRect.height - activeField.element.offsetHeight));
+        // Constrain to parent bounds
+        newX = Math.max(0, Math.min(newX, parentRect.width - activeField.element.offsetWidth));
+        newY = Math.max(0, Math.min(newY, parentRect.height - activeField.element.offsetHeight));
 
-      // Update positions for all instances of this field
-      updateAllFieldPositions(activeField.fieldKey, newX, newY);
+        // Update positions for all instances of this field
+        updateAllFieldPositions(activeField.fieldKey, newX, newY);
 
-      // Save the position
-      Object.keys(fieldPositions).forEach(idx => {
-        if (!fieldPositions[idx]) fieldPositions[idx] = {};
-        fieldPositions[idx][activeField.fieldKey] = {
-          left: newX + 'px',
-          top: newY + 'px'
-        };
-      });
+        // Save the position
+        Object.keys(fieldPositions).forEach(idx => {
+          if (!fieldPositions[idx]) fieldPositions[idx] = {};
+          fieldPositions[idx][activeField.fieldKey] = {
+            left: newX + 'px',
+            top: newY + 'px'
+          };
+        });
+      } else if (isResizing) {
+        // Calculate new font size based on mouse movement
+        const deltaX = e.movementX;
+        const newSize = Math.max(6, Math.min(24, initialFontSize + (deltaX * 0.1)));
+        
+        // Update font size for all instances of this field
+        updateAllFieldSizes(activeField.fieldKey, newSize);
+        
+        // Save the size
+        if (!fieldSizes[activeField.fieldKey]) fieldSizes[activeField.fieldKey] = {};
+        fieldSizes[activeField.fieldKey].fontSize = newSize;
+        
+        initialFontSize = newSize;
+      }
     });
 
     document.addEventListener("mouseup", () => {
       isDragging = false;
+      isResizing = false;
       activeField = null;
     });
 
@@ -596,13 +651,19 @@ function dropField(e) {
           row.style.left = pos.left;
           row.style.top = pos.top;
           
+          // Set size from saved sizes or default
+          const size = fieldSizes[field.key]?.fontSize || 10;
+          
           row.innerHTML = `
-            <span class="detail-value" contenteditable="${editMode ? 'true' : 'false'}" ${editMode ? `onblur="updateFieldValue(${cardIdx}, '${field.key}', this.innerText)"` : ''}>${value}</span>
+            <div style="position: relative; display: inline-block;">
+              <span class="detail-value" style="font-size: ${size}pt" contenteditable="${editMode ? 'true' : 'false'}" ${editMode ? `onblur="updateFieldValue(${cardIdx}, '${field.key}', this.innerText)"` : ''}>${value}</span>
+              <div class="text-resize-handle"></div>
+            </div>
             ${deleteMode ? `<button type="button" class="remove-field-btn" style="margin-left:8px; color:#fff; background:#d9534f; border:none; border-radius:3px; padding:2px 8px; cursor:pointer; font-size:12px;" onclick="removeField(${idx})">Delete</button>` : ''}
           `;
           detailsDiv.appendChild(row);
           
-          // Make the row draggable
+          // Make the row draggable and resizable
           makeDraggable(row, cardIdx, field.key);
         });
       });
