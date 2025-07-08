@@ -86,10 +86,18 @@
     .details {
       line-height: 1.7;
       flex: 1;
+      position: relative;
+      width: 100%;
+      height: 100%;
     }
 
     .detail-row {
       margin-bottom: 2px;
+      position: absolute;
+      cursor: move;
+      background: transparent;
+      padding: 2px;
+      user-select: none;
     }
 
     .detail-value {
@@ -501,12 +509,75 @@ function dropField(e) {
   }
 }
 
+    // Store field positions for each card
+    const fieldPositions = {};
+    let activeField = null;
+    let isDragging = false;
+    let initialX, initialY, xOffset, yOffset;
+
+    function updateAllFieldPositions(fieldKey, left, top) {
+      document.querySelectorAll(`.detail-row[data-field-id="${fieldKey}"]`).forEach(field => {
+        field.style.left = left + 'px';
+        field.style.top = top + 'px';
+      });
+    }
+
+    function makeDraggable(element, cardIdx, fieldKey) {
+      element.addEventListener("mousedown", e => {
+        if (editMode || deleteMode) return;
+        
+        const rect = element.getBoundingClientRect();
+        initialX = e.clientX - rect.left;
+        initialY = e.clientY - rect.top;
+        
+        if (e.target === element || e.target.classList.contains('detail-value')) {
+          activeField = { element, fieldKey };
+          isDragging = true;
+        }
+      });
+    }
+
+    // Handle mouse events at document level
+    document.addEventListener("mousemove", e => {
+      if (!isDragging || !activeField) return;
+      e.preventDefault();
+
+      const parentRect = activeField.element.parentElement.getBoundingClientRect();
+      
+      // Calculate new position
+      let newX = e.clientX - parentRect.left - initialX;
+      let newY = e.clientY - parentRect.top - initialY;
+
+      // Constrain to parent bounds
+      newX = Math.max(0, Math.min(newX, parentRect.width - activeField.element.offsetWidth));
+      newY = Math.max(0, Math.min(newY, parentRect.height - activeField.element.offsetHeight));
+
+      // Update positions for all instances of this field
+      updateAllFieldPositions(activeField.fieldKey, newX, newY);
+
+      // Save the position
+      Object.keys(fieldPositions).forEach(idx => {
+        if (!fieldPositions[idx]) fieldPositions[idx] = {};
+        fieldPositions[idx][activeField.fieldKey] = {
+          left: newX + 'px',
+          top: newY + 'px'
+        };
+      });
+    });
+
+    document.addEventListener("mouseup", () => {
+      isDragging = false;
+      activeField = null;
+    });
+
     function renderFieldsOnAllCards() {
       const cards = document.querySelectorAll('.id-card');
       cards.forEach((card, cardIdx) => {
         const detailsDiv = card.querySelector('.details');
         detailsDiv.innerHTML = '';
         if (!cardFieldValues[cardIdx]) cardFieldValues[cardIdx] = {};
+        if (!fieldPositions[cardIdx]) fieldPositions[cardIdx] = {};
+        
         globalFields.forEach((field, idx) => {
           let value = cardFieldValues[cardIdx][field.key];
           if (typeof value === 'undefined') {
@@ -518,11 +589,21 @@ function dropField(e) {
           }
           const row = document.createElement('div');
           row.className = 'detail-row';
+          row.setAttribute('data-field-id', field.key);
+          
+          // Set position from saved positions or default
+          const pos = fieldPositions[cardIdx][field.key] || { left: '10px', top: (idx * 25) + 'px' };
+          row.style.left = pos.left;
+          row.style.top = pos.top;
+          
           row.innerHTML = `
             <span class="detail-value" contenteditable="${editMode ? 'true' : 'false'}" ${editMode ? `onblur="updateFieldValue(${cardIdx}, '${field.key}', this.innerText)"` : ''}>${value}</span>
             ${deleteMode ? `<button type="button" class="remove-field-btn" style="margin-left:8px; color:#fff; background:#d9534f; border:none; border-radius:3px; padding:2px 8px; cursor:pointer; font-size:12px;" onclick="removeField(${idx})">Delete</button>` : ''}
           `;
           detailsDiv.appendChild(row);
+          
+          // Make the row draggable
+          makeDraggable(row, cardIdx, field.key);
         });
       });
     }
