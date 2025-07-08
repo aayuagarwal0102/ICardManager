@@ -129,6 +129,27 @@
       pointer-events: none;
     }
 
+    .draggable-photo {
+      position: absolute;
+      left: 0;
+      top: 0;
+      cursor: move;
+    }
+
+    .resize-handle {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 8px;
+      height: 8px;
+      cursor: se-resize;
+      opacity: 0;
+    }
+
+    .draggable-photo:hover .resize-handle {
+      opacity: 0.3;
+    }
+
     .principal-label {
       font-weight: 600;
     }
@@ -260,8 +281,8 @@
       <div class="id-card" style="position: relative;">
         <div class="details"></div>
         <div class="draggable-photo" id="photo-<%= cardIdx %>" style="position: absolute; left: 0; top: 0; cursor: move;">
-          <img src="<%= student.photo %>" alt="Student" class="student-photo resizable-photo" data-idx="<%= cardIdx %>" style="pointer-events: none; width: 2.5cm; height: 3.2cm; object-fit: cover; border: 1px solid #2a4d60; resize: both; overflow: auto;" />
-          <div class="resize-handle" style="position:absolute; right:0; bottom:0; width:16px; height:16px; background:#2a4d60; cursor: se-resize; border-radius:3px;"></div>
+          <img src="<%= student.photo %>" alt="Student" class="student-photo resizable-photo" data-idx="<%= cardIdx %>" style="pointer-events: none; width: 2.5cm; height: 3.2cm; object-fit: cover; border: 1px solid #2a4d60;" />
+          <div class="resize-handle"></div>
         </div>
       </div>
     <% }); %>
@@ -628,18 +649,35 @@ function dropField(e) {
     document.getElementById('headingColorInput').addEventListener('input', e => {
       document.documentElement.style.setProperty('--heading-color', e.target.value);
     });
-    // Make student photo draggable
     // Make all student photos draggable and resizable independently
     const photoStates = {};
+    const globalPhotoPosition = { left: 0, top: 0 };
+    const globalPhotoSize = { width: 2.5, height: 3.2 }; // in cm
+
+    function updateAllPhotoPositions() {
+      document.querySelectorAll('.draggable-photo').forEach(photo => {
+        photo.style.left = globalPhotoPosition.left + 'px';
+        photo.style.top = globalPhotoPosition.top + 'px';
+        photo.style.position = 'absolute';
+        photo.style.zIndex = 20;
+      });
+    }
+
+    function updateAllPhotoSizes() {
+      document.querySelectorAll('.resizable-photo').forEach(img => {
+        img.style.width = globalPhotoSize.width + 'cm';
+        img.style.height = globalPhotoSize.height + 'cm';
+      });
+    }
+
     document.querySelectorAll('.draggable-photo').forEach((photoDiv, idx) => {
       let isDraggingPhoto = false, offsetXPhoto = 0, offsetYPhoto = 0;
       let isResizing = false, startW = 0, startH = 0, startX = 0, startY = 0;
-      if (!photoStates[idx]) photoStates[idx] = { left: 0, top: 0, width: 2.5, height: 3.2 };
-      photoDiv.style.left = photoStates[idx].left + 'px';
-      photoDiv.style.top = photoStates[idx].top + 'px';
+      
       const img = photoDiv.querySelector('.resizable-photo');
-      img.style.width = photoStates[idx].width + 'cm';
-      img.style.height = photoStates[idx].height + 'cm';
+      img.style.width = globalPhotoSize.width + 'cm';
+      img.style.height = globalPhotoSize.height + 'cm';
+
       // Drag
       photoDiv.addEventListener('mousedown', function(e) {
         if (e.target.classList.contains('resize-handle')) return;
@@ -647,37 +685,39 @@ function dropField(e) {
         offsetXPhoto = e.clientX - photoDiv.getBoundingClientRect().left;
         offsetYPhoto = e.clientY - photoDiv.getBoundingClientRect().top;
       });
+
       document.addEventListener('mousemove', function(e) {
         if (isDraggingPhoto) {
           const parent = photoDiv.parentElement;
           const bounds = parent.getBoundingClientRect();
           let x = e.clientX - bounds.left - offsetXPhoto;
           let y = e.clientY - bounds.top - offsetYPhoto;
+          
           // Clamp within parent
           x = Math.max(0, Math.min(x, parent.offsetWidth - photoDiv.offsetWidth));
           y = Math.max(0, Math.min(y, parent.offsetHeight - photoDiv.offsetHeight));
-          photoDiv.style.left = x + 'px';
-          photoDiv.style.top = y + 'px';
-          photoDiv.style.position = 'absolute';
-          photoDiv.style.zIndex = 20;
-          photoStates[idx].left = x;
-          photoStates[idx].top = y;
+          
+          globalPhotoPosition.left = x;
+          globalPhotoPosition.top = y;
+          updateAllPhotoPositions();
         } else if (isResizing) {
           let newW = startW + (e.clientX - startX);
           let newH = startH + (e.clientY - startY);
           // Convert px to cm (1cm ≈ 37.8px)
           let wCm = Math.max(1, newW / 37.8);
           let hCm = Math.max(1, newH / 37.8);
-          img.style.width = wCm + 'cm';
-          img.style.height = hCm + 'cm';
-          photoStates[idx].width = wCm;
-          photoStates[idx].height = hCm;
+          
+          globalPhotoSize.width = wCm;
+          globalPhotoSize.height = hCm;
+          updateAllPhotoSizes();
         }
       });
+
       document.addEventListener('mouseup', function() {
         isDraggingPhoto = false;
         isResizing = false;
       });
+
       // Resize
       const handle = photoDiv.querySelector('.resize-handle');
       handle.addEventListener('mousedown', function(e) {
