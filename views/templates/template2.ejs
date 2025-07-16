@@ -8,8 +8,7 @@
       --id-bg: white;
       --id-font-size: 7pt;
       --id-font-family: Arial;
-      --heading-bg: #2a4d60;
-      --heading-color: white;
+      --field-text-color: #222;
     }
 
     .print-container {
@@ -23,6 +22,7 @@
       box-sizing: border-box;
       width: 100%;
       margin: 0 auto;
+      box-sizing: border-box;
     }
 
     .id-card {
@@ -42,6 +42,7 @@
       background-size: cover;
       background-repeat: no-repeat;
       background-position: center center;
+      box-sizing: border-box;
     }
 
     .id-header {
@@ -70,8 +71,6 @@
     }
 
     .heading {
-      background-color: var(--heading-bg);
-      color: var(--heading-color);
       font-size: 6.5pt;
       padding: 1px;
       text-align: center;
@@ -108,6 +107,7 @@
       font-size: 10pt;
       font-weight: 500;
       display: inline-block;
+      color: var(--field-text-color, #222);
     }
 
     .text-resize-handle {
@@ -244,6 +244,7 @@
 
       .print-container {
         page-break-after: always;
+        break-inside: avoid;
         overflow: hidden;
       }
 
@@ -263,6 +264,8 @@
         box-shadow: none !important;
         border-radius: 0;
         border: 1px solid #2a4d60;
+        break-inside: avoid;
+        margin: 0;
       }
 
       .back-card {
@@ -351,12 +354,8 @@
       </select>
     </label>
 
-    <label>Heading Background:
-      <input type="color" id="headingBgInput" value="#2a4d60">
-    </label>
-
-    <label>Heading Text Color:
-      <input type="color" id="headingColorInput" value="#ffffff">
+    <label>Field Text Color:
+      <input type="color" id="fieldTextColorInput" value="#222222">
     </label>
 
     <label>Upload Background Image:
@@ -851,12 +850,9 @@ function dropField(e) {
       document.documentElement.style.setProperty('--id-font-family', e.target.value);
     });
 
-    document.getElementById('headingBgInput').addEventListener('input', e => {
-      document.documentElement.style.setProperty('--heading-bg', e.target.value);
-    });
-
-    document.getElementById('headingColorInput').addEventListener('input', e => {
-      document.documentElement.style.setProperty('--heading-color', e.target.value);
+    // Field text color change
+    document.getElementById('fieldTextColorInput').addEventListener('input', e => {
+      document.documentElement.style.setProperty('--field-text-color', e.target.value);
     });
     // Make all student photos draggable and resizable independently
     const photoStates = {};
