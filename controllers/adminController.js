@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const School = require('../models/School'); // Import School Model
 const ClassTeacher= require("../models/ClassTeacher");
 const Student = require('../models/Student');
+const IdCardDesign = require('../models/IdCardDesign');
 const QRCode = require('qrcode');
 
 
@@ -83,8 +84,6 @@ exports.printStudentId = async (req, res) => {
         // Fetch Students
         const students = await Student.find({ _id: { $in: ids } });
 
-    
-
         // Generate QR Codes for Each Student
         const studentsWithQr = await Promise.all(students.map(async (student) => {
             const qrData = JSON.stringify({
@@ -109,11 +108,31 @@ exports.printStudentId = async (req, res) => {
         // Fetch the teacher object
         const teacher = await ClassTeacher.findById(students[0].classTeacherId);
 
-        // Get selected template from session
-        const selectedTemplate = req.session.selectedTemplate || 'template1';
+        // Try to load saved design for this school
+        let savedDesign = null;
+        try {
+            const design = await IdCardDesign.findOne({ 
+                schoolId: students[0].schoolId, 
+                isDefault: true 
+            });
+            savedDesign = design;
+        } catch (error) {
+            console.log('No saved design found for school:', students[0].schoolId);
+        }
 
-        // Render
-        res.render(`templates/${selectedTemplate}`, { studentsWithQr, school, teacher });
+        // Get selected template from session or use saved design template
+        let selectedTemplate = req.session.selectedTemplate || 'template1';
+        if (savedDesign && savedDesign.template) {
+            selectedTemplate = savedDesign.template;
+        }
+
+        // Render with saved design data
+        res.render(`templates/${selectedTemplate}`, { 
+            studentsWithQr, 
+            school, 
+            teacher,
+            savedDesign: savedDesign 
+        });
 
     } catch (error) {
         req.flash("error_msg","Error printing multiple ID cards:");
@@ -190,7 +209,118 @@ exports.logoutAdmin = (req, res) => {
     });
 };
 
+// Save ID Card Design for School
+exports.saveIdCardDesign = async (req, res) => {
+    try {
+        const { schoolId, designName, template, fields, styling, photoSettings } = req.body;
+        
+        // Check if a default design already exists for this school
+        const existingDefault = await IdCardDesign.findOne({ 
+            schoolId, 
+            isDefault: true 
+        });
 
+        if (existingDefault) {
+            // Update existing default design
+            existingDefault.designName = designName || existingDefault.designName;
+            existingDefault.template = template || existingDefault.template;
+            existingDefault.fields = fields || existingDefault.fields;
+            existingDefault.styling = styling || existingDefault.styling;
+            existingDefault.photoSettings = photoSettings || existingDefault.photoSettings;
+            
+            await existingDefault.save();
+            return res.json({ success: true, message: 'Design updated successfully', designId: existingDefault._id });
+        } else {
+            // Create new default design
+            const newDesign = new IdCardDesign({
+                schoolId,
+                designName: designName || 'Default Design',
+                template: template || 'template2',
+                fields: fields || [],
+                styling: styling || {
+                    backgroundColor: '#ffffff',
+                    fontFamily: 'Arial',
+                    fontSize: 7,
+                    fieldTextColor: '#222222',
+                    backgroundImage: null
+                },
+                photoSettings: photoSettings || {
+                    position: { left: 0, top: 0 },
+                    size: { width: 2.5, height: 3.2 }
+                },
+                isDefault: true
+            });
+            
+            await newDesign.save();
+            return res.json({ success: true, message: 'Design saved successfully', designId: newDesign._id });
+        }
+    } catch (error) {
+        console.error('Error saving ID card design:', error);
+        return res.status(500).json({ success: false, message: 'Error saving design' });
+    }
+};
 
+// Load ID Card Design for School
+exports.loadIdCardDesign = async (req, res) => {
+    try {
+        const { schoolId } = req.params;
+        
+        // Find the default design for this school
+        const design = await IdCardDesign.findOne({ 
+            schoolId, 
+            isDefault: true 
+        });
 
+        if (!design) {
+            return res.json({ 
+                success: false, 
+                message: 'No saved design found for this school',
+                design: null 
+            });
+        }
 
+        return res.json({ 
+            success: true, 
+            message: 'Design loaded successfully',
+            design: design 
+        });
+    } catch (error) {
+        console.error(' loading ID card design:', error);
+        return res.status(500).json({ success: false, message: 'Error loading design' });
+    }
+};
+
+// Get all designs for a school
+exports.getSchoolDesigns = async (req, res) => {
+    try {
+        const { schoolId } = req.params;
+        
+        const designs = await IdCardDesign.find({ schoolId }).sort({ createdAt: -1 });
+        
+        return res.json({ 
+            success: true, 
+            designs: designs 
+        });
+    } catch (error) {
+        console.error('Error fetching school designs:', error);
+        return res.status(500).json({ success: false, message: 'Error fetching designs' });
+    }
+};
+
+// Delete a design
+exports.deleteDesign = async (req, res) => {
+    try {
+        const { designId } = req.params;
+        
+        const design = await IdCardDesign.findByIdAndDelete(designId);
+        
+        if (!design) {
+            return res.status(404).json({ success: false, message: 'Design not found' });
+        }
+
+        return res.json({ success: true, message: 'Design deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting design:', error);
+        return res.status(500).json({ success: false, message: 'Error deleting design' });
+    }
+};

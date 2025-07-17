@@ -35,9 +35,9 @@ app.use(cookieParser());
 // Compression middleware
 app.use(compression());
 
-// Body parser with size limits
-app.use(express.json({ limit: '10kb' }));
-app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+// Body parser with size limits - increased for image uploads
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 const path = require("path");
 const session= require("express-session");

@@ -291,6 +291,52 @@
       flex-direction: column;
       font-weight: bold;
     }
+
+    /* Field Color Controls Styling */
+    #fieldColorControls {
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 10px;
+      background: #f8f9fa;
+    }
+
+    .field-color-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      background: white;
+      border-radius: 4px;
+      border: 1px solid #e9ecef;
+      margin-bottom: 5px;
+      transition: all 0.2s ease;
+    }
+
+    .field-color-item:hover {
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .field-color-item span {
+      font-size: 12px;
+      font-weight: 500;
+      min-width: 100px;
+      color: #495057;
+    }
+
+    .field-color-item input[type="color"] {
+      width: 35px;
+      height: 30px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .field-color-item input[type="color"]:hover {
+      transform: scale(1.1);
+    }
   </style>
 </head>
 
@@ -325,15 +371,25 @@
     <button id="saveFieldsBtn" onclick="saveFieldEdits()" style="display:none;">Save</button>
     <button id="layoutEditBtn" onclick="enableLayoutEditMode()">Reorder Fields</button>
     <button id="layoutSaveBtn" onclick="disableLayoutEditMode()" style="display:none;">Done</button>
+    
+    <!-- Design Management Buttons -->
+    <div style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+      <h4 style="margin: 0 0 10px 0; color: #2a4d60;">Design Management</h4>
+      <button onclick="saveCurrentDesign()" style="background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 4px; margin-right: 10px; cursor: pointer;">💾 Save Design</button>
+      <button onclick="loadSavedDesign()" style="background: #007bff; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">📂 Load Design</button>
+    </div>
+
+    <!-- Individual Field Color Controls -->
+    <div style="margin-top: 10px; padding: 10px; background: #e9ecef; border-radius: 5px;">
+      <h4 style="margin: 0 0 10px 0; color: #2a4d60;">Individual Field Colors</h4>
+      <div id="fieldColorControls" style="display: flex; flex-wrap: wrap; gap: 10px;">
+        <!-- Field color controls will be dynamically added here -->
+      </div>
+      <button onclick="toggleFieldColorMode()" style="background: #17a2b8; color: white; border: none; padding: 8px 15px; border-radius: 4px; margin-top: 10px; cursor: pointer;">🎨 Edit Field Colors</button>
+    </div>
   </div>
 
-  <!-- 🌈 Styling Controls -->
-   <div style="margin: 20px;">
-  <label>
-    <input type="checkbox" id="toggleBackCheckbox" onchange="toggleBackSide()">
-    Enable Back Side Printing
-  </label>
-</div>
+ 
 
   <div class="style-controls">
     <h3>Customize ID Card</h3>
@@ -590,11 +646,13 @@ function dropField(e) {
     // Store field positions for each card
     const fieldPositions = {};
     const fieldSizes = {};
+    const fieldColors = {}; // Store individual field colors
     let activeField = null;
     let isDragging = false;
     let isResizing = false;
     let initialX, initialY, xOffset, yOffset;
     let initialFontSize = 10;
+    let fieldColorMode = false;
 
     function updateAllFieldPositions(fieldKey, left, top) {
       document.querySelectorAll(`.detail-row[data-field-id="${fieldKey}"]`).forEach(field => {
@@ -607,6 +665,51 @@ function dropField(e) {
       document.querySelectorAll(`.detail-row[data-field-id="${fieldKey}"] .detail-value`).forEach(field => {
         field.style.fontSize = fontSize + 'pt';
       });
+    }
+
+    function updateAllFieldColors(fieldKey, color) {
+      document.querySelectorAll(`.detail-row[data-field-id="${fieldKey}"] .detail-value`).forEach(field => {
+        field.style.color = color;
+      });
+    }
+
+    function toggleFieldColorMode() {
+      fieldColorMode = !fieldColorMode;
+      const controlsDiv = document.getElementById('fieldColorControls');
+      const toggleBtn = event.target;
+      
+      if (fieldColorMode) {
+        // Show color controls for each field
+        controlsDiv.innerHTML = '';
+        toggleBtn.textContent = '✅ Done Editing Colors';
+        toggleBtn.style.background = '#28a745';
+        
+        globalFields.forEach(field => {
+          const fieldDiv = document.createElement('div');
+          fieldDiv.className = 'field-color-item';
+          
+          const label = document.createElement('span');
+          label.textContent = field.label;
+          
+          const colorInput = document.createElement('input');
+          colorInput.type = 'color';
+          colorInput.value = fieldColors[field.key] || '#222222';
+          
+          colorInput.addEventListener('change', (e) => {
+            fieldColors[field.key] = e.target.value;
+            updateAllFieldColors(field.key, e.target.value);
+          });
+          
+          fieldDiv.appendChild(label);
+          fieldDiv.appendChild(colorInput);
+          controlsDiv.appendChild(fieldDiv);
+        });
+      } else {
+        // Hide color controls
+        controlsDiv.innerHTML = '<p style="margin: 0; color: #666; font-size: 12px;">Click "Edit Field Colors" to customize individual field colors</p>';
+        toggleBtn.textContent = '🎨 Edit Field Colors';
+        toggleBtn.style.background = '#17a2b8';
+      }
     }
 
     function makeDraggable(element, cardIdx, fieldKey) {
@@ -654,10 +757,11 @@ function dropField(e) {
         // Update positions for all instances of this field
         updateAllFieldPositions(activeField.fieldKey, newX, newY);
 
-        // Save the position
-        Object.keys(fieldPositions).forEach(idx => {
-          if (!fieldPositions[idx]) fieldPositions[idx] = {};
-          fieldPositions[idx][activeField.fieldKey] = {
+        // Save the position to all cards to maintain consistency
+        const cards = document.querySelectorAll('.id-card');
+        cards.forEach((_, cardIdx) => {
+          if (!fieldPositions[cardIdx]) fieldPositions[cardIdx] = {};
+          fieldPositions[cardIdx][activeField.fieldKey] = {
             left: newX + 'px',
             top: newY + 'px'
           };
@@ -706,16 +810,20 @@ function dropField(e) {
           row.setAttribute('data-field-id', field.key);
           
           // Set position from saved positions or default
-          const pos = fieldPositions[cardIdx][field.key] || { left: '10px', top: (idx * 25) + 'px' };
+          // Use position from card 0 for all cards to maintain consistency
+          const pos = fieldPositions[0]?.[field.key] || fieldPositions[cardIdx]?.[field.key] || { left: '10px', top: (idx * 25) + 'px' };
           row.style.left = pos.left;
           row.style.top = pos.top;
           
           // Set size from saved sizes or default
           const size = fieldSizes[field.key]?.fontSize || 10;
           
+          // Set color from saved colors or default
+          const color = fieldColors[field.key] || '#222222';
+          
           row.innerHTML = `
             <div style="position: relative; display: inline-block;">
-              <span class="detail-value" style="font-size: ${size}pt" contenteditable="${editMode ? 'true' : 'false'}" ${editMode ? `onblur="updateFieldValue(${cardIdx}, '${field.key}', this.innerText)"` : ''}>${value}</span>
+              <span class="detail-value" style="font-size: ${size}pt; color: ${color}" contenteditable="${editMode ? 'true' : 'false'}" ${editMode ? `onblur="updateFieldValue(${cardIdx}, '${field.key}', this.innerText)"` : ''}>${value}</span>
               <div class="text-resize-handle"></div>
             </div>
             ${deleteMode ? `<button type="button" class="remove-field-btn" style="margin-left:8px; color:#fff; background:#d9534f; border:none; border-radius:3px; padding:2px 8px; cursor:pointer; font-size:12px;" onclick="removeField(${idx})">Delete</button>` : ''}
@@ -814,6 +922,14 @@ function dropField(e) {
     document.getElementById('bgImageInput').addEventListener('change', function(e) {
       const file = e.target.files[0];
       if (!file) return;
+      
+      // Check file size (max 500KB)
+      if (file.size > 500 * 1024) {
+        alert('⚠️ Image file is too large. Please select an image smaller than 500KB.');
+        e.target.value = ''; // Clear the input
+        return;
+      }
+      
       const reader = new FileReader();
       reader.onload = function(evt) {
         bgImageDataUrl = evt.target.result;
@@ -854,6 +970,226 @@ function dropField(e) {
     document.getElementById('fieldTextColorInput').addEventListener('input', e => {
       document.documentElement.style.setProperty('--field-text-color', e.target.value);
     });
+
+    // Design Management Functions
+    const currentSchoolId = '<%= school._id %>';
+    let savedDesign = null;
+
+    // Save current design
+    async function saveCurrentDesign() {
+      try {
+        // For now, skip background image if it's too large to prevent payload issues
+        let backgroundImageToSave = null;
+        if (bgImageDataUrl && bgImageDataUrl.length < 500000) { // Only save if smaller than 500KB
+          backgroundImageToSave = bgImageDataUrl;
+        } else if (bgImageDataUrl) {
+          alert('⚠️ Background image is too large to save. Please use a smaller image (under 500KB).');
+        }
+
+        const designData = {
+          schoolId: currentSchoolId,
+          designName: 'Default Design',
+          template: 'template2',
+          fields: globalFields.map(field => ({
+            label: field.label,
+            key: field.key,
+            position: {
+              left: fieldPositions[0]?.[field.key]?.left || '10px',
+              top: fieldPositions[0]?.[field.key]?.top || '10px'
+            },
+            fontSize: fieldSizes[field.key]?.fontSize || 10,
+            textColor: fieldColors[field.key] || '#222222'
+          })),
+          styling: {
+            backgroundColor: document.getElementById('bgColorInput').value,
+            fontFamily: document.getElementById('fontFamilyInput').value,
+            fontSize: parseInt(document.getElementById('fontSizeInput').value),
+            fieldTextColor: document.getElementById('fieldTextColorInput').value,
+            backgroundImage: backgroundImageToSave
+          },
+          photoSettings: {
+            position: globalPhotoPosition,
+            size: globalPhotoSize
+          }
+        };
+
+        const response = await fetch('/admin/save-design', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(designData)
+        });
+
+        const result = await response.json();
+        
+        if (result.success) {
+          alert('✅ Design saved successfully! This design will be used for all classes in this school.');
+        } else {
+          alert('❌ Error saving design: ' + result.message);
+        }
+      } catch (error) {
+        console.error('Error saving design:', error);
+        alert('❌ Error saving design. Please try again.');
+      }
+    }
+
+    // Load saved design
+    async function loadSavedDesign() {
+      try {
+        const response = await fetch(`/admin/load-design/${currentSchoolId}`);
+        const result = await response.json();
+        
+        if (result.success && result.design) {
+          savedDesign = result.design;
+          
+          // Load fields
+          globalFields = savedDesign.fields.map(field => ({
+            label: field.label,
+            key: field.key
+          }));
+          
+          // Load field positions and sizes
+          savedDesign.fields.forEach(field => {
+            // Apply positions to all cards for consistency
+            const cards = document.querySelectorAll('.id-card');
+            cards.forEach((_, cardIdx) => {
+              if (!fieldPositions[cardIdx]) fieldPositions[cardIdx] = {};
+              fieldPositions[cardIdx][field.key] = {
+                left: field.position.left,
+                top: field.position.top
+              };
+            });
+            
+            fieldSizes[field.key] = {
+              fontSize: field.fontSize
+            };
+            
+            // Load individual field colors
+            fieldColors[field.key] = field.textColor || '#222222';
+          });
+          
+          // Load styling
+          if (savedDesign.styling) {
+            document.getElementById('bgColorInput').value = savedDesign.styling.backgroundColor;
+            document.getElementById('fontFamilyInput').value = savedDesign.styling.fontFamily;
+            document.getElementById('fontSizeInput').value = savedDesign.styling.fontSize;
+            document.getElementById('fieldTextColorInput').value = savedDesign.styling.fieldTextColor;
+            
+            // Apply styling
+            document.documentElement.style.setProperty('--id-bg', savedDesign.styling.backgroundColor);
+            document.documentElement.style.setProperty('--id-font-family', savedDesign.styling.fontFamily);
+            document.documentElement.style.setProperty('--id-font-size', savedDesign.styling.fontSize + 'pt');
+            document.documentElement.style.setProperty('--field-text-color', savedDesign.styling.fieldTextColor);
+            
+            // Load background image
+            if (savedDesign.styling.backgroundImage) {
+              bgImageDataUrl = savedDesign.styling.backgroundImage;
+              setAllCardBackground();
+              document.getElementById('bgImagePreview').innerHTML = `<img src="${bgImageDataUrl}" style="max-width:120px; max-height:60px; border:1px solid #ccc; border-radius:4px;">`;
+            }
+          }
+          
+          // Load photo settings
+          if (savedDesign.photoSettings) {
+            globalPhotoPosition.left = savedDesign.photoSettings.position.left;
+            globalPhotoPosition.top = savedDesign.photoSettings.position.top;
+            globalPhotoSize.width = savedDesign.photoSettings.size.width;
+            globalPhotoSize.height = savedDesign.photoSettings.size.height;
+            
+            updateAllPhotoPositions();
+            updateAllPhotoSizes();
+          }
+          
+          // Re-render fields
+          renderFieldsOnAllCards();
+          
+          alert('✅ Design loaded successfully!');
+        } else {
+          alert('ℹ️ No saved design found for this school. Create a design first.');
+        }
+      } catch (error) {
+        console.error('Error loading design:', error);
+        alert('❌ Error loading design. Please try again.');
+      }
+    }
+
+
+
+    // Auto-load saved design when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      // Load saved design after a short delay to ensure everything is initialized
+      setTimeout(() => {
+        loadSavedDesign();
+      }, 500);
+    });
+
+    // Function to apply saved design
+    function applySavedDesign(design) {
+      if (!design) return;
+      
+      // Load fields
+      globalFields = design.fields.map(field => ({
+        label: field.label,
+        key: field.key
+      }));
+      
+      // Load field positions and sizes
+      design.fields.forEach(field => {
+        // Apply positions to all cards for consistency
+        const cards = document.querySelectorAll('.id-card');
+        cards.forEach((_, cardIdx) => {
+          if (!fieldPositions[cardIdx]) fieldPositions[cardIdx] = {};
+          fieldPositions[cardIdx][field.key] = {
+            left: field.position.left,
+            top: field.position.top
+          };
+        });
+        
+        fieldSizes[field.key] = {
+          fontSize: field.fontSize
+        };
+        
+        // Load individual field colors
+        fieldColors[field.key] = field.textColor || '#222222';
+      });
+      
+      // Load styling
+      if (design.styling) {
+        document.getElementById('bgColorInput').value = design.styling.backgroundColor;
+        document.getElementById('fontFamilyInput').value = design.styling.fontFamily;
+        document.getElementById('fontSizeInput').value = design.styling.fontSize;
+        document.getElementById('fieldTextColorInput').value = design.styling.fieldTextColor;
+        
+        // Apply styling
+        document.documentElement.style.setProperty('--id-bg', design.styling.backgroundColor);
+        document.documentElement.style.setProperty('--id-font-family', design.styling.fontFamily);
+        document.documentElement.style.setProperty('--id-font-size', design.styling.fontSize + 'pt');
+        document.documentElement.style.setProperty('--field-text-color', design.styling.fieldTextColor);
+        
+        // Load background image
+        if (design.styling.backgroundImage) {
+          bgImageDataUrl = design.styling.backgroundImage;
+          setAllCardBackground();
+          document.getElementById('bgImagePreview').innerHTML = `<img src="${bgImageDataUrl}" style="max-width:120px; max-height:60px; border:1px solid #ccc; border-radius:4px;">`;
+        }
+      }
+      
+      // Load photo settings
+      if (design.photoSettings) {
+        globalPhotoPosition.left = design.photoSettings.position.left;
+        globalPhotoPosition.top = design.photoSettings.position.top;
+        globalPhotoSize.width = design.photoSettings.size.width;
+        globalPhotoSize.height = design.photoSettings.size.height;
+        
+        updateAllPhotoPositions();
+        updateAllPhotoSizes();
+      }
+      
+      // Re-render fields
+      renderFieldsOnAllCards();
+    }
+
     // Make all student photos draggable and resizable independently
     const photoStates = {};
     const globalPhotoPosition = { left: 0, top: 0 };
