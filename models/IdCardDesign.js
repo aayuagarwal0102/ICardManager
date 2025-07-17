@@ -24,7 +24,8 @@ const IdCardDesignSchema = new mongoose.Schema({
             top: { type: String, default: '10px' }
         },
         fontSize: { type: Number, default: 10 },
-        textColor: { type: String, default: '#222222' }
+        textColor: { type: String, default: '#222222' },
+        fontWeight: { type: String, default: 'normal' }
     }],
     styling: {
         backgroundColor: { type: String, default: '#ffffff' },

@@ -371,6 +371,7 @@
         <label><input type="checkbox" value="Address"> Address</label><br>
         <label><input type="checkbox" value="DOB"> DOB</label><br>
         <label><input type="checkbox" value="House"> House</label><br>
+        <label><input type="checkbox" value="Principal's Signature"> Principal's Signature</label><br>
         <button type="button" onclick="closeFieldDropdown()" style="margin-top:6px;">Close</button>
       </div>
     </div>
@@ -568,7 +569,8 @@
       "Mobile": "contact",
       "Address": "address",
       "DOB": "dob",
-      "House": "house"
+      "House": "house",
+      "Principal's Signature": "principalSignature"
     };
     let deleteMode = false;
     let editMode = false;
@@ -679,19 +681,41 @@ function dropField(e) {
           let value = cardFieldValues[cardIdx][field.key];
           if (typeof value === 'undefined') {
             const studentData = window.studentsWithQr && window.studentsWithQr[cardIdx] ? window.studentsWithQr[cardIdx].student : {};
-            value = studentData[field.key] || '';
-            if (field.key === 'dob' && value) {
-              try { value = new Date(value).toLocaleDateString(); } catch {}
+            const schoolData = window.schoolData || {};
+            
+            if (field.key === 'principalSignature') {
+              value = schoolData.signature || '';
+            } else {
+              value = studentData[field.key] || '';
+              if (field.key === 'dob' && value) {
+                try { value = new Date(value).toLocaleDateString(); } catch {}
+              }
             }
           }
           const row = document.createElement('div');
           row.className = 'detail-row';
-          row.innerHTML = `
-            <span class="detail-label" contenteditable="${editMode ? 'true' : 'false'}" ${editMode ? `onblur="updateFieldLabel(${idx}, this.innerText)"` : ''}>${field.label}</span>
-            <span class="colon">:</span>
-            <span class="detail-value" contenteditable="${editMode ? 'true' : 'false'}" ${editMode ? `onblur="updateFieldValue(${cardIdx}, '${field.key}', this.innerText)"` : ''}>${value}</span>
-            ${deleteMode ? `<button type="button" class="remove-field-btn" style="margin-left:8px; color:#fff; background:#d9534f; border:none; border-radius:3px; padding:2px 8px; cursor:pointer; font-size:12px;" onclick="removeField(${idx})">Delete</button>` : ''}
-          `;
+          
+          if (field.key === 'principalSignature') {
+            // Render signature as image
+            row.innerHTML = `
+              <span class="detail-label" contenteditable="${editMode ? 'true' : 'false'}" ${editMode ? `onblur="updateFieldLabel(${idx}, this.innerText)"` : ''}>${field.label}</span>
+              <span class="colon">:</span>
+              <div class="signature-wrapper" style="display: inline-block; position: relative;">
+                <div class="draggable-signature" style="position: absolute; top: 0; left: 0; cursor: move; z-index: 10;">
+                  <img src="${value}" alt="Principal's Signature" class="signature" style="width: 1.6cm; height: auto; background: transparent; border: none; padding: 0; filter: none; opacity: 1; box-shadow: none; border-radius: 3px; pointer-events: none;" />
+                </div>
+              </div>
+              ${deleteMode ? `<button type="button" class="remove-field-btn" style="margin-left:8px; color:#fff; background:#d9534f; border:none; border-radius:3px; padding:2px 8px; cursor:pointer; font-size:12px;" onclick="removeField(${idx})">Delete</button>` : ''}
+            `;
+          } else {
+            // Render regular text field
+            row.innerHTML = `
+              <span class="detail-label" contenteditable="${editMode ? 'true' : 'false'}" ${editMode ? `onblur="updateFieldLabel(${idx}, this.innerText)"` : ''}>${field.label}</span>
+              <span class="colon">:</span>
+              <span class="detail-value" contenteditable="${editMode ? 'true' : 'false'}" ${editMode ? `onblur="updateFieldValue(${cardIdx}, '${field.key}', this.innerText)"` : ''}>${value}</span>
+              ${deleteMode ? `<button type="button" class="remove-field-btn" style="margin-left:8px; color:#fff; background:#d9534f; border:none; border-radius:3px; padding:2px 8px; cursor:pointer; font-size:12px;" onclick="removeField(${idx})">Delete</button>` : ''}
+            `;
+          }
           detailsDiv.appendChild(row);
         });
       });
@@ -720,6 +744,7 @@ function dropField(e) {
     }
 
     window.studentsWithQr = JSON.parse('<%- JSON.stringify(studentsWithQr || []) %>');
+    window.schoolData = JSON.parse('<%- JSON.stringify(school || {}) %>');
 
     const excelToSchemaMap = {
       'Roll No': 'rollNo',

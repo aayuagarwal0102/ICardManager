@@ -361,6 +361,7 @@
         <label><input type="checkbox" value="PEN No"> PEN No</label><br>
         <label><input type="checkbox" value="ID Card Status"> ID Card Status</label><br>
         <label><input type="checkbox" value="School Name"> School Name</label><br>
+        <label><input type="checkbox" value="Principal's Signature"> Principal's Signature</label><br>
         <button type="button" onclick="closeFieldDropdown()" style="margin-top:6px;">Close</button>
       </div>
     </div>
@@ -379,13 +380,13 @@
       <button onclick="loadSavedDesign()" style="background: #007bff; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">📂 Load Design</button>
     </div>
 
-    <!-- Individual Field Color Controls -->
+    <!-- Individual Field Color and Font Weight Controls -->
     <div style="margin-top: 10px; padding: 10px; background: #e9ecef; border-radius: 5px;">
-      <h4 style="margin: 0 0 10px 0; color: #2a4d60;">Individual Field Colors</h4>
+      <h4 style="margin: 0 0 10px 0; color: #2a4d60;">Individual Field Styling</h4>
       <div id="fieldColorControls" style="display: flex; flex-wrap: wrap; gap: 10px;">
-        <!-- Field color controls will be dynamically added here -->
+        <!-- Field color and weight controls will be dynamically added here -->
       </div>
-      <button onclick="toggleFieldColorMode()" style="background: #17a2b8; color: white; border: none; padding: 8px 15px; border-radius: 4px; margin-top: 10px; cursor: pointer;">🎨 Edit Field Colors</button>
+      <button onclick="toggleFieldColorMode()" style="background: #17a2b8; color: white; border: none; padding: 8px 15px; border-radius: 4px; margin-top: 10px; cursor: pointer;">🎨 Edit Field Styling</button>
     </div>
   </div>
 
@@ -537,6 +538,7 @@
       "Mother's Name": "mothername",
       "Mobile": "contact",
       "Address": "address",
+      "Principal's Signature": "principalSignature",
       "DOB": "dob",
       "House": "house",
       "NIC Code": "nicCode",
@@ -647,6 +649,7 @@ function dropField(e) {
     const fieldPositions = {};
     const fieldSizes = {};
     const fieldColors = {}; // Store individual field colors
+    const fieldWeights = {}; // Store individual field font weights
     let activeField = null;
     let isDragging = false;
     let isResizing = false;
@@ -673,23 +676,42 @@ function dropField(e) {
       });
     }
 
+    function updateAllFieldWeights(fieldKey, weight) {
+      document.querySelectorAll(`.detail-row[data-field-id="${fieldKey}"] .detail-value`).forEach(field => {
+        field.style.fontWeight = weight;
+      });
+    }
+
     function toggleFieldColorMode() {
       fieldColorMode = !fieldColorMode;
       const controlsDiv = document.getElementById('fieldColorControls');
       const toggleBtn = event.target;
       
       if (fieldColorMode) {
-        // Show color controls for each field
+        // Show color and weight controls for each field
         controlsDiv.innerHTML = '';
-        toggleBtn.textContent = '✅ Done Editing Colors';
+        toggleBtn.textContent = '✅ Done Editing Styling';
         toggleBtn.style.background = '#28a745';
         
         globalFields.forEach(field => {
           const fieldDiv = document.createElement('div');
           fieldDiv.className = 'field-color-item';
+          fieldDiv.style.flexDirection = 'column';
+          fieldDiv.style.alignItems = 'flex-start';
+          fieldDiv.style.gap = '5px';
           
           const label = document.createElement('span');
           label.textContent = field.label;
+          label.style.fontWeight = 'bold';
+          
+          const controlsRow = document.createElement('div');
+          controlsRow.style.display = 'flex';
+          controlsRow.style.gap = '10px';
+          controlsRow.style.alignItems = 'center';
+          
+          const colorLabel = document.createElement('span');
+          colorLabel.textContent = 'Color:';
+          colorLabel.style.fontSize = '12px';
           
           const colorInput = document.createElement('input');
           colorInput.type = 'color';
@@ -700,14 +722,42 @@ function dropField(e) {
             updateAllFieldColors(field.key, e.target.value);
           });
           
+          const weightLabel = document.createElement('span');
+          weightLabel.textContent = 'Weight:';
+          weightLabel.style.fontSize = '12px';
+          
+          const weightSelect = document.createElement('select');
+          weightSelect.style.fontSize = '12px';
+          weightSelect.style.padding = '2px';
+          
+          const weights = ['normal', 'bold', '100', '200', '300', '400', '500', '600', '700', '800', '900'];
+          weights.forEach(weight => {
+            const option = document.createElement('option');
+            option.value = weight;
+            option.textContent = weight;
+            weightSelect.appendChild(option);
+          });
+          
+          weightSelect.value = fieldWeights[field.key] || 'normal';
+          
+          weightSelect.addEventListener('change', (e) => {
+            fieldWeights[field.key] = e.target.value;
+            updateAllFieldWeights(field.key, e.target.value);
+          });
+          
+          controlsRow.appendChild(colorLabel);
+          controlsRow.appendChild(colorInput);
+          controlsRow.appendChild(weightLabel);
+          controlsRow.appendChild(weightSelect);
+          
           fieldDiv.appendChild(label);
-          fieldDiv.appendChild(colorInput);
+          fieldDiv.appendChild(controlsRow);
           controlsDiv.appendChild(fieldDiv);
         });
       } else {
-        // Hide color controls
-        controlsDiv.innerHTML = '<p style="margin: 0; color: #666; font-size: 12px;">Click "Edit Field Colors" to customize individual field colors</p>';
-        toggleBtn.textContent = '🎨 Edit Field Colors';
+        // Hide styling controls
+        controlsDiv.innerHTML = '<p style="margin: 0; color: #666; font-size: 12px;">Click "Edit Field Styling" to customize individual field colors and font weights</p>';
+        toggleBtn.textContent = '🎨 Edit Field Styling';
         toggleBtn.style.background = '#17a2b8';
       }
     }
@@ -715,6 +765,7 @@ function dropField(e) {
     function makeDraggable(element, cardIdx, fieldKey) {
       const resizeHandle = element.querySelector('.text-resize-handle');
       const valueSpan = element.querySelector('.detail-value');
+      const signatureImg = element.querySelector('.draggable-signature');
       
       element.addEventListener("mousedown", e => {
         if (editMode || deleteMode) return;
@@ -731,7 +782,7 @@ function dropField(e) {
         initialX = e.clientX - rect.left;
         initialY = e.clientY - rect.top;
         
-        if (e.target === element || e.target.classList.contains('detail-value')) {
+        if (e.target === element || e.target.classList.contains('detail-value') || e.target.classList.contains('draggable-signature') || e.target.classList.contains('signature')) {
           activeField = { element, fieldKey };
           isDragging = true;
         }
@@ -800,9 +851,15 @@ function dropField(e) {
           let value = cardFieldValues[cardIdx][field.key];
           if (typeof value === 'undefined') {
             const studentData = window.studentsWithQr && window.studentsWithQr[cardIdx] ? window.studentsWithQr[cardIdx].student : {};
-            value = studentData[field.key] || '';
-            if (field.key === 'dob' && value) {
-              try { value = new Date(value).toLocaleDateString(); } catch {}
+            const schoolData = window.schoolData || {};
+            
+            if (field.key === 'principalSignature') {
+              value = schoolData.signature || '';
+            } else {
+              value = studentData[field.key] || '';
+              if (field.key === 'dob' && value) {
+                try { value = new Date(value).toLocaleDateString(); } catch {}
+              }
             }
           }
           const row = document.createElement('div');
@@ -821,13 +878,29 @@ function dropField(e) {
           // Set color from saved colors or default
           const color = fieldColors[field.key] || '#222222';
           
-          row.innerHTML = `
-            <div style="position: relative; display: inline-block;">
-              <span class="detail-value" style="font-size: ${size}pt; color: ${color}" contenteditable="${editMode ? 'true' : 'false'}" ${editMode ? `onblur="updateFieldValue(${cardIdx}, '${field.key}', this.innerText)"` : ''}>${value}</span>
-              <div class="text-resize-handle"></div>
-            </div>
-            ${deleteMode ? `<button type="button" class="remove-field-btn" style="margin-left:8px; color:#fff; background:#d9534f; border:none; border-radius:3px; padding:2px 8px; cursor:pointer; font-size:12px;" onclick="removeField(${idx})">Delete</button>` : ''}
-          `;
+          // Set weight from saved weights or default
+          const weight = fieldWeights[field.key] || 'normal';
+          
+          if (field.key === 'principalSignature') {
+            // Render signature as draggable image
+            row.innerHTML = `
+              <div style="position: relative; display: inline-block;">
+                <div class="draggable-signature" style="position: absolute; top: 0; left: 0; cursor: move; z-index: 10;">
+                  <img src="${value}" alt="Principal's Signature" class="signature" style="width: 1.6cm; height: auto; background: transparent; border: none; padding: 0; filter: none; opacity: 1; box-shadow: none; border-radius: 3px; pointer-events: none;" />
+                </div>
+              </div>
+              ${deleteMode ? `<button type="button" class="remove-field-btn" style="margin-left:8px; color:#fff; background:#d9534f; border:none; border-radius:3px; padding:2px 8px; cursor:pointer; font-size:12px;" onclick="removeField(${idx})">Delete</button>` : ''}
+            `;
+          } else {
+            // Render regular text field
+            row.innerHTML = `
+              <div style="position: relative; display: inline-block;">
+                <span class="detail-value" style="font-size: ${size}pt; color: ${color}; font-weight: ${weight}" contenteditable="${editMode ? 'true' : 'false'}" ${editMode ? `onblur="updateFieldValue(${cardIdx}, '${field.key}', this.innerText)"` : ''}>${value}</span>
+                <div class="text-resize-handle"></div>
+              </div>
+              ${deleteMode ? `<button type="button" class="remove-field-btn" style="margin-left:8px; color:#fff; background:#d9534f; border:none; border-radius:3px; padding:2px 8px; cursor:pointer; font-size:12px;" onclick="removeField(${idx})">Delete</button>` : ''}
+            `;
+          }
           detailsDiv.appendChild(row);
           
           // Make the row draggable and resizable
@@ -859,6 +932,7 @@ function dropField(e) {
     }
 
     window.studentsWithQr = JSON.parse('<%- JSON.stringify(studentsWithQr || []) %>');
+    window.schoolData = JSON.parse('<%- JSON.stringify(school || {}) %>');
 
     const excelToSchemaMap = {
       'Roll No': 'rollNo',
@@ -998,7 +1072,8 @@ function dropField(e) {
               top: fieldPositions[0]?.[field.key]?.top || '10px'
             },
             fontSize: fieldSizes[field.key]?.fontSize || 10,
-            textColor: fieldColors[field.key] || '#222222'
+            textColor: fieldColors[field.key] || '#222222',
+            fontWeight: fieldWeights[field.key] || 'normal'
           })),
           styling: {
             backgroundColor: document.getElementById('bgColorInput').value,
@@ -1067,6 +1142,9 @@ function dropField(e) {
             
             // Load individual field colors
             fieldColors[field.key] = field.textColor || '#222222';
+            
+            // Load individual field weights
+            fieldWeights[field.key] = field.fontWeight || 'normal';
           });
           
           // Load styling
@@ -1152,6 +1230,9 @@ function dropField(e) {
         
         // Load individual field colors
         fieldColors[field.key] = field.textColor || '#222222';
+        
+        // Load individual field weights
+        fieldWeights[field.key] = field.fontWeight || 'normal';
       });
       
       // Load styling
