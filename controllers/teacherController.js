@@ -29,49 +29,75 @@ module.exports.getDashboard = async (req, res) => {
 module.exports.saveStudent= async (req, res) => {
     const teacherId = req.params.id;
     const {
-        rollNo, name, fathername, contact, address, dob
+        rollNo, name, fathername, mothername, contact, address, dob, house, nicCode, penNo
     } = req.body;
 
-    const  teacher= await ClassTeacher.findById(teacherId);
-    
-    const existingStudent = await Student.findOne({ 
-        rollNo: rollNo, 
-        schoolId: teacher.schoolId,
-      });
-
-      if (existingStudent) {
-         req.flash("error_msg","Roll number already exists in this school.");
-        return  res.redirect(`/class-teacher/${teacherId}`);
-      }
+    // Validate required fields
+    if (!rollNo || !name || !fathername) {
+        req.flash("error_msg","Roll number, name, and father's name are required.");
+        return res.redirect(`/class-teacher/${teacherId}`);
+    }
 
     try {
         const teacher = await ClassTeacher.findById(teacherId);
-        const school= await School.findById(teacher.schoolId);
+        if (!teacher) {
+            req.flash("error_msg","Teacher not found.");
+            return res.redirect(`/class-teacher/${teacherId}`);
+        }
+
+        const school = await School.findById(teacher.schoolId);
+        if (!school) {
+            req.flash("error_msg","School not found.");
+            return res.redirect(`/class-teacher/${teacherId}`);
+        }
+        
+        // Check for existing student with same roll number in this school
+        const existingStudent = await Student.findOne({ 
+            rollNo: rollNo, 
+            schoolId: teacher.schoolId,
+        });
+
+        if (existingStudent) {
+            req.flash("error_msg","Roll number already exists in this school.");
+            return res.redirect(`/class-teacher/${teacherId}`);
+        }
+
+        // Parse date if provided
+        let parsedDob = null;
+        if (dob) {
+            parsedDob = new Date(dob);
+            if (isNaN(parsedDob.getTime())) {
+                req.flash("error_msg","Invalid date format for date of birth.");
+                return res.redirect(`/class-teacher/${teacherId}`);
+            }
+        }
+
         const student = new Student({
-            rollNo,
-            name,
+            rollNo: rollNo.trim(),
+            name: name.trim(),
             schoolId: teacher.schoolId,
             classTeacherId: teacher._id,
             schoolName: school.schoolName, 
             class: teacher.class,
             section: teacher.section,
-            contact,
-            address,
-            dob,
-            fathername,
-            mothername, 
-            house,
-            nicCode,
-            penNo,
+            contact: contact || '',
+            address: address || '',
+            dob: parsedDob,
+            fathername: fathername.trim(),
+            mothername: mothername || '', 
+            house: house || '',
+            nicCode: nicCode || '',
+            penNo: penNo || '',
             idCardStatus: 'Pending',
-            photo: req.file ? req.file.path : null
+            photo: req.file ? req.file.path : null // Cloudinary URL will be stored here
         });
 
         await student.save();
-        req.flash("success_msg","added successfully");
+        req.flash("success_msg","Student added successfully");
         res.redirect(`/class-teacher/${teacherId}`);
     } catch (err) {
-       req.flash("error_msg","Error adding student");
+        console.error('Error saving student:', err);
+        req.flash("error_msg","Error adding student: " + err.message);
         res.redirect(`/class-teacher/${teacherId}`);
     }
 };

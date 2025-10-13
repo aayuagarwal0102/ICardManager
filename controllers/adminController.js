@@ -54,6 +54,7 @@ exports.getSchools = async (req, res) => {
     }
 };
 
+// This is the correct version for the new ID Card Editor flow
 exports.printStudentId = async (req, res) => {
     try {
         const selectedIds = req.body.selectedStudents;
@@ -134,30 +135,24 @@ exports.save_template = (req, res) => {
     res.redirect('/admin/dashboard');
 };
 
-// =================================================================
-// ===== NAYA CONTROLLER FUNCTION YAHAAN ADD KIYA GAYA HAI =====
-// =================================================================
 exports.generateDesignedCards = async (req, res) => {
     try {
-        // editor.js se bheja gaya design aur students ka data receive karo
         const { design, students } = req.body;
 
         if (!design || !students || students.length === 0) {
             return res.status(400).send('Missing design or student data.');
         }
 
-        // Student ka ID Card status "Generated" par update karo
         const studentIds = students.map(s => s._id);
         await Student.updateMany(
             { _id: { $in: studentIds } },
             { $set: { idCardStatus: "Generated" } }
         );
 
-        // Nayi EJS file 'final-cards.ejs' ko render karo jo sab cards ko display karegi
         res.render('admin/final-cards', {
             design: design,
             students: students,
-            layout: false // Hum yahan bhi main layout use nahi karenge
+            layout: false
         });
 
     } catch (error) {
@@ -165,9 +160,6 @@ exports.generateDesignedCards = async (req, res) => {
         res.status(500).send('An error occurred while generating the cards.');
     }
 };
-// =================================================================
-// ===== NAYA FUNCTION ENDS HERE =====
-// =================================================================
 
 exports.logoutAdmin = (req, res) => {
     req.session.destroy(() => {
