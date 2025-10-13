@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Print Ready ID Cards</title>
+    <style>
+        /* Basic styles for printing on an A4 sheet */
+        @page {
+            size: A4;
+            margin: 10mm;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            -webkit-print-color-adjust: exact;
+            color-adjust: exact;
+        }
+        .page-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            align-content: flex-start;
+        }
+        .card {
+            position: relative;
+            width: 85.6mm;
+            height: 54mm;
+            border: 1px dashed #cccccc;
+            margin: 2mm;
+            box-sizing: border-box;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .element {
+            position: absolute;
+            box-sizing: border-box;
+            white-space: nowrap;
+        }
+        .element img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        @media print {
+            .card {
+                border: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <% students.forEach(student => { %>
+            <div class="card" style="background-image: url('<%- design.backgroundImage.replace(/url\(['"]?(.*?)['"]?\)/i, '$1') %>');">
+
+                <% design.elements.forEach(element => { %>
+                    <%
+                        // ✨ FULLY UPDATED REPLACEMENT LOGIC ✨
+                        let content = element.content || '';
+                        if (content) {
+                            content = content.replace(/{{student\.name}}/g, student.name || '');
+                            content = content.replace(/{{student\.rollNo}}/g, student.rollNo || '');
+                            content = content.replace(/{{student\.class}}/g, student.class || '');
+                            content = content.replace(/{{student\.section}}/g, student.section || '');
+                            content = content.replace(/{{student\.fathername}}/g, student.fathername || '');
+                            content = content.replace(/{{student\.mothername}}/g, student.mothername || '');
+                            content = content.replace(/{{student\.contact}}/g, student.contact || '');
+                            content = content.replace(/{{student\.address}}/g, student.address || '');
+                            content = content.replace(/{{student\.photo}}/g, student.photo || '');
+                            content = content.replace(/{{student\.house}}/g, student.house || '');
+                            content = content.replace(/{{student\.nicCode}}/g, student.nicCode || '');
+                            content = content.replace(/{{student\.penNo}}/g, student.penNo || '');
+                            
+                            // Special handling to format the Date of Birth
+                            if (content.includes('{{student.dob}}')) {
+                                let dobString = '';
+                                if (student.dob) {
+                                    try {
+                                        const date = new Date(student.dob);
+                                        // Format: DD-MM-YYYY
+                                        dobString = `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getFullYear()}`;
+                                    } catch (e) { /* Fails silently if date is invalid */ }
+                                }
+                                content = content.replace(/{{student\.dob}}/g, dobString);
+                            }
+
+                            // Fallback for any other custom fields
+                            content = content.replace(/{{.*?}}/g, element.displayText || '');
+                        }
+                    %>
+
+                    <div class="element" style="
+                        top: <%= element.y %>px;
+                        left: <%= element.x %>px;
+                        width: <%= element.width %>;
+                        height: <%= element.height %>;
+                        font-family: '<%= element.fontFamily %>';
+                        font-size: <%= element.fontSize %>;
+                        font-weight: <%= element.fontWeight || 'normal' %>;
+                        font-style: <%= element.fontStyle || 'normal' %>;
+                        text-decoration: <%= element.textDecoration || 'none' %>;
+                        color: <%= element.color %>;
+                    ">
+                        <% if (element.type === 'text') { %>
+                            <span><%- content %></span>
+                        <% } else if (element.type === 'image') { %>
+                            <img src="<%- content %>" alt="Photo">
+                        <% } %>
+                    </div>
+                <% }) %>
+            </div>
+        <% }) %>
+    </div>
+</body>
+</html>

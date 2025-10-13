@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor - <%= template.name %></title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@400;700&family=Playfair+Display:wght@400;700&family=Lobster&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0" />
+    <link rel="stylesheet" href="/css/editor.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:ital,wght@0,400;0,700;1,400&family=Lato:ital,wght@0,400;0,700;1,400&family=Open+Sans:ital,wght@0,400;0,700;1,400&family=Poppins:ital,wght@0,400;0,700;1,400&family=Oswald:wght@400;700&family=Raleway:ital,wght@0,400;0,700;1,400&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Nunito+Sans:ital,wght@0,400;0,700;1,400&family=Anton&family=Bebas+Neue&family=Lobster&family=Pacifico&family=Caveat&family=Dancing+Script&family=Indie+Flower&family=Shadows+Into+Light&family=Abril+Fatface&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+</head>
+
+<body data-layout="<%= template.layout %>">
+    <script>
+        // This makes student and template data available for editor.js
+        const selectedStudentsData = <%- JSON.stringify(students) %>;
+        const template = <%- JSON.stringify(template) %>;
+    </script>
+    <div class="editor-container">
+        <header class="top-bar">
+            <div class="title-section">
+                <span class="app-icon material-symbols-outlined">badge</span>
+                <span class="title-text">Authentic TechSoft » <%= template.name %> - [Front]</span>
+            </div>
+            <div class="actions-section">
+                <button class="btn btn-proceed">PROCEED</button>
+            </div>
+        </header>
+
+        <aside class="left-toolbar">
+            <div class="toolbar-main">
+                <button class="tool-btn active" data-tooltip="Fix Data">
+                    <span class="material-symbols-outlined">database</span>
+                </button>
+                <button id="add-image-btn" class="tool-btn" data-tooltip="Add Image">
+                    <span class="material-symbols-outlined">image</span>
+                </button>
+                
+                <div class="tool-select-wrapper">
+                    <span class="material-symbols-outlined select-icon">add_box</span>
+                    <span class="tool-label">Add Field</span>
+                    <select id="add-field-select" class="tool-select" title="Add Student Field">
+                        <option value="" disabled selected>Add Field</option>
+                        <option value="{{student.name}}">Student Name</option>
+                        <option value="{{student.rollNo}}">Roll No</option>
+                        <option value="{{student.class}}">Class</option>
+                        <option value="{{student.section}}">Section</option>
+                        <option value="{{student.fathername}}">Father's Name</option>
+                        <option value="{{student.mothername}}">Mother's Name</option>
+                        <option value="{{student.contact}}">Contact No</option>
+                        <option value="{{student.address}}">Address</option>
+                        <option value="{{student.dob}}">Date of Birth</option>
+                        <option value="{{student.house}}">House</option>
+                        <option value="{{student.nicCode}}">NIC Code</option>
+                        <option value="{{student.penNo}}">PEN No.</option>
+                    </select>
+                </div>
+
+                <button class="tool-btn" data-tooltip="Add Text">
+                    <span class="material-symbols-outlined">title</span>
+                </button>
+                <button class="tool-btn" data-tooltip="Add Shape">
+                    <span class="material-symbols-outlined">pentagon</span>
+                </button>
+                <button class="tool-btn" data-tooltip="Favorites">
+                    <span class="material-symbols-outlined">star</span>
+                </button>
+            </div>
+            <div class="toolbar-footer">
+                <a href="/" class="tool-btn" data-tooltip="Dashboard">
+                    <span class="material-symbols-outlined">dashboard</span>
+                </a>
+            </div>
+        </aside>
+        <main class="canvas-area">
+            <%
+                let frontCanvasStyles = `width: ${template.width * 4.5}px; height: ${template.height * 4.5}px;`;
+                if (template.backgroundImage) {
+                    frontCanvasStyles += ` background-image: url('${template.backgroundImage}'); background-size: cover; background-position: center;`;
+                }
+            %>
+            <div id="canvas-front" class="card-canvas active" style="<%= frontCanvasStyles %>">
+            </div>
+
+            <% if (template.layout === 'double') { %>
+                <%
+                    const backCanvasStyles = `width: ${template.width * 4.5}px; height: ${template.height * 4.5}px;`;
+                %>
+                <div id="canvas-back" class="card-canvas" style="<%= backCanvasStyles %>">
+                </div>
+            <% } %>
+        </main>
+
+        <aside class="right-toolbar">
+            <div class="zoom-control">
+                <span id="zoom-display">ZOOM: 100%</span>
+                <button id="zoom-in-btn" class="tool-btn"><span class="material-symbols-outlined">add</span></button>
+                <button id="zoom-out-btn" class="tool-btn"><span class="material-symbols-outlined">remove</span></button>
+            </div>
+
+            <div id="properties-panel" class="properties-panel hidden">
+                <div class="prop-group">
+                    <label for="font-family-select">Font Family</label>
+                    <select id="font-family-select">
+                        <optgroup label="Sans Serif">
+                            <option value="Roboto">Roboto</option>
+                            <option value="Montserrat">Montserrat</option>
+                            <option value="Lato">Lato</option>
+                            <option value="Open Sans">Open Sans</option>
+                            <option value="Poppins">Poppins</option>
+                            <option value="Oswald">Oswald</option>
+                            <option value="Raleway">Raleway</option>
+                            <option value="Nunito Sans">Nunito Sans</option>
+                            <option value="Bebas Neue">Bebas Neue</option>
+                        </optgroup>
+                        <optgroup label="Serif">
+                            <option value="Merriweather">Merriweather</option>
+                            <option value="Playfair Display">Playfair Display</option>
+                            <option value="Lora">Lora</option>
+                            <option value="Abril Fatface">Abril Fatface</option>
+                        </optgroup>
+                        <optgroup label="Handwriting">
+                            <option value="Caveat">Caveat</option>
+                            <option value="Dancing Script">Dancing Script</option>
+                            <option value="Indie Flower">Indie Flower</option>
+                            <option value="Pacifico">Pacifico</option>
+                            <option value="Lobster">Lobster</option>
+                            <option value="Shadows Into Light">Shadows Into Light</option>
+                        </optgroup>
+                        <optgroup label="Display">
+                            <option value="Anton">Anton</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <div class="prop-group">
+                    <label for="font-size-input">Size</label>
+                    <input type="number" id="font-size-input" value="12" min="6" step="1">
+                </div>
+                <div class="prop-group">
+                    <label for="color-input">Color</label>
+                    <input type="color" id="color-input" value="#333333">
+                </div>
+                <div class="prop-group">
+                    <label>Formatting</label>
+                    <div class="format-buttons">
+                        <button id="bold-btn" class="format-btn" title="Bold"><span class="material-symbols-outlined">format_bold</span></button>
+                        <button id="italic-btn" class="format-btn" title="Italic"><span class="material-symbols-outlined">format_italic</span></button>
+                        <button id="underline-btn" class="format-btn" title="Underline"><span class="material-symbols-outlined">format_underlined</span></button>
+                    </div>
+                </div>
+            </div>
+
+            <button id="best-fit-btn" class="tool-btn best-fit-btn">
+                <span class="material-symbols-outlined">fullscreen</span>
+                BEST FIT
+            </button>
+        </aside>
+
+        <footer class="bottom-bar">
+            <% if (template.layout === 'double') { %>
+                <div class="side-switcher">
+                    <div class="switcher-background"></div>
+                    <button id="front-view-btn" class="side-btn active">Front</button>
+                    <button id="back-view-btn" class="side-btn">Back</button>
+                </div>
+            <% } %>
+
+            <div id="background-btn" class="footer-item premium-btn">
+                <span class="material-symbols-outlined">image</span>
+                <span>Background Image</span>
+            </div>
+
+            <div class="footer-item premium-btn" title="Background Color">
+                <input type="color" id="background-color-input" class="background-color-picker">
+                <span>Background Color</span>
+            </div>
+
+            <button id="remove-background-btn" class="footer-item premium-btn" title="Remove Background">
+                <span class="material-symbols-outlined">layers_clear</span>
+                <span>Remove Background</span>
+            </button>
+
+            <button id="display-mode-btn" class="footer-item">Display: Cropped</button>
+        </footer>
+
+        <input type="file" id="background-upload" accept="image/*" style="display: none;">
+        <input type="file" id="image-upload" accept="image/*" style="display: none;">
+    </div>
+
+    <script src="/js/editor.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,199 @@
+/* ===== GLOBAL STYLES & VARIABLES ===== */
+:root {
+    --bg-main: #1d1d27;
+    --bg-toolbar: #252532;
+    --bg-header: #252532;
+    --text-primary: #f0f2f5;
+    --text-secondary: #a8a9ae;
+    --border-color: #313141;
+    --accent-proceed: #805ad5;
+    --selection-border: #007bff; /* A bright blue for selection controls */
+    --accent-active: #313141;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    height: 100vh;
+    overflow: hidden;
+    user-select: none;
+}
+
+.editor-container {
+    display: grid;
+    grid-template-columns: 80px 1fr 240px;
+    grid-template-rows: 40px 1fr 40px;
+    height: 100vh;
+    grid-template-areas:
+        "header header header"
+        "left-toolbar canvas-area right-toolbar"
+        "footer footer footer";
+}
+
+/* ===== LAYOUT & BARS ===== */
+.top-bar { grid-area: header; background-color: var(--bg-header); display: flex; justify-content: space-between; align-items: center; padding: 0 15px; border-bottom: 1px solid var(--border-color); }
+.left-toolbar { grid-area: left-toolbar; }
+.right-toolbar { grid-area: right-toolbar; }
+.bottom-bar { grid-area: footer; background-color: var(--bg-toolbar); border-top: 1px solid var(--border-color); display: flex; align-items: center; padding: 0 20px; gap: 20px; font-size: 0.8rem; }
+.left-toolbar, .right-toolbar { background-color: var(--bg-toolbar); display: flex; flex-direction: column; align-items: center; border-right: 1px solid var(--border-color); }
+.right-toolbar { border-left: 1px solid var(--border-color); border-right: none; padding: 10px; }
+.left-toolbar { padding: 0; justify-content: space-between; }
+
+/* === Header & Generic Buttons === */
+.title-section { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
+.app-icon { color: var(--accent-proceed); }
+.btn-proceed { background-color: var(--accent-proceed); color: white; font-weight: 600; border-radius: 4px; letter-spacing: 0.5px; border: none; padding: 8px 15px; cursor: pointer; }
+
+/* === Toolbars & Tool Buttons === */
+.toolbar-main, .toolbar-footer { display: flex; flex-direction: column; align-items: center; padding: 15px 0; width: 100%; }
+.tool-btn { position: relative; background: transparent; border: none; color: var(--text-secondary); padding: 10px; border-radius: 4px; cursor: pointer; width: 80%; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; font-size: 0.7rem; gap: 2px; transition: background-color 0.2s, color 0.2s; }
+.tool-btn:hover, .tool-btn.active { background-color: var(--accent-active); color: var(--text-primary); }
+.tool-btn .material-symbols-outlined { font-size: 28px; }
+
+/* ===== "ADD FIELD" DROPDOWN STYLES ===== */
+.tool-select-wrapper {
+    position: relative;
+    width: 80%;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 4px;
+    color: var(--text-secondary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+.tool-select-wrapper:hover {
+    background-color: var(--accent-active);
+    color: var(--text-primary);
+}
+.tool-select-wrapper .select-icon {
+    font-size: 28px;
+    pointer-events: none;
+}
+.tool-select-wrapper .tool-label {
+    font-size: 0.7rem;
+    pointer-events: none;
+}
+.tool-select {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* ========================================================= */
+/* ===== FIX 1: CENTER CANVAS AND ZOOM ORIGIN ===== */
+/* ========================================================= */
+.canvas-area {
+    grid-area: canvas-area;
+    display: flex; /* Use flexbox to center content */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    overflow: hidden;
+    background-image: linear-gradient(45deg, #2b2b2b 25%, transparent 25%), linear-gradient(-45deg, #2b2b2b 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #2b2b2b 75%), linear-gradient(-45deg, transparent 75%, #2b2b2b 75%);
+    background-size: 20px 20px;
+}
+
+/* ========================================================= */
+/* ===== FIX 2: ROUNDED CORNERS & TRANSFORM ORIGIN ===== */
+/* ========================================================= */
+.card-canvas {
+    background-color: white;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    position: relative;
+    display: block;
+    border-radius: 12px; /* Added: Slightly rounded corners */
+    transform-origin: center center; /* Changed: This ensures zoom is from the center */
+}
+
+
+/* ===== DRAGGABLE ELEMENT & CONTROLS ===== */
+.draggable-element {
+    position: absolute;
+    min-height: 20px;
+    min-width: 20px;
+    cursor: move;
+    padding: 2px;
+    border: 1px dashed transparent;
+}
+.draggable-element .text-content {
+    outline: none;
+    width: 100%;
+    height: 100%;
+    color: #000;
+}
+.draggable-element .text-content[contenteditable="true"] {
+    cursor: text;
+}
+.draggable-element.selected {
+    z-index: 1000;
+}
+.selection-box {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--selection-border);
+    pointer-events: none;
+}
+.floating-toolbar {
+    display: none;
+    position: absolute;
+    top: -32px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    border-radius: 5px;
+    padding: 2px;
+    z-index: 1001;
+}
+.draggable-element.selected .selection-box,
+.draggable-element.selected .floating-toolbar {
+    display: flex;
+}
+.floating-toolbar .toolbar-btn {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+}
+.floating-toolbar .toolbar-btn:hover {
+    background: #555;
+    border-radius: 3px;
+}
+.toolbar-btn .material-symbols-outlined {
+    font-size: 18px;
+}
+
+/* ===== RIGHT TOOLBAR & PROPERTIES PANEL ===== */
+.right-toolbar .best-fit-btn { margin-top: auto; }
+.properties-panel { width: 100%; padding: 10px; margin-top: 15px; border-top: 1px solid var(--border-color); text-align: left; font-size: 0.8rem; }
+.properties-panel.hidden { display: none; }
+.prop-group { margin-bottom: 12px; }
+.prop-group label { display: block; margin-bottom: 5px; color: var(--text-secondary); font-size: 0.75rem; }
+.properties-panel input, .properties-panel select { width: 100%; background-color: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-primary); padding: 8px; border-radius: 4px; font-size: 0.8rem; }
+.properties-panel input[type="color"] { padding: 4px; height: 40px; }
+.format-buttons { display: flex; gap: 5px; }
+.format-btn { flex: 1; background-color: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-secondary); padding: 5px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.format-btn:hover { border-color: var(--accent-proceed); }
+.format-btn.active { background-color: var(--accent-proceed); color: white; border-color: var(--accent-proceed); }
+.format-btn .material-symbols-outlined { font-size: 20px; }
+
+/* Footer and other elements */
+.footer-item { display: flex; align-items: center; gap: 8px; padding: 5px 10px; border-radius: 4px; cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease; color: var(--text-secondary); border: 1px solid transparent; }
+.background-color-picker { padding: 0; border: none; width: 24px; height: 24px; background: none; cursor: pointer; }
+#display-mode-btn { background: transparent; border: none; color: var(--text-secondary); font-family: inherit; font-size: inherit; }
