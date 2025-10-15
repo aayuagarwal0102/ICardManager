@@ -17,9 +17,11 @@
 
 <body data-layout="<%= template.layout %>">
     <script>
-        // This makes student and template data available for editor.js
+        // This makes all necessary data available for editor.js
         const selectedStudentsData = <%- JSON.stringify(students) %>;
         const template = <%- JSON.stringify(template) %>;
+        // ✨ School data (for logo) is now also available ✨
+        const school = <%- JSON.stringify(school) %>;
     </script>
     <div class="editor-container">
         <header class="top-bar">
@@ -58,6 +60,7 @@
                         <option value="{{student.house}}">House</option>
                         <option value="{{student.nicCode}}">NIC Code</option>
                         <option value="{{student.penNo}}">PEN No.</option>
+                        <option value="{{school.logo}}">School Logo</option>
                     </select>
                 </div>
 
@@ -77,6 +80,7 @@
                 </a>
             </div>
         </aside>
+
         <main class="canvas-area">
             <%
                 let frontCanvasStyles = `width: ${template.width * 4.5}px; height: ${template.height * 4.5}px;`;

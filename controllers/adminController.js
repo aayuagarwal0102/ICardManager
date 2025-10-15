@@ -79,11 +79,18 @@ exports.printStudentId = async (req, res) => {
             return res.redirect("back");
         }
 
+        // ===== YEH NAYI LINE ADD KI GAYI HAI =====
+        // Pehle student ki schoolId se school ka poora data (logo ke saath) fetch karo
+        const school = await School.findById(students[0].schoolId);
+        // ===========================================
+
         res.render('admin/print-id', {
             students: students,
             template: template,
+            school: school, // <-- School data ko page par bhejo
             layout: false
         });
+
 
     } catch (error) {
         console.error("Error loading ID card editor:", error);
@@ -135,6 +142,8 @@ exports.save_template = (req, res) => {
     res.redirect('/admin/dashboard');
 };
 
+// Find this function in your controller and replace it
+
 exports.generateDesignedCards = async (req, res) => {
     try {
         const { design, students } = req.body;
@@ -143,15 +152,21 @@ exports.generateDesignedCards = async (req, res) => {
             return res.status(400).send('Missing design or student data.');
         }
 
+        // ✨ FIX 1: Fetch the school data using the first student's schoolId ✨
+        const school = await School.findById(students[0].schoolId);
+
+        // Update the ID Card status for all selected students to "Generated"
         const studentIds = students.map(s => s._id);
         await Student.updateMany(
             { _id: { $in: studentIds } },
             { $set: { idCardStatus: "Generated" } }
         );
 
+        // Render the final cards page
         res.render('admin/final-cards', {
             design: design,
             students: students,
+            school: school, // ✨ FIX 2: Pass the school object to the template ✨
             layout: false
         });
 

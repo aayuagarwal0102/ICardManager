@@ -93,36 +93,48 @@ function collectDesignData() {
         addToolbarListeners(element);
     }
 
-    function createImageElement(options = {}) {
-        const config = { id: `element-${Date.now()}`, placeholder: '{{student.photo}}', width: '90px', height: '110px', x: 250, y: 30, ...options };
-        const element = document.createElement('div');
-        element.className = 'draggable-element';
-        element.id = config.id;
-        element.dataset.type = 'image';
-        element.style.transform = `translate(${config.x}px, ${config.y}px)`;
-        element.style.width = config.width;
-        element.style.height = config.height;
-        element.style.border = '1px dashed #999';
-        element.style.display = 'flex';
-        element.style.alignItems = 'center';
-        element.style.justifyContent = 'center';
-        
-        // ✨ FIX: Added the floating-toolbar div here ✨
-        element.innerHTML = `
+    // Apni file mein is function ko dhundhein aur isse replace karein
+
+function createImageElement(options = {}) {
+    const config = { id: `element-${Date.now()}`, placeholder: '{{student.photo}}', width: '90px', height: '110px', x: 250, y: 30, ...options };
+    const element = document.createElement('div');
+    element.className = 'draggable-element';
+    element.id = config.id;
+    element.dataset.type = 'image';
+    element.style.transform = `translate(${config.x}px, ${config.y}px)`;
+    element.style.width = config.width;
+    element.style.height = config.height;
+    element.style.border = '1px dashed #999';
+    element.style.display = 'flex';
+    element.style.alignItems = 'center';
+    element.style.justifyContent = 'center';
+
+    // ===== ✨ FIX YAHAN HAI: Hum image ka source (URL) check kar rahe hain =====
+    let imageSrc = '/images/placeholder-image.png'; // Default placeholder
+    
+    // Check karo ki kya placeholder school logo ka hai
+    if (config.placeholder === '{{school.logo}}') {
+        // Agar haan, to 'school' object (jo ejs se aa raha hai) se asli logo ka URL use karo
+        // Agar school object mein logo nahi hai, to default placeholder use karo
+        imageSrc = school.logo || '/images/placeholder-image.png';
+    }
+    // =========================================================================
+    
+    element.innerHTML = `
         <div class="selection-box"></div>
-        <img src="/images/placeholder-image.png" data-placeholder="${config.placeholder}" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">
+        <img src="${imageSrc}" data-placeholder="${config.placeholder}" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">
         <div class="floating-toolbar">
             <button class="toolbar-btn shape-toggle-btn" title="Change Shape"><span class="material-symbols-outlined">pentagon</span></button>
             <button class="toolbar-btn delete-btn" title="Delete"><span class="material-symbols-outlined">delete</span></button>
         </div>
     `;
 
-        element.setAttribute('data-x', config.x);
-        element.setAttribute('data-y', config.y);
-        canvasFront.appendChild(element);
-        makeElementInteractive(element);
-        addToolbarListeners(element);
-    }
+    element.setAttribute('data-x', config.x);
+    element.setAttribute('data-y', config.y);
+    canvasFront.appendChild(element);
+    makeElementInteractive(element);
+    addToolbarListeners(element);
+}
     
     // --- 6. SELECTION & INTERACTIVITY ---
     function selectElement(element) {
@@ -218,12 +230,39 @@ function collectDesignData() {
     // --- 7. EVENT LISTENERS ---
     addTextBtn.addEventListener('click', () => createTextElement());
     addImageBtn.addEventListener('click', () => createImageElement());
-    addFieldSelect.addEventListener('change', () => {
-        const selectedOption = addFieldSelect.options[addFieldSelect.selectedIndex];
-        if (!selectedOption || !selectedOption.value) return;
-        createTextElement({ displayText: selectedOption.text, placeholder: selectedOption.value, x: 40, y: 40 });
-        addFieldSelect.selectedIndex = 0;
-    });
+    // Apni file mein is poore event listener ko dhundhein aur replace karein
+
+addFieldSelect.addEventListener('change', () => {
+    const selectedOption = addFieldSelect.options[addFieldSelect.selectedIndex];
+    if (!selectedOption || !selectedOption.value) return;
+
+    const placeholderValue = selectedOption.value; // Jaise '{{school.logo}}'
+    const friendlyName = selectedOption.text;     // Jaise 'School Logo'
+
+    // ✨ FIX YAHAN HAI: Hum check kar rahe hain ki kya user ne logo select kiya hai ✨
+    if (placeholderValue.includes('logo')) {
+        // Agar 'logo' hai, to ek naya image element banao
+        createImageElement({
+            placeholder: placeholderValue,
+            // Aap logo ke liye default size yahan set kar sakte hain
+            width: '50px',
+            height: '50px',
+            x: 150,
+            y: 10
+        });
+    } else {
+        // Warna, purane jaisa text element banao
+        createTextElement({
+            displayText: friendlyName,
+            placeholder: placeholderValue,
+            x: 40,
+            y: 40
+        });
+    }
+
+    // Dropdown ko wapas default par set kar do
+    addFieldSelect.selectedIndex = 0;
+});
     canvasFront.addEventListener('click', (e) => { if(e.target === canvasFront) selectElement(null); });
     zoomInBtn.addEventListener('click', () => { currentZoom = Math.min(MAX_ZOOM, currentZoom + ZOOM_STEP); updateZoom(); });
     zoomOutBtn.addEventListener('click', () => { currentZoom = Math.max(MIN_ZOOM, currentZoom - ZOOM_STEP); updateZoom(); });

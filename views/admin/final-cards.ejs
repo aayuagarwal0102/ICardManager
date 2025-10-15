@@ -61,6 +61,12 @@
                         // ✨ FULLY UPDATED REPLACEMENT LOGIC ✨
                         let content = element.content || '';
                         if (content) {
+                            // First, replace the school-level placeholder
+                            if (content.includes('{{school.logo}}')) {
+                                content = content.replace(/{{school\.logo}}/g, school.logo || '');
+                            }
+
+                            // Then, replace all the student-level placeholders
                             content = content.replace(/{{student\.name}}/g, student.name || '');
                             content = content.replace(/{{student\.rollNo}}/g, student.rollNo || '');
                             content = content.replace(/{{student\.class}}/g, student.class || '');
