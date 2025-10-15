@@ -44,20 +44,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // --- 4. CORE FUNCTIONS ---
-    function collectDesignData() {
-        const elements = canvasFront.querySelectorAll('.draggable-element');
-        const elementsData = Array.from(elements).map(el => {
-            const x = parseFloat(el.getAttribute('data-x')) || 0;
-            const y = parseFloat(el.getAttribute('data-y')) || 0;
-            const baseData = { id: el.id, x, y, width: el.style.width, height: el.style.height };
-            if (el.dataset.type === 'image') {
-                return { ...baseData, type: 'image', content: el.querySelector('img').getAttribute('data-placeholder') };
-            } else {
-                return { ...baseData, type: 'text', content: el.querySelector('.text-content').getAttribute('data-placeholder'), displayText: el.querySelector('.text-content').innerText, fontFamily: el.style.fontFamily, fontSize: el.style.fontSize, color: el.style.color, fontWeight: el.style.fontWeight, fontStyle: el.style.fontStyle, textDecoration: el.style.textDecoration };
-            }
-        });
-        return { backgroundImage: canvasFront.style.backgroundImage, elements: elementsData };
-    }
+    // Apni file mein is function ko dhundhein aur isse replace karein
+
+function collectDesignData() {
+    const elements = canvasFront.querySelectorAll('.draggable-element');
+    const elementsData = Array.from(elements).map(el => {
+        const x = parseFloat(el.getAttribute('data-x')) || 0;
+        const y = parseFloat(el.getAttribute('data-y')) || 0;
+        const baseData = { id: el.id, x, y, width: el.style.width, height: el.style.height };
+
+        if (el.dataset.type === 'image') {
+            // ✨ FIX YAHAN HAI: Hum shape ki information add kar rahe hain ✨
+            const img = el.querySelector('img');
+            const shape = img.classList.contains('is-circular') ? 'circle' : 'rectangle';
+            
+            return { 
+                ...baseData, 
+                type: 'image', 
+                content: img.getAttribute('data-placeholder'),
+                shape: shape // Nayi property
+            };
+        } else {
+            return { ...baseData, type: 'text', content: el.querySelector('.text-content').getAttribute('data-placeholder'), displayText: el.querySelector('.text-content').innerText, fontFamily: el.style.fontFamily, fontSize: el.style.fontSize, color: el.style.color, fontWeight: el.style.fontWeight, fontStyle: el.style.fontStyle, textDecoration: el.style.textDecoration };
+        }
+    });
+    return { backgroundImage: canvasFront.style.backgroundImage, elements: elementsData };
+}
 
     // --- 5. ELEMENT CREATION ---
     function createTextElement(options = {}) {
@@ -97,12 +109,13 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // ✨ FIX: Added the floating-toolbar div here ✨
         element.innerHTML = `
-            <div class="selection-box"></div>
-            <img src="/images/placeholder-image.png" data-placeholder="${config.placeholder}" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">
-            <div class="floating-toolbar">
-                <button class="toolbar-btn delete-btn" title="Delete"><span class="material-symbols-outlined">delete</span></button>
-            </div>
-        `;
+        <div class="selection-box"></div>
+        <img src="/images/placeholder-image.png" data-placeholder="${config.placeholder}" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">
+        <div class="floating-toolbar">
+            <button class="toolbar-btn shape-toggle-btn" title="Change Shape"><span class="material-symbols-outlined">pentagon</span></button>
+            <button class="toolbar-btn delete-btn" title="Delete"><span class="material-symbols-outlined">delete</span></button>
+        </div>
+    `;
 
         element.setAttribute('data-x', config.x);
         element.setAttribute('data-y', config.y);
@@ -178,12 +191,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function addToolbarListeners(element) {
-        element.querySelector('.delete-btn').addEventListener('click', (e) => {
+    // Delete button ka logic
+    const deleteBtn = element.querySelector('.delete-btn');
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             if (selectedElement === element) selectElement(null);
             element.remove();
         });
     }
+
+    // ✨ FIX: "Change Shape" button ka naya logic ✨
+    const shapeToggleBtn = element.querySelector('.shape-toggle-btn');
+    if (shapeToggleBtn) {
+        shapeToggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Event ko aage badhne se roko
+            const img = element.querySelector('img');
+            if (img) {
+                // 'is-circular' class ko add ya remove karo (toggle)
+                img.classList.toggle('is-circular');
+            }
+        });
+    }
+}
 
     // --- 7. EVENT LISTENERS ---
     addTextBtn.addEventListener('click', () => createTextElement());

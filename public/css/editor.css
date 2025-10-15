@@ -197,3 +197,12 @@ body {
 .footer-item { display: flex; align-items: center; gap: 8px; padding: 5px 10px; border-radius: 4px; cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease; color: var(--text-secondary); border: 1px solid transparent; }
 .background-color-picker { padding: 0; border: none; width: 24px; height: 24px; background: none; cursor: pointer; }
 #display-mode-btn { background: transparent; border: none; color: var(--text-secondary); font-family: inherit; font-size: inherit; }
+/* Circular shape ke liye naya style */
+.draggable-element img.is-circular {
+    border-radius: 50%; /* Image ko poori tarah goal bana dega */
+}
+
+/* Smooth transition ke liye (optional, lekin accha dikhta hai) */
+.draggable-element img {
+    transition: border-radius 0.3s ease;
+}

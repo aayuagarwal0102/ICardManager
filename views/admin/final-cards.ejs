@@ -107,7 +107,7 @@
                         <% if (element.type === 'text') { %>
                             <span><%- content %></span>
                         <% } else if (element.type === 'image') { %>
-                            <img src="<%- content %>" alt="Photo">
+                            <img src="<%- content %>" alt="Photo" style="<%- element.shape === 'circle' ? 'border-radius: 50%;' : '' %>">
                         <% } %>
                     </div>
                 <% }) %>
