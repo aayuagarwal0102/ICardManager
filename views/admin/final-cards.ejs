@@ -54,47 +54,45 @@
 <body>
     <div class="page-container">
         <% students.forEach(student => { %>
-            <div class="card" style="background-image: url('<%- design.backgroundImage.replace(/url\(['"]?(.*?)['"]?\)/i, '$1') %>');">
+            <div class="card" style="background-image: url('<%- design.backgroundImage ? design.backgroundImage.replace(/url\(['"]?(.*?)['"]?\)/i, '$1') : 'none' %>');">
 
                 <% design.elements.forEach(element => { %>
                     <%
-                        // ✨ FULLY UPDATED REPLACEMENT LOGIC ✨
-                        let content = element.content || '';
-                        if (content) {
-                            // First, replace the school-level placeholder
-                            if (content.includes('{{school.logo}}')) {
-                                content = content.replace(/{{school\.logo}}/g, school.logo || '');
-                            }
+                        // ===== ✨ FINAL, CORRECTED REPLACEMENT LOGIC ✨ =====
+                        let finalDisplay = '';
+                        const placeholder = element.content || '';
+                        const label = element.label || '';
 
-                            // Then, replace all the student-level placeholders
-                            content = content.replace(/{{student\.name}}/g, student.name || '');
-                            content = content.replace(/{{student\.rollNo}}/g, student.rollNo || '');
-                            content = content.replace(/{{student\.class}}/g, student.class || '');
-                            content = content.replace(/{{student\.section}}/g, student.section || '');
-                            content = content.replace(/{{student\.fathername}}/g, student.fathername || '');
-                            content = content.replace(/{{student\.mothername}}/g, student.mothername || '');
-                            content = content.replace(/{{student\.contact}}/g, student.contact || '');
-                            content = content.replace(/{{student\.address}}/g, student.address || '');
-                            content = content.replace(/{{student\.photo}}/g, student.photo || '');
-                            content = content.replace(/{{student\.house}}/g, student.house || '');
-                            content = content.replace(/{{student\.nicCode}}/g, student.nicCode || '');
-                            content = content.replace(/{{student\.penNo}}/g, student.penNo || '');
-                            
-                            // Special handling to format the Date of Birth
-                            if (content.includes('{{student.dob}}')) {
-                                let dobString = '';
-                                if (student.dob) {
-                                    try {
-                                        const date = new Date(student.dob);
-                                        // Format: DD-MM-YYYY
-                                        dobString = `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getFullYear()}`;
-                                    } catch (e) { /* Fails silently if date is invalid */ }
+                        // Step 1: Find the actual data value
+                        let dataValue = '';
+                        if (placeholder.includes('school.logo')) {
+                            dataValue = school.logo || '';
+                        } else {
+                            const keyMatch = placeholder.match(/student\.(\w+)/);
+                            if (keyMatch) {
+                                const key = keyMatch[1];
+                                if (student[key] !== undefined && student[key] !== null) {
+                                    if (key === 'dob') { // Special formatting for DOB
+                                        try {
+                                            const date = new Date(student.dob);
+                                            dataValue = `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getFullYear()}`;
+                                        } catch(e) { dataValue = ''; }
+                                    } else {
+                                        dataValue = student[key];
+                                    }
                                 }
-                                content = content.replace(/{{student\.dob}}/g, dobString);
                             }
-
-                            // Fallback for any other custom fields
-                            content = content.replace(/{{.*?}}/g, element.displayText || '');
+                        }
+                        
+                        // Step 2: Construct the final string based on type and label
+                        if (element.type === 'text') {
+                            if (label) { // If it's a field with a label (e.g., "Student Name")
+                                finalDisplay = `${label} - ${dataValue}`;
+                            } else { // If it's just custom text without a label
+                                finalDisplay = dataValue || placeholder.replace(/{{.*?}}|/g, ''); 
+                            }
+                        } else { // For images
+                            finalDisplay = dataValue;
                         }
                     %>
 
@@ -111,9 +109,9 @@
                         color: <%= element.color %>;
                     ">
                         <% if (element.type === 'text') { %>
-                            <span><%- content %></span>
+                            <span><%- finalDisplay %></span>
                         <% } else if (element.type === 'image') { %>
-                            <img src="<%- content %>" alt="Photo" style="<%- element.shape === 'circle' ? 'border-radius: 50%;' : '' %>">
+                            <img src="<%- finalDisplay %>" alt="Photo" style="<%- element.shape === 'circle' ? 'border-radius: 50%;' : '' %>">
                         <% } %>
                     </div>
                 <% }) %>

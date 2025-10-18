@@ -52,46 +52,55 @@ function collectDesignData() {
         const x = parseFloat(el.getAttribute('data-x')) || 0;
         const y = parseFloat(el.getAttribute('data-y')) || 0;
         const baseData = { id: el.id, x, y, width: el.style.width, height: el.style.height };
-
+        
         if (el.dataset.type === 'image') {
-            // ✨ FIX YAHAN HAI: Hum shape ki information add kar rahe hain ✨
             const img = el.querySelector('img');
             const shape = img.classList.contains('is-circular') ? 'circle' : 'rectangle';
-            
-            return { 
-                ...baseData, 
-                type: 'image', 
-                content: img.getAttribute('data-placeholder'),
-                shape: shape // Nayi property
+            return { ...baseData, type: 'image', content: img.getAttribute('data-placeholder'), shape: shape };
+        } else { // Text element
+            return {
+                ...baseData,
+                type: 'text',
+                content: el.querySelector('.text-content').getAttribute('data-placeholder'),
+                // ✨ FIX: Send the stored label, not the preview text ✨
+                label: el.dataset.label || '', 
+                fontFamily: el.style.fontFamily,
+                fontSize: el.style.fontSize,
+                color: el.style.color,
+                fontWeight: el.style.fontWeight,
+                fontStyle: el.style.fontStyle,
+                textDecoration: el.style.textDecoration
             };
-        } else {
-            return { ...baseData, type: 'text', content: el.querySelector('.text-content').getAttribute('data-placeholder'), displayText: el.querySelector('.text-content').innerText, fontFamily: el.style.fontFamily, fontSize: el.style.fontSize, color: el.style.color, fontWeight: el.style.fontWeight, fontStyle: el.style.fontStyle, textDecoration: el.style.textDecoration };
         }
     });
     return { backgroundImage: canvasFront.style.backgroundImage, elements: elementsData };
 }
 
     // --- 5. ELEMENT CREATION ---
-    function createTextElement(options = {}) {
-        const config = { id: `element-${Date.now()}`, displayText: 'New Text', placeholder: '{{custom.new_text}}', fontSize: '12px', fontFamily: 'Roboto', color: '#000000', x: 20, y: 20, ...options };
-        const element = document.createElement('div');
-        element.className = 'draggable-element';
-        element.id = config.id;
-        element.dataset.type = 'text';
-        element.style.transform = `translate(${config.x}px, ${config.y}px)`;
-        element.style.fontFamily = config.fontFamily;
-        element.style.fontSize = config.fontSize;
-        element.style.color = config.color;
-        element.style.fontWeight = config.fontWeight || 'normal';
-        element.style.fontStyle = config.fontStyle || 'normal';
-        element.style.textDecoration = config.textDecoration || 'none';
-        element.innerHTML = `<div class="selection-box"></div><div class="text-content" data-placeholder="${config.placeholder}">${config.displayText}</div><div class="floating-toolbar"><button class="toolbar-btn delete-btn" title="Delete"><span class="material-symbols-outlined">delete</span></button></div>`;
-        element.setAttribute('data-x', config.x);
-        element.setAttribute('data-y', config.y);
-        canvasFront.appendChild(element);
-        makeElementInteractive(element);
-        addToolbarListeners(element);
-    }
+   function createTextElement(options = {}) {
+    // We add a 'label' property to the config
+    const config = { id: `element-${Date.now()}`, displayText: 'New Text', placeholder: '{{custom.new_text}}', label: '', fontSize: '12px', fontFamily: 'Roboto', color: '#000000', x: 20, y: 20, ...options };
+    const element = document.createElement('div');
+    element.className = 'draggable-element';
+    element.id = config.id;
+    element.dataset.type = 'text';
+    // Store the label in a data-attribute for later retrieval
+    element.dataset.label = config.label;
+    
+    element.style.transform = `translate(${config.x}px, ${config.y}px)`;
+    element.style.fontFamily = config.fontFamily;
+    element.style.fontSize = config.fontSize;
+    element.style.color = config.color;
+    element.style.fontWeight = config.fontWeight || 'normal';
+    element.style.fontStyle = config.fontStyle || 'normal';
+    element.style.textDecoration = config.textDecoration || 'none';
+    element.innerHTML = `<div class="selection-box"></div><div class="text-content" data-placeholder="${config.placeholder}">${config.displayText}</div><div class="floating-toolbar"><button class="toolbar-btn delete-btn" title="Delete"><span class="material-symbols-outlined">delete</span></button></div>`;
+    element.setAttribute('data-x', config.x);
+    element.setAttribute('data-y', config.y);
+    canvasFront.appendChild(element);
+    makeElementInteractive(element);
+    addToolbarListeners(element);
+}
 
     // Apni file mein is function ko dhundhein aur isse replace karein
 
@@ -232,35 +241,51 @@ function createImageElement(options = {}) {
     addImageBtn.addEventListener('click', () => createImageElement());
     // Apni file mein is poore event listener ko dhundhein aur replace karein
 
+// Apni file mein is poore event listener ko dhundhein aur isse replace karein
+
 addFieldSelect.addEventListener('change', () => {
     const selectedOption = addFieldSelect.options[addFieldSelect.selectedIndex];
     if (!selectedOption || !selectedOption.value) return;
 
-    const placeholderValue = selectedOption.value; // Jaise '{{school.logo}}'
-    const friendlyName = selectedOption.text;     // Jaise 'School Logo'
+    const placeholder = selectedOption.value;
+    const friendlyName = selectedOption.text;
 
-    // ✨ FIX YAHAN HAI: Hum check kar rahe hain ki kya user ne logo select kiya hai ✨
-    if (placeholderValue.includes('logo')) {
-        // Agar 'logo' hai, to ek naya image element banao
-        createImageElement({
-            placeholder: placeholderValue,
-            // Aap logo ke liye default size yahan set kar sakte hain
-            width: '50px',
-            height: '50px',
-            x: 150,
-            y: 10
-        });
-    } else {
-        // Warna, purane jaisa text element banao
-        createTextElement({
-            displayText: friendlyName,
-            placeholder: placeholderValue,
-            x: 40,
-            y: 40
-        });
+    if (placeholder.includes('school.logo')) {
+        createImageElement({ placeholder: placeholder, width: '50px', height: '50px', x: 150, y: 10 });
+        addFieldSelect.selectedIndex = 0;
+        return;
     }
 
-    // Dropdown ko wapas default par set kar do
+    let previewText = friendlyName;
+    if (selectedStudentsData && selectedStudentsData.length > 0) {
+        const firstStudent = selectedStudentsData[0];
+        const keyMatch = placeholder.match(/student\.(\w+)/);
+        if (keyMatch) {
+            const key = keyMatch[1];
+            let studentData = '';
+            if (key === 'dob' && firstStudent.dob) {
+                try {
+                    const date = new Date(firstStudent.dob);
+                    studentData = `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getFullYear()}`;
+                } catch (e) { studentData = 'Invalid Date'; }
+            } else if (firstStudent[key]) {
+                studentData = firstStudent[key];
+            }
+            if (studentData) {
+                previewText += ` - ${studentData}`;
+            }
+        }
+    }
+
+    // Pass the 'label' to the create function
+    createTextElement({
+        displayText: previewText,
+        placeholder: placeholder,
+        label: friendlyName, // <-- This is the important part
+        x: 40,
+        y: 40
+    });
+
     addFieldSelect.selectedIndex = 0;
 });
     canvasFront.addEventListener('click', (e) => { if(e.target === canvasFront) selectElement(null); });
